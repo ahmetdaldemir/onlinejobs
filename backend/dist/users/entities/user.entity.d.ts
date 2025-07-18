@@ -1,0 +1,37 @@
+export declare enum UserType {
+    JOB_SEEKER = "job_seeker",
+    EMPLOYER = "employer"
+}
+export declare enum UserStatus {
+    ACTIVE = "active",
+    INACTIVE = "inactive",
+    ONLINE = "online",
+    OFFLINE = "offline"
+}
+export declare class User {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    password: string;
+    userType: UserType;
+    status: UserStatus;
+    bio: string;
+    profileImage: string;
+    latitude: number;
+    longitude: number;
+    address: string;
+    city: string;
+    district: string;
+    isVerified: boolean;
+    rating: number;
+    totalReviews: number;
+    createdAt: Date;
+    updatedAt: Date;
+    lastSeen: Date;
+    jobs: any[];
+    sentMessages: any[];
+    receivedMessages: any[];
+    category: any;
+}

@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: onlinejobs_postgres
+    environment:
+      POSTGRES_DB: onlinejobs
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - onlinejobs_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: onlinejobs_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - onlinejobs_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: onlinejobs_backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=onlinejobs
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=password123
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=your-super-secret-jwt-key
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - onlinejobs_network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  onlinejobs_network:
+    driver: bridge 
