@@ -12,6 +12,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { LocationsModule } from './locations/locations.module';
 import { DatabaseModule } from './database/database.module';
 import { SeedsModule } from './seeds/seeds.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -33,7 +34,7 @@ import { SeedsModule } from './seeds/seeds.module';
     LocationsModule,
     SeedsModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule {} 
