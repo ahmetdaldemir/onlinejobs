@@ -1,5 +1,0 @@
-name = "onlinejobs-backend"
-compatibility_date = "2024-01-01"
-compatibility_flags = ["nodejs_compat"]
-main = "src/main.ts"
-account_id = "074fb7979b46c1e051ee9633dec226c4"
