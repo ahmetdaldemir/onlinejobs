@@ -7,22 +7,22 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
-        const isProduction = configService.get('NODE_ENV') === 'production';
+        const databaseUrl = configService.get('DATABASE_URL');
         
-        if (isProduction && configService.get('DATABASE_URL')) {
-          // Production: Neon PostgreSQL
+        if (databaseUrl) {
+          // DATABASE_URL kullanarak bağlantı
           return {
             type: 'postgres',
-            url: configService.get('DATABASE_URL'),
+            url: databaseUrl,
             ssl: {
               rejectUnauthorized: false,
             },
             entities: [__dirname + '/../**/*.entity{.ts,.js}'],
             synchronize: true, // Entity'lerden otomatik migrate
-            logging: false,
+            logging: configService.get('NODE_ENV') === 'development',
           };
         } else {
-          // Development: Local PostgreSQL
+          // Fallback: Local PostgreSQL (DATABASE_URL yoksa)
           return {
             type: 'postgres',
             host: configService.get('DATABASE_HOST', 'localhost'),

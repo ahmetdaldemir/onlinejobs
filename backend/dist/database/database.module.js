@@ -19,17 +19,17 @@ exports.DatabaseModule = DatabaseModule = __decorate([
             typeorm_1.TypeOrmModule.forRootAsync({
                 imports: [config_1.ConfigModule],
                 useFactory: (configService) => {
-                    const isProduction = configService.get('NODE_ENV') === 'production';
-                    if (isProduction && configService.get('DATABASE_URL')) {
+                    const databaseUrl = configService.get('DATABASE_URL');
+                    if (databaseUrl) {
                         return {
                             type: 'postgres',
-                            url: configService.get('DATABASE_URL'),
+                            url: databaseUrl,
                             ssl: {
                                 rejectUnauthorized: false,
                             },
                             entities: [__dirname + '/../**/*.entity{.ts,.js}'],
                             synchronize: true,
-                            logging: false,
+                            logging: configService.get('NODE_ENV') === 'development',
                         };
                     }
                     else {
