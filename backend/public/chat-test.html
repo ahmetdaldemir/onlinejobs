@@ -162,8 +162,9 @@
         </div>
         <input type="text" id="receiverId" placeholder="Alıcı ID (UUID)" value="">
         <input type="text" id="jwtToken" placeholder="JWT Token (opsiyonel)">
-        <button onclick="connect()">Bağlan</button>
-        <button onclick="disconnect()">Bağlantıyı Kes</button>
+                    <button onclick="connect()">Bağlan</button>
+            <button onclick="disconnect()">Bağlantıyı Kes</button>
+            <button onclick="testConnection()">Bağlantıyı Test Et</button>
         <button onclick="generateNewUserId()">Yeni ID Oluştur</button>
     </div>
 
@@ -473,6 +474,39 @@
         function isValidUUID(uuid) {
             const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
             return uuidRegex.test(uuid);
+        }
+
+        function testConnection() {
+            const serverUrl = 'https://onlinejobs.onrender.com';
+            addMessage('Test', `Render URL'ine bağlantı test ediliyor: ${serverUrl}`, 'received');
+            
+            // API test
+            fetch(`${serverUrl}/users/test`)
+                .then(response => {
+                    if (response.ok) {
+                        addMessage('Test', '✅ API bağlantısı başarılı!', 'received');
+                    } else {
+                        addMessage('Test', `❌ API hatası: ${response.status}`, 'received');
+                    }
+                })
+                .catch(error => {
+                    addMessage('Test', `❌ API bağlantı hatası: ${error.message}`, 'received');
+                });
+            
+            // WebSocket test
+            const testSocket = io(serverUrl, {
+                transports: ['websocket', 'polling'],
+                timeout: 10000,
+            });
+            
+            testSocket.on('connect', () => {
+                addMessage('Test', '✅ WebSocket bağlantısı başarılı!', 'received');
+                testSocket.disconnect();
+            });
+            
+            testSocket.on('connect_error', (error) => {
+                addMessage('Test', `❌ WebSocket bağlantı hatası: ${error.message}`, 'received');
+            });
         }
 
         // Sayfa yüklendiğinde kullanıcıları yükle
