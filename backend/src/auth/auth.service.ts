@@ -63,10 +63,13 @@ export class AuthService {
           name: savedUser.category.name,
         } : undefined,
       },
+      message: 'Kullanıcı başarıyla kayıt oldu',
+      status: 'success',
+      statusCode: 201,
     };
   }
 
-  async login(loginDto: LoginDto): Promise<AuthResponseDto> {
+  async login(loginDto: LoginDto): Promise<AuthResponseDto> { 
     const { email, password } = loginDto;
 
     // Kullanıcıyı bul
@@ -109,6 +112,9 @@ export class AuthService {
           name: user.category.name,
         } : undefined,
       },
+      message: 'Giriş başarılı',
+      status: 'success',
+      statusCode: 200,
     };
   }
 
@@ -126,7 +132,7 @@ export class AuthService {
   }
 
 
-  async chckPhone(chckPhoneDto: ChckPhoneDto): Promise<AuthResponseDto> {
+  async chckPhone(chckPhoneDto: ChckPhoneDto): Promise<{ message: string; status: string; statusCode: number }> {
     const { phone } = chckPhoneDto;
 
     const existingUser = await this.userRepository.findOne({
@@ -139,8 +145,8 @@ export class AuthService {
 
     return {
       message: 'Telefon numarası kontrolü başarılı',
-      user: null,
-      accessToken: null,
+      status: 'success',
+      statusCode: 200,
     };
   }
 } 

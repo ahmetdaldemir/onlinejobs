@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AuthResponseDto = exports.LoginDto = exports.RegisterDto = void 0;
+exports.AuthResponseDto = exports.ChckPhoneDto = exports.LoginDto = exports.RegisterDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 const user_entity_1 = require("../../users/entities/user.entity");
@@ -66,6 +66,14 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], LoginDto.prototype, "password", void 0);
+class ChckPhoneDto {
+}
+exports.ChckPhoneDto = ChckPhoneDto;
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], ChckPhoneDto.prototype, "phone", void 0);
 class AuthResponseDto {
 }
 exports.AuthResponseDto = AuthResponseDto;
@@ -77,4 +85,16 @@ __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", Object)
 ], AuthResponseDto.prototype, "user", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], AuthResponseDto.prototype, "message", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], AuthResponseDto.prototype, "status", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", Number)
+], AuthResponseDto.prototype, "statusCode", void 0);
 //# sourceMappingURL=auth.dto.js.map

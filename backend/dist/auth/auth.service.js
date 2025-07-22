@@ -62,6 +62,9 @@ let AuthService = class AuthService {
                     name: savedUser.category.name,
                 } : undefined,
             },
+            message: 'Kullanıcı başarıyla kayıt oldu',
+            status: 'success',
+            statusCode: 201,
         };
     }
     async login(loginDto) {
@@ -99,6 +102,9 @@ let AuthService = class AuthService {
                     name: user.category.name,
                 } : undefined,
             },
+            message: 'Giriş başarılı',
+            status: 'success',
+            statusCode: 200,
         };
     }
     async validateUser(userId) {
@@ -110,6 +116,20 @@ let AuthService = class AuthService {
             throw new common_1.UnauthorizedException('Kullanıcı bulunamadı');
         }
         return user;
+    }
+    async chckPhone(chckPhoneDto) {
+        const { phone } = chckPhoneDto;
+        const existingUser = await this.userRepository.findOne({
+            where: { phone },
+        });
+        if (existingUser) {
+            throw new common_1.ConflictException('Telefon numarası zaten kullanımda');
+        }
+        return {
+            message: 'Telefon numarası kontrolü başarılı',
+            status: 'success',
+            statusCode: 200,
+        };
     }
 };
 exports.AuthService = AuthService;

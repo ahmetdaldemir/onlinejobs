@@ -12,6 +12,9 @@ export declare class LoginDto {
     email: string;
     password: string;
 }
+export declare class ChckPhoneDto {
+    phone: string;
+}
 export declare class AuthResponseDto {
     accessToken: string;
     user: {
@@ -32,4 +35,7 @@ export declare class AuthResponseDto {
             name: string;
         };
     };
+    message: string;
+    status: string;
+    statusCode: number;
 }

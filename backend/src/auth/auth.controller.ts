@@ -1,7 +1,7 @@
 import { Controller, Post, Body, UseGuards, Get, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { RegisterDto, LoginDto, AuthResponseDto } from './dto/auth.dto';
+import { RegisterDto, LoginDto, AuthResponseDto, ChckPhoneDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @ApiTags('Authentication')
@@ -30,7 +30,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Telefon numarası kontrolü' })
   @ApiResponse({ status: 200, description: 'Telefon numarası kontrolü başarılı' })
   @ApiResponse({ status: 400, description: 'Telefon numarası zaten kullanımda' })
-  async chckPhone(@Body() chckPhoneDto: ChckPhoneDto): Promise<AuthResponseDto> {
+  async chckPhone(@Body() chckPhoneDto: ChckPhoneDto): Promise<{ message: string; status: string; statusCode: number }> {
     return this.authService.chckPhone(chckPhoneDto);
   }
 

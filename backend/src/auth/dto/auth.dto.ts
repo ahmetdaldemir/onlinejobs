@@ -73,4 +73,15 @@ export class AuthResponseDto {
       name: string;
     };
   };
+
+  @ApiProperty()
+  message: string;
+
+  @ApiProperty()
+  status: string;
+
+  @ApiProperty()
+  statusCode: number;
+
+
 } 
