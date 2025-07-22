@@ -38,6 +38,7 @@ let UsersSeedService = class UsersSeedService {
             userType: user_entity_1.UserType.JOB_SEEKER,
             status: user_entity_1.UserStatus.ACTIVE,
             isVerified: true,
+            isOnline: true,
         });
         const user2 = this.userRepository.create({
             firstName: 'Test',
@@ -48,6 +49,7 @@ let UsersSeedService = class UsersSeedService {
             userType: user_entity_1.UserType.EMPLOYER,
             status: user_entity_1.UserStatus.ACTIVE,
             isVerified: true,
+            isOnline: true,
         });
         const savedUsers = await this.userRepository.save([user1, user2]);
         console.log('Test users created successfully!');

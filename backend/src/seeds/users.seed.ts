@@ -31,6 +31,7 @@ export class UsersSeedService {
       userType: UserType.JOB_SEEKER,
       status: UserStatus.ACTIVE,
       isVerified: true,
+      isOnline: true,
     });
 
     // Test kullanıcısı 2
@@ -43,6 +44,7 @@ export class UsersSeedService {
       userType: UserType.EMPLOYER,
       status: UserStatus.ACTIVE,
       isVerified: true,
+      isOnline: true,
     });
 
     const savedUsers = await this.userRepository.save([user1, user2]);

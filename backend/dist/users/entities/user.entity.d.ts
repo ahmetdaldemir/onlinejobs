@@ -25,6 +25,7 @@ export declare class User {
     city: string;
     district: string;
     isVerified: boolean;
+    isOnline: boolean;
     rating: number;
     totalReviews: number;
     createdAt: Date;

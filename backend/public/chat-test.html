@@ -283,7 +283,10 @@
                     // Varsayılan olarak kullanıcı 1'i seç
                     currentUserId = user1Id;
                     currentUserName = `${users[0].firstName} ${users[0].lastName}`;
-                    document.getElementById('myUserId').textContent = currentUserId;
+                    const myUserIdElement = document.getElementById('myUserId');
+                    if (myUserIdElement) {
+                        myUserIdElement.textContent = currentUserId;
+                    }
                     
                     addMessage('Sistem', 'Test kullanıcıları yüklendi!', 'received');
                     addMessage('Sistem', `Kullanıcı 1: ${users[0].firstName} ${users[0].lastName}`, 'received');
@@ -322,7 +325,10 @@
                     if (users.length > 0) {
                         currentUserId = users[0].id;
                         currentUserName = `${users[0].firstName} ${users[0].lastName}`;
-                        document.getElementById('myUserId').textContent = currentUserId;
+                        const myUserIdElement = document.getElementById('myUserId');
+                        if (myUserIdElement) {
+                            myUserIdElement.textContent = currentUserId;
+                        }
                         addMessage('Sistem', `Varsayılan kullanıcı seçildi: ${currentUserName}`, 'received');
                     }
                 } else {
@@ -361,7 +367,10 @@
             if (user1Id) {
                 currentUserId = user1Id;
                 currentUserName = 'John Doe'; // Test kullanıcı 1 adı
-                document.getElementById('myUserId').textContent = currentUserId;
+                const myUserIdElement = document.getElementById('myUserId');
+                if (myUserIdElement) {
+                    myUserIdElement.textContent = currentUserId;
+                }
                 addMessage('Sistem', `Kullanıcı 1 olarak ayarlandı: ${currentUserName}`, 'received');
             } else {
                 addMessage('Hata', 'Kullanıcı 1 henüz yüklenmedi!', 'received');
@@ -372,7 +381,10 @@
             if (user2Id) {
                 currentUserId = user2Id;
                 currentUserName = 'Jane Smith'; // Test kullanıcı 2 adı
-                document.getElementById('myUserId').textContent = currentUserId;
+                const myUserIdElement = document.getElementById('myUserId');
+                if (myUserIdElement) {
+                    myUserIdElement.textContent = currentUserId;
+                }
                 addMessage('Sistem', `Kullanıcı 2 olarak ayarlandı: ${currentUserName}`, 'received');
             } else {
                 addMessage('Hata', 'Kullanıcı 2 henüz yüklenmedi!', 'received');
@@ -384,7 +396,10 @@
             if (realUsers && realUsers[index]) {
                 currentUserId = realUsers[index].id;
                 currentUserName = `${realUsers[index].firstName} ${realUsers[index].lastName}`;
-                document.getElementById('myUserId').textContent = currentUserId;
+                const myUserIdElement = document.getElementById('myUserId');
+                if (myUserIdElement) {
+                    myUserIdElement.textContent = currentUserId;
+                }
                 addMessage('Sistem', `Kullanıcı seçildi: ${currentUserName} (${realUsers[index].id})`, 'received');
             } else {
                 addMessage('Hata', 'Kullanıcı bulunamadı!', 'received');
@@ -393,7 +408,10 @@
 
         function setReceiverAsRealUser(index) {
             if (realUsers && realUsers[index]) {
-                document.getElementById('receiverId').value = realUsers[index].id;
+                const receiverIdElement = document.getElementById('receiverId');
+                if (receiverIdElement) {
+                    receiverIdElement.value = realUsers[index].id;
+                }
                 receiverName = `${realUsers[index].firstName} ${realUsers[index].lastName}`;
                 addMessage('Sistem', `Alıcı ayarlandı: ${receiverName} (${realUsers[index].id})`, 'received');
             } else {
@@ -403,7 +421,10 @@
 
         function setReceiverAsUser1() {
             if (user1Id) {
-                document.getElementById('receiverId').value = user1Id;
+                const receiverIdElement = document.getElementById('receiverId');
+                if (receiverIdElement) {
+                    receiverIdElement.value = user1Id;
+                }
                 receiverName = 'John Doe'; // Test kullanıcı 1 adı
                 addMessage('Sistem', `Alıcı John Doe olarak ayarlandı: ${user1Id}`, 'received');
             } else {
@@ -413,7 +434,10 @@
 
         function setReceiverAsUser2() {
             if (user2Id) {
-                document.getElementById('receiverId').value = user2Id;
+                const receiverIdElement = document.getElementById('receiverId');
+                if (receiverIdElement) {
+                    receiverIdElement.value = user2Id;
+                }
                 receiverName = 'Jane Smith'; // Test kullanıcı 2 adı
                 addMessage('Sistem', `Alıcı Jane Smith olarak ayarlandı: ${user2Id}`, 'received');
             } else {

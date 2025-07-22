@@ -11,4 +11,7 @@ export declare class UsersService {
     updateStatus(userId: string, status: UserStatus): Promise<User>;
     updateLocation(userId: string, latitude: number, longitude: number): Promise<User>;
     updateProfile(userId: string, updateData: any): Promise<User>;
+    setUserOnline(userId: string): Promise<User>;
+    setUserOffline(userId: string): Promise<User>;
+    setTestUsersOnline(): Promise<void>;
 }

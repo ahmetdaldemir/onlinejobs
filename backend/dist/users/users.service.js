@@ -82,6 +82,26 @@ let UsersService = class UsersService {
         Object.assign(user, updateData);
         return this.userRepository.save(user);
     }
+    async setUserOnline(userId) {
+        const user = await this.findById(userId);
+        user.isOnline = true;
+        user.status = user_entity_1.UserStatus.ONLINE;
+        user.lastSeen = new Date();
+        return this.userRepository.save(user);
+    }
+    async setUserOffline(userId) {
+        const user = await this.findById(userId);
+        user.isOnline = false;
+        user.status = user_entity_1.UserStatus.OFFLINE;
+        user.lastSeen = new Date();
+        return this.userRepository.save(user);
+    }
+    async setTestUsersOnline() {
+        const testUsers = await this.findTestUsers();
+        for (const user of testUsers) {
+            await this.setUserOnline(user.id);
+        }
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([

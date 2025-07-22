@@ -64,6 +64,9 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
       const userIndex = (this.connectionCount - 1) % testUsers.length;
       const userId = testUsers[userIndex].id;
       
+      // Kullanıcıyı online yap
+      await this.usersService.setUserOnline(userId);
+      
       this.connectedUsers.set(userId, client);
       client.data.userId = userId;
       
@@ -77,6 +80,11 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
   handleDisconnect(client: Socket) {
     const userId = client.data.userId;
     if (userId) {
+      // Kullanıcıyı offline yap
+      this.usersService.setUserOffline(userId).catch(error => {
+        console.error('Error setting user offline:', error);
+      });
+      
       this.connectedUsers.delete(userId);
       this.connectionCount--;
       console.log(`User ${userId} disconnected`);

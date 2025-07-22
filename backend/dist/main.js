@@ -7,6 +7,7 @@ const swagger_1 = require("@nestjs/swagger");
 const path_1 = require("path");
 const express = require("express");
 const users_seed_1 = require("./seeds/users.seed");
+const users_service_1 = require("./users/users.service");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors({
@@ -35,6 +36,14 @@ async function bootstrap() {
     try {
         const usersSeedService = app.get(users_seed_1.UsersSeedService);
         await usersSeedService.seed();
+        try {
+            const usersService = app.get(users_service_1.UsersService);
+            await usersService.setTestUsersOnline();
+            console.log('✅ Test kullanıcıları online yapıldı');
+        }
+        catch (usersError) {
+            console.log('Users service error:', usersError.message);
+        }
     }
     catch (error) {
         console.log('Seed service error:', error.message);

@@ -90,4 +90,30 @@ export class UsersService {
     Object.assign(user, updateData);
     return this.userRepository.save(user);
   }
+
+  // Kullanıcıyı online yap
+  async setUserOnline(userId: string): Promise<User> {
+    const user = await this.findById(userId);
+    user.isOnline = true;
+    user.status = UserStatus.ONLINE;
+    user.lastSeen = new Date();
+    return this.userRepository.save(user);
+  }
+
+  // Kullanıcıyı offline yap
+  async setUserOffline(userId: string): Promise<User> {
+    const user = await this.findById(userId);
+    user.isOnline = false;
+    user.status = UserStatus.OFFLINE;
+    user.lastSeen = new Date();
+    return this.userRepository.save(user);
+  }
+
+  // Test kullanıcılarını otomatik online yap
+  async setTestUsersOnline(): Promise<void> {
+    const testUsers = await this.findTestUsers();
+    for (const user of testUsers) {
+      await this.setUserOnline(user.id);
+    }
+  }
 } 

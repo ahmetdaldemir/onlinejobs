@@ -6,6 +6,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import * as express from 'express';
 import { UsersSeedService } from './seeds/users.seed';
+import { UsersService } from './users/users.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -46,6 +47,15 @@ async function bootstrap() {
   try {
     const usersSeedService = app.get(UsersSeedService);
     await usersSeedService.seed();
+    
+    // Test kullanıcılarını otomatik online yap
+    try {
+      const usersService = app.get(UsersService);
+      await usersService.setTestUsersOnline();
+      console.log('✅ Test kullanıcıları online yapıldı');
+    } catch (usersError) {
+      console.log('Users service error:', usersError.message);
+    }
   } catch (error) {
     console.log('Seed service error:', error.message);
   }

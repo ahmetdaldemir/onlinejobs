@@ -42,6 +42,7 @@ let MessagesGateway = class MessagesGateway {
             this.connectionCount++;
             const userIndex = (this.connectionCount - 1) % testUsers.length;
             const userId = testUsers[userIndex].id;
+            await this.usersService.setUserOnline(userId);
             this.connectedUsers.set(userId, client);
             client.data.userId = userId;
             console.log(`User ${userId} connected (connection #${this.connectionCount})`);
@@ -54,6 +55,9 @@ let MessagesGateway = class MessagesGateway {
     handleDisconnect(client) {
         const userId = client.data.userId;
         if (userId) {
+            this.usersService.setUserOffline(userId).catch(error => {
+                console.error('Error setting user offline:', error);
+            });
             this.connectedUsers.delete(userId);
             this.connectionCount--;
             console.log(`User ${userId} disconnected`);

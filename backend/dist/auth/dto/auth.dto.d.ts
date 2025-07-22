@@ -26,6 +26,7 @@ export declare class AuthResponseDto {
         userType: UserType;
         status: string;
         isVerified: boolean;
+        isOnline: boolean;
         rating: number;
         totalReviews: number;
         profileImage?: string;

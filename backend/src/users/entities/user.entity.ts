@@ -100,6 +100,10 @@ export class User {
   @ApiProperty()
   isVerified: boolean;
 
+  @Column({ default: false })
+  @ApiProperty()
+  isOnline: boolean;
+
   @Column({ default: 0 })
   @ApiProperty()
   rating: number;

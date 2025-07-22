@@ -118,6 +118,11 @@ __decorate([
     __metadata("design:type", Boolean)
 ], User.prototype, "isVerified", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", Boolean)
+], User.prototype, "isOnline", void 0);
+__decorate([
     (0, typeorm_1.Column)({ default: 0 }),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", Number)
