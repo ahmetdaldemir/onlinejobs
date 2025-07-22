@@ -557,6 +557,8 @@
                 addMessage('Debug', `Socket ID: ${socket.id}`, 'received');
                 addMessage('Debug', `Mevcut Kullanıcı ID: ${currentUserId}`, 'received');
                 addMessage('Debug', `Alıcı ID: ${currentReceiverId || 'Seçilmedi'}`, 'received');
+                addMessage('Debug', `Socket Connected: ${socket.connected}`, 'received');
+                addMessage('Debug', `Socket Ready State: ${socket.io.readyState}`, 'received');
             } else {
                 addMessage('Hata', 'Socket bağlantısı yok!', 'received');
             }
@@ -700,6 +702,8 @@
             addMessage('Debug', `Mesaj: ${content}`, 'received');
             addMessage('Debug', `Socket bağlı: ${socket ? 'Evet' : 'Hayır'}`, 'received');
             addMessage('Debug', `Socket ID: ${socket ? socket.id : 'Yok'}`, 'received');
+            addMessage('Debug', `Socket Connected: ${socket ? socket.connected : 'N/A'}`, 'received');
+            addMessage('Debug', `Socket Ready State: ${socket && socket.io ? socket.io.readyState : 'N/A'}`, 'received');
 
             // Mesajı gönder
             socket.emit('send_message', {

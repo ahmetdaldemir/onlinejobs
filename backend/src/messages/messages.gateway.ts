@@ -73,6 +73,8 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
       console.log(`User ${userId} connected (connection #${this.connectionCount})`);
       console.log('Client data after connection:', client.data);
       console.log('Connected users map:', Array.from(this.connectedUsers.entries()));
+      console.log('Socket ID:', client.id);
+      console.log('Socket connected:', client.connected);
     } catch (error) {
       console.error('Connection error:', error);
       client.disconnect();
@@ -155,8 +157,15 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
       });
 
       const receiverSocket = this.connectedUsers.get(data.receiverId);
-      if (receiverSocket) {
-        console.log('Alıcı bulundu, mesaj gönderiliyor...');
+      console.log('=== ALICI SOCKET DEBUG ===');
+      console.log('Alıcı ID:', data.receiverId);
+      console.log('ConnectedUsers Map:', Array.from(this.connectedUsers.entries()));
+      console.log('ReceiverSocket bulundu mu:', !!receiverSocket);
+      console.log('ReceiverSocket ID:', receiverSocket?.id);
+      console.log('ReceiverSocket connected:', receiverSocket?.connected);
+      
+      if (receiverSocket && receiverSocket.connected) {
+        console.log('Alıcı bulundu ve bağlı, mesaj gönderiliyor...');
         receiverSocket.emit('new_message', {
           id: message.id,
           senderId: senderId,
@@ -199,6 +208,7 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
         }
       } else {
         console.log('Alıcı bağlı değil! Alıcı ID:', data.receiverId);
+        console.log('Bağlı kullanıcılar:', Array.from(this.connectedUsers.keys()));
         client.emit('message_error', {
           error: `Alıcı (${data.receiverId}) bağlı değil. Mesaj kaydedildi ama iletilemedi.`
         });

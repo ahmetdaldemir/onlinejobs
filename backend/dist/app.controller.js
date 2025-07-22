@@ -11,27 +11,108 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
-const swagger_1 = require("@nestjs/swagger");
+const seed_service_1 = require("./seeds/seed.service");
 let AppController = class AppController {
-    getHealth() {
-        return {
-            status: 'ok',
-            message: 'API is running',
-            timestamp: new Date().toISOString(),
-        };
+    constructor(seedService) {
+        this.seedService = seedService;
+    }
+    getHello() {
+        return 'Online Jobs API is running!';
+    }
+    async seedUsers() {
+        try {
+            await this.seedService.seedUsers();
+            return {
+                message: 'Test kullanıcıları başarıyla eklendi!',
+                status: 'success'
+            };
+        }
+        catch (error) {
+            return {
+                message: 'Seed hatası: ' + error.message,
+                status: 'error'
+            };
+        }
+    }
+    async seedAll() {
+        try {
+            await this.seedService.runSeeds();
+            return {
+                message: 'Tüm seed verileri başarıyla eklendi!',
+                status: 'success'
+            };
+        }
+        catch (error) {
+            return {
+                message: 'Seed hatası: ' + error.message,
+                status: 'error'
+            };
+        }
+    }
+    async seedCategories() {
+        try {
+            await this.seedService.seedCategories();
+            return {
+                message: 'Kategoriler başarıyla eklendi!',
+                status: 'success'
+            };
+        }
+        catch (error) {
+            return {
+                message: 'Seed hatası: ' + error.message,
+                status: 'error'
+            };
+        }
+    }
+    async seedLocations() {
+        try {
+            await this.seedService.seedLocations();
+            return {
+                message: 'Lokasyonlar başarıyla eklendi!',
+                status: 'success'
+            };
+        }
+        catch (error) {
+            return {
+                message: 'Seed hatası: ' + error.message,
+                status: 'error'
+            };
+        }
     }
 };
 exports.AppController = AppController;
 __decorate([
-    (0, common_1.Get)('health'),
-    (0, swagger_1.ApiOperation)({ summary: 'Health check endpoint' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'API is healthy' }),
+    (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], AppController.prototype, "getHealth", null);
+    __metadata("design:returntype", String)
+], AppController.prototype, "getHello", null);
+__decorate([
+    (0, common_1.Post)('seed/users'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "seedUsers", null);
+__decorate([
+    (0, common_1.Post)('seed/all'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "seedAll", null);
+__decorate([
+    (0, common_1.Post)('seed/categories'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "seedCategories", null);
+__decorate([
+    (0, common_1.Post)('seed/locations'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "seedLocations", null);
 exports.AppController = AppController = __decorate([
-    (0, swagger_1.ApiTags)('Health'),
-    (0, common_1.Controller)()
+    (0, common_1.Controller)(),
+    __metadata("design:paramtypes", [seed_service_1.SeedService])
 ], AppController);
 //# sourceMappingURL=app.controller.js.map

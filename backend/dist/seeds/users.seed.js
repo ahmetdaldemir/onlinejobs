@@ -254,6 +254,7 @@ let UsersSeedService = class UsersSeedService {
             },
         ];
         for (const userData of demoUsers) {
+            console.log(userData);
             const user = this.userRepository.create(userData);
             await this.userRepository.save(user);
             console.log(`Created user: ${userData.firstName} ${userData.lastName} (${userData.phone})`);

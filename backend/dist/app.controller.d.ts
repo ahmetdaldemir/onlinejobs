@@ -1,7 +1,22 @@
+import { SeedService } from './seeds/seed.service';
 export declare class AppController {
-    getHealth(): {
-        status: string;
+    private readonly seedService;
+    constructor(seedService: SeedService);
+    getHello(): string;
+    seedUsers(): Promise<{
         message: string;
-        timestamp: string;
-    };
+        status: string;
+    }>;
+    seedAll(): Promise<{
+        message: string;
+        status: string;
+    }>;
+    seedCategories(): Promise<{
+        message: string;
+        status: string;
+    }>;
+    seedLocations(): Promise<{
+        message: string;
+        status: string;
+    }>;
 }
