@@ -19,10 +19,10 @@ import { AiService } from '../ai/ai.service';
       'http://localhost:3000',
       'http://localhost:3001',
       'http://localhost:8080',
-      'https://onlinejobs.onrender.com', // Render URL'iniz
+      'https://onlinejobs.onrender.com',
       'https://*.onrender.com',
       /^https:\/\/.*\.onrender\.com$/,
-      '*', // Geliştirme için
+      '*',
     ],
     credentials: true,
     methods: ['GET', 'POST'],
@@ -44,7 +44,6 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   async handleConnection(client: Socket) {
     try {
-      // JWT token'ı socket handshake'den al
       const token = client.handshake.auth.token || client.handshake.headers.authorization;
       
       if (!token) {
@@ -52,19 +51,16 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
         return;
       }
 
-      // Test kullanıcılarını al
       const testUsers = await this.usersService.findTestUsers();
       if (testUsers.length === 0) {
         client.disconnect();
         return;
       }
 
-      // Bağlantı sayısına göre kullanıcı seç
       this.connectionCount++;
       const userIndex = (this.connectionCount - 1) % testUsers.length;
       const userId = testUsers[userIndex].id;
       
-      // Kullanıcıyı online yap
       await this.usersService.setUserOnline(userId);
       
       this.connectedUsers.set(userId, client);
@@ -80,7 +76,6 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
   handleDisconnect(client: Socket) {
     const userId = client.data.userId;
     if (userId) {
-      // Kullanıcıyı offline yap
       this.usersService.setUserOffline(userId).catch(error => {
         console.error('Error setting user offline:', error);
       });
@@ -99,7 +94,14 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
     try {
       const senderId = client.data.userId;
       
-      // String'i enum'a çevir
+      // Debug bilgileri
+      console.log('=== MESAJ GÖNDERME DEBUG ===');
+      console.log('Gönderici ID:', senderId);
+      console.log('Alıcı ID:', data.receiverId);
+      console.log('Mesaj içeriği:', data.content);
+      console.log('Bağlı kullanıcılar:', Array.from(this.connectedUsers.keys()));
+      console.log('Alıcı bağlı mı:', this.connectedUsers.has(data.receiverId));
+      
       let messageType = MessageType.TEXT;
       if (data.type) {
         switch (data.type.toUpperCase()) {
@@ -117,7 +119,6 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
         }
       }
       
-      // Mesajı veritabanına kaydet
       const message = await this.messagesService.sendMessage(
         senderId,
         data.receiverId,
@@ -125,16 +126,17 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
         messageType,
       );
 
-      // Göndericiye mesaj gönderildi bilgisi
+      console.log('Mesaj veritabanına kaydedildi:', message.id);
+
       client.emit('message_sent', {
         id: message.id,
         content: message.content,
         receiverId: data.receiverId,
       });
 
-      // Alıcıya mesajı gönder
       const receiverSocket = this.connectedUsers.get(data.receiverId);
       if (receiverSocket) {
+        console.log('Alıcı bulundu, mesaj gönderiliyor...');
         receiverSocket.emit('new_message', {
           id: message.id,
           senderId: senderId,
@@ -143,19 +145,17 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
           createdAt: message.createdAt,
         });
 
-        // AI yanıtı oluştur (eğer aktifse)
+        // AI yanıtı oluştur
         try {
           const aiResponse = await this.aiService.generateResponse(data.receiverId, data.content);
           if (aiResponse) {
-            // AI yanıtını veritabanına kaydet
             const aiMessage = await this.messagesService.sendMessage(
-              data.receiverId, // AI'dan gelen yanıt
-              senderId, // Orijinal göndericiye geri gönder
+              data.receiverId,
+              senderId,
               aiResponse,
               MessageType.TEXT,
             );
 
-            // AI yanıtını orijinal göndericiye gönder
             client.emit('new_message', {
               id: aiMessage.id,
               senderId: data.receiverId,
@@ -165,7 +165,6 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
               isAiResponse: true,
             });
 
-            // AI yanıtını AI kullanıcısına da gönder
             receiverSocket.emit('new_message', {
               id: aiMessage.id,
               senderId: data.receiverId,
@@ -178,6 +177,11 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
         } catch (aiError) {
           console.error('AI response error:', aiError);
         }
+      } else {
+        console.log('Alıcı bağlı değil! Alıcı ID:', data.receiverId);
+        client.emit('message_error', {
+          error: `Alıcı (${data.receiverId}) bağlı değil. Mesaj kaydedildi ama iletilemedi.`
+        });
       }
     } catch (error) {
       console.error('Send message error:', error);
@@ -234,7 +238,6 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
       const userId = client.data.userId;
       await this.messagesService.markConversationAsRead(data.senderId, userId);
       
-      // Mesaj gönderen kişiye okundu bilgisi gönder
       const senderSocket = this.connectedUsers.get(data.senderId);
       if (senderSocket) {
         senderSocket.emit('messages_read', {
@@ -256,7 +259,6 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
       const userId = client.data.userId;
       const message = await this.messagesService.markAsRead(data.messageId, userId);
       
-      // Mesaj gönderen kişiye okundu bilgisi gönder
       const senderSocket = this.connectedUsers.get(message.senderId);
       if (senderSocket) {
         senderSocket.emit('message_read', {
@@ -271,12 +273,10 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
   }
 
   private getConversationRoomName(userId1: string, userId2: string): string {
-    // Benzersiz oda adı oluştur
     const sortedIds = [userId1, userId2].sort();
     return `conversation_${sortedIds[0]}_${sortedIds[1]}`;
   }
 
-  // Mesaj gönderme yardımcı metodu
   sendMessageToUser(userId: string, event: string, data: any) {
     const userSocket = this.connectedUsers.get(userId);
     if (userSocket) {

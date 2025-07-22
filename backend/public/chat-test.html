@@ -178,6 +178,7 @@
             <button onclick="loadOnlineUsers()">Online Kullanıcıları Yükle</button>
             <button onclick="loadOnlineJobSeekers()">Online İş Arayanlar</button>
             <button onclick="loadOnlineEmployers()">Online İşverenler</button>
+            <button onclick="listConnectedUsers()">Bağlı Kullanıcıları Listele</button>
             <button onclick="generateNewUserId()">Yeni ID Oluştur</button>
             <button onclick="setAsUser1()">Kullanıcı 1 Ol</button>
             <button onclick="setAsUser2()">Kullanıcı 2 Ol</button>
@@ -548,6 +549,19 @@
             }
         }
 
+        // Bağlı kullanıcıları listele
+        function listConnectedUsers() {
+            addMessage('Debug', 'Bağlı kullanıcıları kontrol ediliyor...', 'received');
+            
+            if (socket && socket.connected) {
+                addMessage('Debug', `Socket ID: ${socket.id}`, 'received');
+                addMessage('Debug', `Mevcut Kullanıcı ID: ${currentUserId}`, 'received');
+                addMessage('Debug', `Alıcı ID: ${currentReceiverId || 'Seçilmedi'}`, 'received');
+            } else {
+                addMessage('Hata', 'Socket bağlantısı yok!', 'received');
+            }
+        }
+
         function connect() {
             const token = document.getElementById('jwtToken').value;
 
@@ -586,6 +600,11 @@
                 } else {
                     addMessage('Sistem', 'Alıcı seçilmedi - Tüm mesajları alabilirsiniz', 'received');
                 }
+                
+                // Bağlantı bilgilerini logla
+                console.log('Socket connected with ID:', socket.id);
+                console.log('Current user ID:', currentUserId);
+                console.log('Current receiver ID:', currentReceiverId);
             });
 
             socket.on('disconnect', () => {
@@ -627,6 +646,7 @@
 
             socket.on('message_error', (data) => {
                 addMessage('Hata', data.error, 'received');
+                console.error('Message error:', data);
             });
 
             socket.on('user_typing', (data) => {
@@ -664,6 +684,7 @@
             const content = messageInput.value.trim();
 
             if (!content || !socket) {
+                addMessage('Hata', 'Mesaj göndermek için bağlantı kurun!', 'received');
                 return;
             }
 
@@ -672,6 +693,11 @@
                 addMessage('Hata', 'Mesaj göndermek için alıcı seçin!', 'received');
                 return;
             }
+
+            // Debug bilgileri
+            addMessage('Debug', `Gönderici: ${currentUserId}`, 'received');
+            addMessage('Debug', `Alıcı: ${currentReceiverId}`, 'received');
+            addMessage('Debug', `Mesaj: ${content}`, 'received');
 
             // Mesajı gönder
             socket.emit('send_message', {

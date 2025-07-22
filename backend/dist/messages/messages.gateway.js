@@ -66,6 +66,12 @@ let MessagesGateway = class MessagesGateway {
     async handleSendMessage(data, client) {
         try {
             const senderId = client.data.userId;
+            console.log('=== MESAJ GÖNDERME DEBUG ===');
+            console.log('Gönderici ID:', senderId);
+            console.log('Alıcı ID:', data.receiverId);
+            console.log('Mesaj içeriği:', data.content);
+            console.log('Bağlı kullanıcılar:', Array.from(this.connectedUsers.keys()));
+            console.log('Alıcı bağlı mı:', this.connectedUsers.has(data.receiverId));
             let messageType = message_entity_1.MessageType.TEXT;
             if (data.type) {
                 switch (data.type.toUpperCase()) {
@@ -83,6 +89,7 @@ let MessagesGateway = class MessagesGateway {
                 }
             }
             const message = await this.messagesService.sendMessage(senderId, data.receiverId, data.content, messageType);
+            console.log('Mesaj veritabanına kaydedildi:', message.id);
             client.emit('message_sent', {
                 id: message.id,
                 content: message.content,
@@ -90,6 +97,7 @@ let MessagesGateway = class MessagesGateway {
             });
             const receiverSocket = this.connectedUsers.get(data.receiverId);
             if (receiverSocket) {
+                console.log('Alıcı bulundu, mesaj gönderiliyor...');
                 receiverSocket.emit('new_message', {
                     id: message.id,
                     senderId: senderId,
@@ -122,6 +130,12 @@ let MessagesGateway = class MessagesGateway {
                 catch (aiError) {
                     console.error('AI response error:', aiError);
                 }
+            }
+            else {
+                console.log('Alıcı bağlı değil! Alıcı ID:', data.receiverId);
+                client.emit('message_error', {
+                    error: `Alıcı (${data.receiverId}) bağlı değil. Mesaj kaydedildi ama iletilemedi.`
+                });
             }
         }
         catch (error) {
