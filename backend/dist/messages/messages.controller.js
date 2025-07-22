@@ -40,6 +40,12 @@ let MessagesController = class MessagesController {
         const count = await this.messagesService.getUnreadCount(req.user.sub);
         return { count };
     }
+    async getMessageStatus(messageId) {
+        return this.messagesService.getMessageStatus(messageId);
+    }
+    async getSentMessagesStatus(req) {
+        return this.messagesService.getSentMessagesStatus(req.user.sub);
+    }
 };
 exports.MessagesController = MessagesController;
 __decorate([
@@ -100,6 +106,24 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], MessagesController.prototype, "getUnreadCount", null);
+__decorate([
+    (0, common_1.Get)(':id/status'),
+    (0, swagger_1.ApiOperation)({ summary: 'Mesaj durumunu getir (gönderildi, iletildi, okundu)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Mesaj durumu' }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], MessagesController.prototype, "getMessageStatus", null);
+__decorate([
+    (0, common_1.Get)('sent/status'),
+    (0, swagger_1.ApiOperation)({ summary: 'Gönderilen mesajların okunma durumunu getir' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Gönderilen mesajların durumu' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], MessagesController.prototype, "getSentMessagesStatus", null);
 exports.MessagesController = MessagesController = __decorate([
     (0, swagger_1.ApiTags)('Messages'),
     (0, common_1.Controller)('messages'),

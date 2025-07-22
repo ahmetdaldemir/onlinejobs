@@ -61,4 +61,18 @@ export class MessagesController {
     const count = await this.messagesService.getUnreadCount(req.user.sub);
     return { count };
   }
+
+  @Get(':id/status')
+  @ApiOperation({ summary: 'Mesaj durumunu getir (gönderildi, iletildi, okundu)' })
+  @ApiResponse({ status: 200, description: 'Mesaj durumu' })
+  async getMessageStatus(@Param('id') messageId: string) {
+    return this.messagesService.getMessageStatus(messageId);
+  }
+
+  @Get('sent/status')
+  @ApiOperation({ summary: 'Gönderilen mesajların okunma durumunu getir' })
+  @ApiResponse({ status: 200, description: 'Gönderilen mesajların durumu' })
+  async getSentMessagesStatus(@Request() req) {
+    return this.messagesService.getSentMessagesStatus(req.user.sub);
+  }
 } 

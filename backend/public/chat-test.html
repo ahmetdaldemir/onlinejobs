@@ -37,6 +37,7 @@
             padding: 10px;
             border-radius: 10px;
             max-width: 70%;
+            position: relative;
         }
         .message.sent {
             background: #007bff;
@@ -47,6 +48,25 @@
             background: #e9ecef;
             color: #333;
         }
+        .message-status {
+            position: absolute;
+            bottom: 2px;
+            right: 5px;
+            font-size: 10px;
+            opacity: 0.7;
+        }
+        .message.sent .message-status {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .message.received .message-status {
+            color: rgba(0, 0, 0, 0.6);
+        }
+        .status-icon {
+            margin-left: 2px;
+        }
+        .status-sent { content: "✓"; }
+        .status-delivered { content: "✓✓"; }
+        .status-read { content: "✓✓"; color: #34b7f1 !important; }
         .chat-input {
             display: flex;
             padding: 15px;
@@ -183,6 +203,7 @@
         let currentReceiverId;
         let user1Id = null;
         let user2Id = null;
+        let sentMessages = new Map(); // Gönderilen mesajları takip et
 
         // API'den kullanıcıları yükle
         async function loadUsers() {
@@ -301,6 +322,8 @@
                 console.log('New message received:', data);
                 if (data.senderId === currentReceiverId) {
                     addMessage('Alıcı', data.content, 'received');
+                    // Mesajı okundu olarak işaretle
+                    markMessageAsRead(data.id);
                 } else {
                     addMessage('Sistem', `Mesaj alındı (Gönderen: ${data.senderId})`, 'received');
                 }
@@ -308,6 +331,9 @@
 
             socket.on('message_sent', (data) => {
                 addMessage('Sistem', `Mesaj gönderildi (ID: ${data.id})`, 'received');
+                // Gönderilen mesajı takip et
+                sentMessages.set(data.id, { status: 'sent', timestamp: new Date() });
+                updateMessageStatus(data.id, 'sent');
             });
 
             socket.on('message_error', (data) => {
@@ -322,6 +348,13 @@
 
             socket.on('messages_read', (data) => {
                 addMessage('Sistem', 'Mesajlar okundu', 'received');
+                // Gönderilen mesajların durumunu güncelle
+                updateAllSentMessagesStatus('read');
+            });
+
+            socket.on('message_read', (data) => {
+                console.log('Message read:', data);
+                updateMessageStatus(data.messageId, 'read');
             });
 
             // Bağlantı hatalarını yakala
@@ -353,8 +386,43 @@
             });
 
             // UI'da mesajı göster
-            addMessage('Ben', content, 'sent');
+            const messageId = 'temp-' + Date.now();
+            addMessage('Ben', content, 'sent', messageId);
             messageInput.value = '';
+        }
+
+        function markMessageAsRead(messageId) {
+            if (socket) {
+                socket.emit('mark_message_read', { messageId });
+            }
+        }
+
+        function updateMessageStatus(messageId, status) {
+            const messageElement = document.querySelector(`[data-message-id="${messageId}"]`);
+            if (messageElement) {
+                const statusElement = messageElement.querySelector('.message-status');
+                if (statusElement) {
+                    statusElement.className = `message-status status-${status}`;
+                    statusElement.textContent = status === 'sent' ? '✓' : status === 'delivered' ? '✓✓' : '✓✓';
+                    if (status === 'read') {
+                        statusElement.style.color = '#34b7f1';
+                    }
+                }
+            }
+        }
+
+        function updateAllSentMessagesStatus(status) {
+            const sentMessages = document.querySelectorAll('.message.sent');
+            sentMessages.forEach(message => {
+                const statusElement = message.querySelector('.message-status');
+                if (statusElement) {
+                    statusElement.className = `message-status status-${status}`;
+                    statusElement.textContent = status === 'sent' ? '✓' : status === 'delivered' ? '✓✓' : '✓✓';
+                    if (status === 'read') {
+                        statusElement.style.color = '#34b7f1';
+                    }
+                }
+            });
         }
 
         function handleKeyPress(event) {
@@ -363,11 +431,27 @@
             }
         }
 
-        function addMessage(sender, content, type) {
+        function addMessage(sender, content, type, messageId = null) {
             const messagesDiv = document.getElementById('messages');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${type}`;
-            messageDiv.innerHTML = `<strong>${sender}:</strong> ${content}`;
+            if (messageId) {
+                messageDiv.setAttribute('data-message-id', messageId);
+            }
+            
+            const messageContent = document.createElement('div');
+            messageContent.innerHTML = `<strong>${sender}:</strong> ${content}`;
+            messageDiv.appendChild(messageContent);
+            
+            // Mesaj durumu için element ekle
+            const statusElement = document.createElement('div');
+            statusElement.className = 'message-status';
+            if (type === 'sent') {
+                statusElement.textContent = '✓';
+                statusElement.className = 'message-status status-sent';
+            }
+            messageDiv.appendChild(statusElement);
+            
             messagesDiv.appendChild(messageDiv);
             messagesDiv.scrollTop = messagesDiv.scrollHeight;
         }

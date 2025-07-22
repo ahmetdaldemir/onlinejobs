@@ -94,6 +94,26 @@ let MessagesService = class MessagesService {
             where: { receiverId: userId, isRead: false },
         });
     }
+    async getMessageStatus(messageId) {
+        const message = await this.messageRepository.findOne({
+            where: { id: messageId },
+        });
+        if (!message) {
+            throw new common_1.NotFoundException('Mesaj bulunamadı');
+        }
+        return {
+            isDelivered: true,
+            isRead: message.isRead,
+            readAt: message.readAt,
+        };
+    }
+    async getSentMessagesStatus(userId) {
+        return this.messageRepository.find({
+            where: { senderId: userId },
+            select: ['id', 'isRead', 'readAt', 'createdAt'],
+            order: { createdAt: 'DESC' },
+        });
+    }
 };
 exports.MessagesService = MessagesService;
 exports.MessagesService = MessagesService = __decorate([

@@ -130,11 +130,29 @@ let MessagesGateway = class MessagesGateway {
             if (senderSocket) {
                 senderSocket.emit('messages_read', {
                     readerId: userId,
+                    timestamp: new Date(),
                 });
             }
         }
         catch (error) {
             console.error('Read messages error:', error);
+        }
+    }
+    async handleMarkMessageRead(data, client) {
+        try {
+            const userId = client.data.userId;
+            const message = await this.messagesService.markAsRead(data.messageId, userId);
+            const senderSocket = this.connectedUsers.get(message.senderId);
+            if (senderSocket) {
+                senderSocket.emit('message_read', {
+                    messageId: message.id,
+                    readerId: userId,
+                    timestamp: message.readAt,
+                });
+            }
+        }
+        catch (error) {
+            console.error('Mark message read error:', error);
         }
     }
     getConversationRoomName(userId1, userId2) {
@@ -193,6 +211,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, socket_io_1.Socket]),
     __metadata("design:returntype", Promise)
 ], MessagesGateway.prototype, "handleReadMessages", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('mark_message_read'),
+    __param(0, (0, websockets_1.MessageBody)()),
+    __param(1, (0, websockets_1.ConnectedSocket)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, socket_io_1.Socket]),
+    __metadata("design:returntype", Promise)
+], MessagesGateway.prototype, "handleMarkMessageRead", null);
 exports.MessagesGateway = MessagesGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {

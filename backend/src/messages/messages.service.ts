@@ -104,4 +104,30 @@ export class MessagesService {
       where: { receiverId: userId, isRead: false },
     });
   }
+
+  // Mesaj durumunu getir (gönderildi, iletildi, okundu)
+  async getMessageStatus(messageId: string): Promise<{ isDelivered: boolean; isRead: boolean; readAt?: Date }> {
+    const message = await this.messageRepository.findOne({
+      where: { id: messageId },
+    });
+
+    if (!message) {
+      throw new NotFoundException('Mesaj bulunamadı');
+    }
+
+    return {
+      isDelivered: true, // WebSocket ile gönderildiği için her zaman true
+      isRead: message.isRead,
+      readAt: message.readAt,
+    };
+  }
+
+  // Kullanıcının gönderdiği mesajların okunma durumunu getir
+  async getSentMessagesStatus(userId: string): Promise<Message[]> {
+    return this.messageRepository.find({
+      where: { senderId: userId },
+      select: ['id', 'isRead', 'readAt', 'createdAt'],
+      order: { createdAt: 'DESC' },
+    });
+  }
 } 

@@ -9,4 +9,10 @@ export declare class MessagesService {
     markAsRead(messageId: string, userId: string): Promise<Message>;
     markConversationAsRead(otherUserId: string, userId: string): Promise<void>;
     getUnreadCount(userId: string): Promise<number>;
+    getMessageStatus(messageId: string): Promise<{
+        isDelivered: boolean;
+        isRead: boolean;
+        readAt?: Date;
+    }>;
+    getSentMessagesStatus(userId: string): Promise<Message[]>;
 }

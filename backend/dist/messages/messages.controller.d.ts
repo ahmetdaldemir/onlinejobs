@@ -15,4 +15,10 @@ export declare class MessagesController {
     getUnreadCount(req: any): Promise<{
         count: number;
     }>;
+    getMessageStatus(messageId: string): Promise<{
+        isDelivered: boolean;
+        isRead: boolean;
+        readAt?: Date;
+    }>;
+    getSentMessagesStatus(req: any): Promise<import("./entities/message.entity").Message[]>;
 }

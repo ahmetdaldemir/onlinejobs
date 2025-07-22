@@ -185,10 +185,34 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
       if (senderSocket) {
         senderSocket.emit('messages_read', {
           readerId: userId,
+          timestamp: new Date(),
         });
       }
     } catch (error) {
       console.error('Read messages error:', error);
+    }
+  }
+
+  @SubscribeMessage('mark_message_read')
+  async handleMarkMessageRead(
+    @MessageBody() data: { messageId: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    try {
+      const userId = client.data.userId;
+      const message = await this.messagesService.markAsRead(data.messageId, userId);
+      
+      // Mesaj gönderen kişiye okundu bilgisi gönder
+      const senderSocket = this.connectedUsers.get(message.senderId);
+      if (senderSocket) {
+        senderSocket.emit('message_read', {
+          messageId: message.id,
+          readerId: userId,
+          timestamp: message.readAt,
+        });
+      }
+    } catch (error) {
+      console.error('Mark message read error:', error);
     }
   }
 

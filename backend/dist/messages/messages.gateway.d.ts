@@ -37,6 +37,9 @@ export declare class MessagesGateway implements OnGatewayConnection, OnGatewayDi
     handleReadMessages(data: {
         senderId: string;
     }, client: Socket): Promise<void>;
+    handleMarkMessageRead(data: {
+        messageId: string;
+    }, client: Socket): Promise<void>;
     private getConversationRoomName;
     sendMessageToUser(userId: string, event: string, data: any): void;
 }
