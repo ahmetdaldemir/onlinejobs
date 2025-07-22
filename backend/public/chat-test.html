@@ -208,7 +208,9 @@
         // API'den kullanıcıları yükle
         async function loadUsers() {
             try {
-                const response = await fetch('http://localhost:3000/users/test');
+                // Render URL'ini kullan
+                const serverUrl = 'https://onlinejobs.onrender.com';
+                const response = await fetch(`${serverUrl}/users/test`);
                 const users = await response.json();
                 
                 if (users && users.length >= 2) {
@@ -231,6 +233,7 @@
             } catch (error) {
                 console.error('Error loading users:', error);
                 addMessage('Hata', 'Kullanıcılar yüklenirken hata oluştu!', 'received');
+                addMessage('Hata', `Hata detayı: ${error.message}`, 'received');
             }
         }
 
@@ -299,11 +302,16 @@
                 return;
             }
 
+            // Render URL'ini kullan
+            const serverUrl = 'https://onlinejobs.onrender.com';
+            
             // Socket.IO bağlantısı
-            socket = io('http://localhost:3000', {
+            socket = io(serverUrl, {
                 auth: {
                     token: token || 'temp-token'
-                }
+                },
+                transports: ['websocket', 'polling'], // Hem WebSocket hem polling dene
+                timeout: 20000, // Timeout süresini artır
             });
 
             socket.on('connect', () => {

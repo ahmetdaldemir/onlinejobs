@@ -10,10 +10,19 @@ import { UsersSeedService } from './seeds/users.seed';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // CORS ayarları
+  // CORS ayarları - Tüm origin'lere izin ver
   app.enableCors({
-    origin: true,
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:8080',
+      'https://onlinejobs.onrender.com', // Render URL'iniz
+      'https://*.onrender.com', // Tüm Render subdomain'lerine izin ver
+      /^https:\/\/.*\.onrender\.com$/, // Regex ile tüm Render domain'lerine izin ver
+    ],
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   });
 
   // Validation pipe
@@ -42,7 +51,7 @@ async function bootstrap() {
   }
 
   const port = process.env.PORT || 3000;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0'); // Tüm IP'lerden erişime izin ver
   
   console.log(`🚀 Uygulama http://localhost:${port} adresinde çalışıyor`);
   console.log(`📚 API Dokümantasyonu: http://localhost:${port}/api`);

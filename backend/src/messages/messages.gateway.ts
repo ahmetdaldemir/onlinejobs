@@ -14,8 +14,19 @@ import { UsersService } from '../users/users.service';
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:8080',
+      'https://onlinejobs.onrender.com', // Render URL'iniz
+      'https://*.onrender.com',
+      /^https:\/\/.*\.onrender\.com$/,
+      '*', // Geliştirme için
+    ],
+    credentials: true,
+    methods: ['GET', 'POST'],
   },
+  transports: ['websocket', 'polling'],
 })
 export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
