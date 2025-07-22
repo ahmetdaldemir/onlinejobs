@@ -18,7 +18,7 @@ export class MessagesService {
       type,
     });
 
-    return this.messageRepository.save(message as unknown as Message);
+    return this.messageRepository.save(message);
   }
 
   async getConversation(userId1: string, userId2: string): Promise<Message[]> {

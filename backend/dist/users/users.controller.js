@@ -22,6 +22,9 @@ let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
     }
+    async findTestUsers() {
+        return this.usersService.findTestUsers();
+    }
     async findAll() {
         return this.usersService.findAll();
     }
@@ -43,7 +46,17 @@ let UsersController = class UsersController {
 };
 exports.UsersController = UsersController;
 __decorate([
+    (0, common_1.Get)('test'),
+    (0, swagger_1.ApiOperation)({ summary: 'Test kullanıcılarını listele (Public)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Test kullanıcıları listelendi' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "findTestUsers", null);
+__decorate([
     (0, common_1.Get)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Tüm kullanıcıları listele' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcılar listelendi' }),
     __metadata("design:type", Function),
@@ -52,6 +65,8 @@ __decorate([
 ], UsersController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('online-job-seekers'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Online iş arayanları listele' }),
     (0, swagger_1.ApiQuery)({ name: 'latitude', required: false, type: Number }),
     (0, swagger_1.ApiQuery)({ name: 'longitude', required: false, type: Number }),
@@ -68,6 +83,8 @@ __decorate([
 ], UsersController.prototype, "findOnlineJobSeekers", null);
 __decorate([
     (0, common_1.Get)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı detayı' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı detayı' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Kullanıcı bulunamadı' }),
@@ -78,6 +95,8 @@ __decorate([
 ], UsersController.prototype, "findById", null);
 __decorate([
     (0, common_1.Put)('status'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı durumunu güncelle' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Durum güncellendi' }),
     __param(0, (0, common_1.Request)()),
@@ -88,6 +107,8 @@ __decorate([
 ], UsersController.prototype, "updateStatus", null);
 __decorate([
     (0, common_1.Put)('location'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı konumunu güncelle' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Konum güncellendi' }),
     __param(0, (0, common_1.Request)()),
@@ -99,6 +120,8 @@ __decorate([
 ], UsersController.prototype, "updateLocation", null);
 __decorate([
     (0, common_1.Put)('profile'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı profilini güncelle' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Profil güncellendi' }),
     __param(0, (0, common_1.Request)()),
@@ -110,8 +133,6 @@ __decorate([
 exports.UsersController = UsersController = __decorate([
     (0, swagger_1.ApiTags)('Users'),
     (0, common_1.Controller)('users'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, swagger_1.ApiBearerAuth)(),
     __metadata("design:paramtypes", [users_service_1.UsersService])
 ], UsersController);
 //# sourceMappingURL=users.controller.js.map

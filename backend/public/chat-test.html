@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Test</title>
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.3.2/uuid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .chat-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .chat-header {
+            background: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f8f9fa;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 70%;
+        }
+        .message.sent {
+            background: #007bff;
+            color: white;
+            margin-left: auto;
+        }
+        .message.received {
+            background: #e9ecef;
+            color: #333;
+        }
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #dee2e6;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .chat-input button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .chat-input button:hover {
+            background: #0056b3;
+        }
+        .user-info {
+            background: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .user-info input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .user-id-display {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+        }
+        .test-users {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border: 1px solid #dee2e6;
+        }
+        .test-users button {
+            margin: 5px;
+            padding: 8px 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .test-users button:hover {
+            background: #218838;
+        }
+        .loading {
+            color: #6c757d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>📱 Mobil Chat Test</h1>
+    
+    <div class="user-info">
+        <h3>🔐 Kullanıcı Bilgileri</h3>
+        <div class="user-id-display">
+            <strong>Benim ID:</strong> <span id="myUserId" class="loading">Yükleniyor...</span>
+        </div>
+        <input type="text" id="receiverId" placeholder="Alıcı ID (UUID)" value="">
+        <input type="text" id="jwtToken" placeholder="JWT Token (opsiyonel)">
+        <button onclick="connect()">Bağlan</button>
+        <button onclick="disconnect()">Bağlantıyı Kes</button>
+        <button onclick="generateNewUserId()">Yeni ID Oluştur</button>
+    </div>
+
+    <div class="test-users">
+        <h4>🧪 Test Kullanıcıları</h4>
+        <p>Bu butonlara tıklayarak test kullanıcı ID'lerini otomatik olarak alabilirsiniz:</p>
+        <button onclick="setAsUser1()">Kullanıcı 1 Ol</button>
+        <button onclick="setAsUser2()">Kullanıcı 2 Ol</button>
+        <button onclick="setReceiverAsUser1()">Alıcı: Kullanıcı 1</button>
+        <button onclick="setReceiverAsUser2()">Alıcı: Kullanıcı 2</button>
+        <div style="margin-top: 10px;">
+            <strong>Kullanıcı 1 ID:</strong> <span id="user1Id" class="loading">Yükleniyor...</span><br>
+            <strong>Kullanıcı 2 ID:</strong> <span id="user2Id" class="loading">Yükleniyor...</span>
+        </div>
+    </div>
+
+    <div id="status" class="status disconnected">Bağlantı yok</div>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <h3>💬 Gerçek Zamanlı Mesajlaşma</h3>
+        </div>
+        <div id="messages" class="chat-messages">
+            <div class="message received">
+                <strong>Sistem:</strong> Hoş geldiniz! Mesajlaşmaya başlayabilirsiniz.
+            </div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Mesajınızı yazın..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Gönder</button>
+        </div>
+    </div>
+
+    <script>
+        let socket;
+        let currentUserId;
+        let currentReceiverId;
+        let user1Id = null;
+        let user2Id = null;
+
+        // API'den kullanıcıları yükle
+        async function loadUsers() {
+            try {
+                const response = await fetch('http://localhost:3000/users/test');
+                const users = await response.json();
+                
+                if (users && users.length >= 2) {
+                    user1Id = users[0].id;
+                    user2Id = users[1].id;
+                    
+                    document.getElementById('user1Id').textContent = user1Id;
+                    document.getElementById('user2Id').textContent = user2Id;
+                    
+                    // Varsayılan olarak kullanıcı 1'i seç
+                    currentUserId = user1Id;
+                    document.getElementById('myUserId').textContent = currentUserId;
+                    
+                    addMessage('Sistem', 'Kullanıcılar yüklendi!', 'received');
+                    addMessage('Sistem', `Kullanıcı 1: ${users[0].firstName} ${users[0].lastName}`, 'received');
+                    addMessage('Sistem', `Kullanıcı 2: ${users[1].firstName} ${users[1].lastName}`, 'received');
+                } else {
+                    addMessage('Hata', 'Yeterli kullanıcı bulunamadı!', 'received');
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+                addMessage('Hata', 'Kullanıcılar yüklenirken hata oluştu!', 'received');
+            }
+        }
+
+        // Sayfa yüklendiğinde otomatik UUID oluştur
+        function generateNewUserId() {
+            currentUserId = uuid.v4();
+            document.getElementById('myUserId').textContent = currentUserId;
+            addMessage('Sistem', `Yeni ID oluşturuldu: ${currentUserId}`, 'received');
+        }
+
+        function setAsUser1() {
+            if (user1Id) {
+                currentUserId = user1Id;
+                document.getElementById('myUserId').textContent = currentUserId;
+                addMessage('Sistem', `Kullanıcı 1 olarak ayarlandı: ${currentUserId}`, 'received');
+            } else {
+                addMessage('Hata', 'Kullanıcı 1 henüz yüklenmedi!', 'received');
+            }
+        }
+
+        function setAsUser2() {
+            if (user2Id) {
+                currentUserId = user2Id;
+                document.getElementById('myUserId').textContent = currentUserId;
+                addMessage('Sistem', `Kullanıcı 2 olarak ayarlandı: ${currentUserId}`, 'received');
+            } else {
+                addMessage('Hata', 'Kullanıcı 2 henüz yüklenmedi!', 'received');
+            }
+        }
+
+        function setReceiverAsUser1() {
+            if (user1Id) {
+                document.getElementById('receiverId').value = user1Id;
+                addMessage('Sistem', `Alıcı Kullanıcı 1 olarak ayarlandı: ${user1Id}`, 'received');
+            } else {
+                addMessage('Hata', 'Kullanıcı 1 henüz yüklenmedi!', 'received');
+            }
+        }
+
+        function setReceiverAsUser2() {
+            if (user2Id) {
+                document.getElementById('receiverId').value = user2Id;
+                addMessage('Sistem', `Alıcı Kullanıcı 2 olarak ayarlandı: ${user2Id}`, 'received');
+            } else {
+                addMessage('Hata', 'Kullanıcı 2 henüz yüklenmedi!', 'received');
+            }
+        }
+
+        function connect() {
+            currentReceiverId = document.getElementById('receiverId').value;
+            const token = document.getElementById('jwtToken').value;
+
+            if (!currentUserId) {
+                addMessage('Hata', 'Önce bir kullanıcı seçin!', 'received');
+                return;
+            }
+
+            if (!currentReceiverId) {
+                alert('Alıcı ID gerekli!');
+                return;
+            }
+
+            // UUID formatını kontrol et
+            if (!isValidUUID(currentReceiverId)) {
+                alert('Geçerli bir UUID girin!');
+                return;
+            }
+
+            // Socket.IO bağlantısı
+            socket = io('http://localhost:3000', {
+                auth: {
+                    token: token || 'temp-token'
+                }
+            });
+
+            socket.on('connect', () => {
+                updateStatus('Bağlandı', 'connected');
+                addMessage('Sistem', 'Bağlantı kuruldu!', 'received');
+                addMessage('Sistem', `Kullanıcı ID: ${currentUserId}`, 'received');
+                addMessage('Sistem', `Alıcı ID: ${currentReceiverId}`, 'received');
+            });
+
+            socket.on('disconnect', () => {
+                updateStatus('Bağlantı kesildi', 'disconnected');
+                addMessage('Sistem', 'Bağlantı kesildi!', 'received');
+            });
+
+            socket.on('new_message', (data) => {
+                console.log('New message received:', data);
+                if (data.senderId === currentReceiverId) {
+                    addMessage('Alıcı', data.content, 'received');
+                } else {
+                    addMessage('Sistem', `Mesaj alındı (Gönderen: ${data.senderId})`, 'received');
+                }
+            });
+
+            socket.on('message_sent', (data) => {
+                addMessage('Sistem', `Mesaj gönderildi (ID: ${data.id})`, 'received');
+            });
+
+            socket.on('message_error', (data) => {
+                addMessage('Hata', data.error, 'received');
+            });
+
+            socket.on('user_typing', (data) => {
+                if (data.userId === currentReceiverId) {
+                    addMessage('Sistem', 'Alıcı yazıyor...', 'received');
+                }
+            });
+
+            socket.on('messages_read', (data) => {
+                addMessage('Sistem', 'Mesajlar okundu', 'received');
+            });
+
+            // Bağlantı hatalarını yakala
+            socket.on('connect_error', (error) => {
+                addMessage('Hata', `Bağlantı hatası: ${error.message}`, 'received');
+            });
+        }
+
+        function disconnect() {
+            if (socket) {
+                socket.disconnect();
+                socket = null;
+            }
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const content = messageInput.value.trim();
+
+            if (!content || !socket) {
+                return;
+            }
+
+            // Mesajı gönder
+            socket.emit('send_message', {
+                receiverId: currentReceiverId,
+                content: content,
+                type: 'TEXT'
+            });
+
+            // UI'da mesajı göster
+            addMessage('Ben', content, 'sent');
+            messageInput.value = '';
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function addMessage(sender, content, type) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = `<strong>${sender}:</strong> ${content}`;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function updateStatus(text, className) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = text;
+            statusDiv.className = `status ${className}`;
+        }
+
+        function isValidUUID(uuid) {
+            const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+            return uuidRegex.test(uuid);
+        }
+
+        // Sayfa yüklendiğinde kullanıcıları yükle
+        window.onload = function() {
+            loadUsers();
+        };
+    </script>
+</body>
+</html> 

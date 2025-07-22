@@ -6,12 +6,19 @@ import { UserStatus } from './entities/user.entity';
 
 @ApiTags('Users')
 @Controller('users')
-@UseGuards(JwtAuthGuard)
-@ApiBearerAuth()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Get('test')
+  @ApiOperation({ summary: 'Test kullanıcılarını listele (Public)' })
+  @ApiResponse({ status: 200, description: 'Test kullanıcıları listelendi' })
+  async findTestUsers() {
+    return this.usersService.findTestUsers();
+  }
+
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Tüm kullanıcıları listele' })
   @ApiResponse({ status: 200, description: 'Kullanıcılar listelendi' })
   async findAll() {
@@ -19,6 +26,8 @@ export class UsersController {
   }
 
   @Get('online-job-seekers')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Online iş arayanları listele' })
   @ApiQuery({ name: 'latitude', required: false, type: Number })
   @ApiQuery({ name: 'longitude', required: false, type: Number })
@@ -35,6 +44,8 @@ export class UsersController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Kullanıcı detayı' })
   @ApiResponse({ status: 200, description: 'Kullanıcı detayı' })
   @ApiResponse({ status: 404, description: 'Kullanıcı bulunamadı' })
@@ -43,6 +54,8 @@ export class UsersController {
   }
 
   @Put('status')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Kullanıcı durumunu güncelle' })
   @ApiResponse({ status: 200, description: 'Durum güncellendi' })
   async updateStatus(
@@ -53,6 +66,8 @@ export class UsersController {
   }
 
   @Put('location')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Kullanıcı konumunu güncelle' })
   @ApiResponse({ status: 200, description: 'Konum güncellendi' })
   async updateLocation(
@@ -64,6 +79,8 @@ export class UsersController {
   }
 
   @Put('profile')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Kullanıcı profilini güncelle' })
   @ApiResponse({ status: 200, description: 'Profil güncellendi' })
   async updateProfile(

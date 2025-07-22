@@ -19,20 +19,22 @@ const typeorm_2 = require("typeorm");
 const category_entity_1 = require("../categories/entities/category.entity");
 const categories_seed_1 = require("./categories.seed");
 const locations_seed_1 = require("./locations.seed");
+const users_seed_1 = require("./users.seed");
 let SeedService = class SeedService {
-    constructor(categoryRepository, locationsSeedService) {
+    constructor(categoryRepository, locationsSeedService, usersSeedService) {
         this.categoryRepository = categoryRepository;
         this.locationsSeedService = locationsSeedService;
+        this.usersSeedService = usersSeedService;
     }
     async seedCategories() {
+        console.log('Kategoriler ekleniyor...');
         const existingCategories = await this.categoryRepository.count();
         if (existingCategories === 0) {
-            console.log('Kategoriler ekleniyor...');
             await this.categoryRepository.save(categories_seed_1.categoriesSeed);
             console.log('Kategoriler başarıyla eklendi!');
         }
         else {
-            console.log('Kategoriler zaten mevcut.');
+            console.log('Kategoriler zaten mevcut, atlanıyor...');
         }
     }
     async seedLocations() {
@@ -40,9 +42,15 @@ let SeedService = class SeedService {
         await this.locationsSeedService.seed();
         console.log('Lokasyonlar başarıyla eklendi!');
     }
+    async seedUsers() {
+        console.log('Test kullanıcıları ekleniyor...');
+        await this.usersSeedService.seed();
+        console.log('Test kullanıcıları başarıyla eklendi!');
+    }
     async runSeeds() {
         await this.seedCategories();
         await this.seedLocations();
+        await this.seedUsers();
     }
 };
 exports.SeedService = SeedService;
@@ -50,6 +58,7 @@ exports.SeedService = SeedService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        locations_seed_1.LocationsSeedService])
+        locations_seed_1.LocationsSeedService,
+        users_seed_1.UsersSeedService])
 ], SeedService);
 //# sourceMappingURL=seed.service.js.map

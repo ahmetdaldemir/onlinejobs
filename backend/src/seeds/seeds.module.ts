@@ -7,6 +7,8 @@ import { City } from '../locations/entities/city.entity';
 import { District } from '../locations/entities/district.entity';
 import { Neighborhood } from '../locations/entities/neighborhood.entity';
 import { LocationsSeedService } from './locations.seed';
+import { User } from '../users/entities/user.entity';
+import { UsersSeedService } from './users.seed';
 
 @Module({
   imports: [
@@ -16,9 +18,10 @@ import { LocationsSeedService } from './locations.seed';
       City,
       District,
       Neighborhood,
+      User,
     ]),
   ],
-  providers: [SeedService, LocationsSeedService],
-  exports: [SeedService, LocationsSeedService],
+  providers: [SeedService, LocationsSeedService, UsersSeedService],
+  exports: [SeedService, LocationsSeedService, UsersSeedService],
 })
 export class SeedsModule {} 

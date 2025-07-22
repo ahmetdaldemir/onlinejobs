@@ -68,13 +68,13 @@ let AuthService = class AuthService {
         };
     }
     async login(loginDto) {
-        const { email, password } = loginDto;
+        const { phone, password } = loginDto;
         const user = await this.userRepository.findOne({
-            where: { email },
+            where: { phone },
             relations: ['category'],
         });
         if (!user) {
-            throw new common_1.UnauthorizedException('Geçersiz email veya şifre');
+            throw new common_1.UnauthorizedException('Geçersiz telefon numarası veya şifre');
         }
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {

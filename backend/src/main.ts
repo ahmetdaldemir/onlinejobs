@@ -1,11 +1,14 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { SeedService } from './seeds/seed.service';
+import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
+import * as express from 'express';
+import { UsersSeedService } from './seeds/users.seed';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // CORS ayarları
   app.enableCors({
@@ -13,32 +16,36 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // Global validation pipe
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-  }));
+  // Validation pipe
+  app.useGlobalPipes(new ValidationPipe());
+
+  // Static dosyaları serve et
+  app.use('/public', express.static(join(__dirname, '..', 'public')));
 
   // Swagger dokümantasyonu
   const config = new DocumentBuilder()
     .setTitle('Online Jobs API')
-    .setDescription('Online Usta/Personel Platformu API')
+    .setDescription('Online Jobs platformu için REST API')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
-  
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  // Seed data'yı çalıştır
-  const seedService = app.get(SeedService);
-  await seedService.runSeeds();
+  // Sadece users seed'ini çalıştır
+  try {
+    const usersSeedService = app.get(UsersSeedService);
+    await usersSeedService.seed();
+  } catch (error) {
+    console.log('Seed service error:', error.message);
+  }
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  console.log(`Application is running on: http://localhost:${port}`);
-  console.log(`Swagger documentation: http://localhost:${port}/api`);
+  
+  console.log(`🚀 Uygulama http://localhost:${port} adresinde çalışıyor`);
+  console.log(`📚 API Dokümantasyonu: http://localhost:${port}/api`);
+  console.log(`💬 Chat Test Sayfası: http://localhost:${port}/public/chat-test.html`);
 }
-
 bootstrap(); 

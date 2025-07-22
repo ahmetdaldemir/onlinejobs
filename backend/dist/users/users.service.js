@@ -21,16 +21,20 @@ let UsersService = class UsersService {
     constructor(userRepository) {
         this.userRepository = userRepository;
     }
-    async findAll() {
+    async findTestUsers() {
         return this.userRepository.find({
-            relations: ['category'],
+            where: [
+                { email: 'testuser1@example.com' },
+                { email: 'testuser2@example.com' }
+            ],
+            select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userType', 'status']
         });
     }
+    async findAll() {
+        return this.userRepository.find();
+    }
     async findById(id) {
-        const user = await this.userRepository.findOne({
-            where: { id },
-            relations: ['category'],
-        });
+        const user = await this.userRepository.findOne({ where: { id } });
         if (!user) {
             throw new common_1.NotFoundException('Kullanıcı bulunamadı');
         }
@@ -39,25 +43,25 @@ let UsersService = class UsersService {
     async findOnlineJobSeekers(latitude, longitude, radius, categoryId) {
         let query = this.userRepository
             .createQueryBuilder('user')
-            .leftJoinAndSelect('user.category', 'category')
             .where('user.userType = :userType', { userType: 'job_seeker' })
             .andWhere('user.status = :status', { status: user_entity_1.UserStatus.ONLINE });
         if (categoryId) {
             query = query.andWhere('user.categoryId = :categoryId', { categoryId });
         }
         if (latitude && longitude && radius) {
-            query = query.andWhere(`
-        (6371 * acos(cos(radians(:latitude)) * cos(radians(user.latitude)) * 
-        cos(radians(user.longitude) - radians(:longitude)) + 
-        sin(radians(:latitude)) * sin(radians(user.latitude)))) <= :radius
-      `, { latitude, longitude, radius });
+            query = query.andWhere(`(
+          6371 * acos(
+            cos(radians(:latitude)) * cos(radians(user.latitude)) *
+            cos(radians(user.longitude) - radians(:longitude)) +
+            sin(radians(:latitude)) * sin(radians(user.latitude))
+          )
+        ) <= :radius`, { latitude, longitude, radius });
         }
         return query.getMany();
     }
     async updateStatus(userId, status) {
         const user = await this.findById(userId);
         user.status = status;
-        user.lastSeen = new Date();
         return this.userRepository.save(user);
     }
     async updateLocation(userId, latitude, longitude) {

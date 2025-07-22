@@ -10,29 +10,36 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  async findAll(): Promise<User[]> {
+  async findTestUsers(): Promise<User[]> {
     return this.userRepository.find({
-      relations: ['category'],
+      where: [
+        { email: 'testuser1@example.com' },
+        { email: 'testuser2@example.com' }
+      ],
+      select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userType', 'status']
     });
+  }
+
+  async findAll(): Promise<User[]> {
+    return this.userRepository.find();
   }
 
   async findById(id: string): Promise<User> {
-    const user = await this.userRepository.findOne({
-      where: { id },
-      relations: ['category'],
-    });
-
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) {
       throw new NotFoundException('Kullanıcı bulunamadı');
     }
-
     return user;
   }
 
-  async findOnlineJobSeekers(latitude?: number, longitude?: number, radius?: number, categoryId?: string): Promise<User[]> {
+  async findOnlineJobSeekers(
+    latitude?: number,
+    longitude?: number,
+    radius?: number,
+    categoryId?: string,
+  ): Promise<User[]> {
     let query = this.userRepository
       .createQueryBuilder('user')
-      .leftJoinAndSelect('user.category', 'category')
       .where('user.userType = :userType', { userType: 'job_seeker' })
       .andWhere('user.status = :status', { status: UserStatus.ONLINE });
 
@@ -42,11 +49,16 @@ export class UsersService {
 
     if (latitude && longitude && radius) {
       // Haversine formülü ile mesafe hesaplama
-      query = query.andWhere(`
-        (6371 * acos(cos(radians(:latitude)) * cos(radians(user.latitude)) * 
-        cos(radians(user.longitude) - radians(:longitude)) + 
-        sin(radians(:latitude)) * sin(radians(user.latitude)))) <= :radius
-      `, { latitude, longitude, radius });
+      query = query.andWhere(
+        `(
+          6371 * acos(
+            cos(radians(:latitude)) * cos(radians(user.latitude)) *
+            cos(radians(user.longitude) - radians(:longitude)) +
+            sin(radians(:latitude)) * sin(radians(user.latitude))
+          )
+        ) <= :radius`,
+        { latitude, longitude, radius }
+      );
     }
 
     return query.getMany();
@@ -55,7 +67,6 @@ export class UsersService {
   async updateStatus(userId: string, status: UserStatus): Promise<User> {
     const user = await this.findById(userId);
     user.status = status;
-    user.lastSeen = new Date();
     return this.userRepository.save(user);
   }
 
@@ -66,7 +77,7 @@ export class UsersService {
     return this.userRepository.save(user);
   }
 
-  async updateProfile(userId: string, updateData: Partial<User>): Promise<User> {
+  async updateProfile(userId: string, updateData: any): Promise<User> {
     const user = await this.findById(userId);
     Object.assign(user, updateData);
     return this.userRepository.save(user);

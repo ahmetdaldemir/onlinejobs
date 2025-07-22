@@ -1,35 +1,40 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@nestjs/core");
+const app_module_1 = require("./app.module");
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
-const app_module_1 = require("./app.module");
-const seed_service_1 = require("./seeds/seed.service");
+const path_1 = require("path");
+const express = require("express");
+const users_seed_1 = require("./seeds/users.seed");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors({
         origin: true,
         credentials: true,
     });
-    app.useGlobalPipes(new common_1.ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-    }));
+    app.useGlobalPipes(new common_1.ValidationPipe());
+    app.use('/public', express.static((0, path_1.join)(__dirname, '..', 'public')));
     const config = new swagger_1.DocumentBuilder()
         .setTitle('Online Jobs API')
-        .setDescription('Online Usta/Personel Platformu API')
+        .setDescription('Online Jobs platformu için REST API')
         .setVersion('1.0')
         .addBearerAuth()
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, config);
     swagger_1.SwaggerModule.setup('api', app, document);
-    const seedService = app.get(seed_service_1.SeedService);
-    await seedService.runSeeds();
+    try {
+        const usersSeedService = app.get(users_seed_1.UsersSeedService);
+        await usersSeedService.seed();
+    }
+    catch (error) {
+        console.log('Seed service error:', error.message);
+    }
     const port = process.env.PORT || 3000;
     await app.listen(port);
-    console.log(`Application is running on: http://localhost:${port}`);
-    console.log(`Swagger documentation: http://localhost:${port}/api`);
+    console.log(`🚀 Uygulama http://localhost:${port} adresinde çalışıyor`);
+    console.log(`📚 API Dokümantasyonu: http://localhost:${port}/api`);
+    console.log(`💬 Chat Test Sayfası: http://localhost:${port}/public/chat-test.html`);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map

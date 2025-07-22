@@ -58,9 +58,9 @@ class LoginDto {
 exports.LoginDto = LoginDto;
 __decorate([
     (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], LoginDto.prototype, "email", void 0);
+], LoginDto.prototype, "phone", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsString)(),

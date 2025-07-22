@@ -16,6 +16,8 @@ const city_entity_1 = require("../locations/entities/city.entity");
 const district_entity_1 = require("../locations/entities/district.entity");
 const neighborhood_entity_1 = require("../locations/entities/neighborhood.entity");
 const locations_seed_1 = require("./locations.seed");
+const user_entity_1 = require("../users/entities/user.entity");
+const users_seed_1 = require("./users.seed");
 let SeedsModule = class SeedsModule {
 };
 exports.SeedsModule = SeedsModule;
@@ -28,10 +30,11 @@ exports.SeedsModule = SeedsModule = __decorate([
                 city_entity_1.City,
                 district_entity_1.District,
                 neighborhood_entity_1.Neighborhood,
+                user_entity_1.User,
             ]),
         ],
-        providers: [seed_service_1.SeedService, locations_seed_1.LocationsSeedService],
-        exports: [seed_service_1.SeedService, locations_seed_1.LocationsSeedService],
+        providers: [seed_service_1.SeedService, locations_seed_1.LocationsSeedService, users_seed_1.UsersSeedService],
+        exports: [seed_service_1.SeedService, locations_seed_1.LocationsSeedService, users_seed_1.UsersSeedService],
     })
 ], SeedsModule);
 //# sourceMappingURL=seeds.module.js.map

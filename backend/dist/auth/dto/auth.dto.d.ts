@@ -9,7 +9,7 @@ export declare class RegisterDto {
     categoryId?: string;
 }
 export declare class LoginDto {
-    email: string;
+    phone: string;
     password: string;
 }
 export declare class CheckPhoneDto {
