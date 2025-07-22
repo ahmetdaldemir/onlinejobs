@@ -44,6 +44,12 @@ export class LoginDto {
   password: string;
 }
 
+export class ChckPhoneDto {
+  @ApiProperty()
+  @IsString()
+  phone: string;
+}
+
 export class AuthResponseDto {
   @ApiProperty()
   accessToken: string;

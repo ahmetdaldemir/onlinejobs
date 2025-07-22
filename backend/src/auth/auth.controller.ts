@@ -25,6 +25,15 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
+
+  @Post('chck-phone')
+  @ApiOperation({ summary: 'Telefon numarası kontrolü' })
+  @ApiResponse({ status: 200, description: 'Telefon numarası kontrolü başarılı' })
+  @ApiResponse({ status: 400, description: 'Telefon numarası zaten kullanımda' })
+  async chckPhone(@Body() chckPhoneDto: ChckPhoneDto): Promise<AuthResponseDto> {
+    return this.authService.chckPhone(chckPhoneDto);
+  }
+
   @Get('profile')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

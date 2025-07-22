@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { User, UserType } from '../users/entities/user.entity';
-import { RegisterDto, LoginDto, AuthResponseDto } from './dto/auth.dto';
+import { RegisterDto, LoginDto, AuthResponseDto, ChckPhoneDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -123,5 +123,24 @@ export class AuthService {
     }
 
     return user;
+  }
+
+
+  async chckPhone(chckPhoneDto: ChckPhoneDto): Promise<AuthResponseDto> {
+    const { phone } = chckPhoneDto;
+
+    const existingUser = await this.userRepository.findOne({
+      where: { phone },
+    });
+
+    if (existingUser) {
+      throw new ConflictException('Telefon numarası zaten kullanımda');
+    }
+
+    return {
+      message: 'Telefon numarası kontrolü başarılı',
+      user: null,
+      accessToken: null,
+    };
   }
 } 
