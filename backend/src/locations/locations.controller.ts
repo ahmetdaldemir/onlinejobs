@@ -1,25 +1,53 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Post } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { LocationsService } from './locations.service';
+import { Country } from './entities/country.entity';
+import { City } from './entities/city.entity';
+import { District } from './entities/district.entity';
+import { Neighborhood } from './entities/neighborhood.entity';
 
 @ApiTags('Locations')
 @Controller('locations')
 export class LocationsController {
   constructor(private readonly locationsService: LocationsService) {}
 
+  @Get('countries')
+  @ApiOperation({ summary: 'Ülkeleri listele' })
+  @ApiResponse({ status: 200, description: 'Ülkeler listelendi', type: [Country] })
+  async getCountries(): Promise<Country[]> {
+    return this.locationsService.getCountries();
+  }
+
   @Get('cities')
-  @ApiOperation({ summary: 'Şehirleri listele' })
-  @ApiResponse({ status: 200, description: 'Şehirler listelendi' })
-  async getCities() {
-    return this.locationsService.getCities();
+  @ApiOperation({ summary: 'Ülkeye göre şehirleri listele' })
+  @ApiQuery({ name: 'countryId', required: true, description: 'Ülke ID' })
+  @ApiResponse({ status: 200, description: 'Şehirler listelendi', type: [City] })
+  async getCitiesByCountry(@Query('countryId') countryId: string): Promise<City[]> {
+    return this.locationsService.getCitiesByCountry(countryId);
   }
 
   @Get('districts')
-  @ApiOperation({ summary: 'İlçeleri listele' })
-  @ApiQuery({ name: 'city', required: true })
-  @ApiResponse({ status: 200, description: 'İlçeler listelendi' })
-  async getDistricts(@Query('city') city: string) {
-    return this.locationsService.getDistricts(city);
+  @ApiOperation({ summary: 'Şehre göre ilçeleri listele' })
+  @ApiQuery({ name: 'cityId', required: true, description: 'Şehir ID' })
+  @ApiResponse({ status: 200, description: 'İlçeler listelendi', type: [District] })
+  async getDistrictsByCity(@Query('cityId') cityId: string): Promise<District[]> {
+    return this.locationsService.getDistrictsByCity(cityId);
+  }
+
+  @Get('neighborhoods')
+  @ApiOperation({ summary: 'İlçeye göre mahalleleri listele' })
+  @ApiQuery({ name: 'districtId', required: true, description: 'İlçe ID' })
+  @ApiResponse({ status: 200, description: 'Mahalleler listelendi', type: [Neighborhood] })
+  async getNeighborhoodsByDistrict(@Query('districtId') districtId: string): Promise<Neighborhood[]> {
+    return this.locationsService.getNeighborhoodsByDistrict(districtId);
+  }
+
+  @Post('sync')
+  @ApiOperation({ summary: 'External API\'den verileri senkronize et (Admin)' })
+  @ApiQuery({ name: 'force', required: false, type: Boolean, description: 'Force sync - mevcut verileri sil ve yeniden ekle' })
+  @ApiResponse({ status: 200, description: 'Senkronizasyon tamamlandı' })
+  async syncFromExternalAPI(@Query('force') force: boolean = false) {
+    return this.locationsService.manualSync(force);
   }
 
   @Get('distance')

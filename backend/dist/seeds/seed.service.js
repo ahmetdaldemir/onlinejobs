@@ -18,9 +18,11 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const category_entity_1 = require("../categories/entities/category.entity");
 const categories_seed_1 = require("./categories.seed");
+const locations_seed_1 = require("./locations.seed");
 let SeedService = class SeedService {
-    constructor(categoryRepository) {
+    constructor(categoryRepository, locationsSeedService) {
         this.categoryRepository = categoryRepository;
+        this.locationsSeedService = locationsSeedService;
     }
     async seedCategories() {
         const existingCategories = await this.categoryRepository.count();
@@ -33,14 +35,21 @@ let SeedService = class SeedService {
             console.log('Kategoriler zaten mevcut.');
         }
     }
+    async seedLocations() {
+        console.log('Lokasyonlar ekleniyor...');
+        await this.locationsSeedService.seed();
+        console.log('Lokasyonlar başarıyla eklendi!');
+    }
     async runSeeds() {
         await this.seedCategories();
+        await this.seedLocations();
     }
 };
 exports.SeedService = SeedService;
 exports.SeedService = SeedService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        locations_seed_1.LocationsSeedService])
 ], SeedService);
 //# sourceMappingURL=seed.service.js.map

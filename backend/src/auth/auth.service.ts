@@ -70,16 +70,16 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto): Promise<AuthResponseDto> { 
-    const { email, password } = loginDto;
+    const { phone, password } = loginDto;
 
     // Kullanıcıyı bul
     const user = await this.userRepository.findOne({
-      where: { email },
+      where: { phone },
       relations: ['category'],
     });
 
     if (!user) {
-      throw new UnauthorizedException('Geçersiz email veya şifre');
+      throw new UnauthorizedException('Geçersiz telefon numarası veya şifre');
     }
 
     // Şifre kontrolü

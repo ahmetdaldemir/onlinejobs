@@ -8,13 +8,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocationsModule = void 0;
 const common_1 = require("@nestjs/common");
+const typeorm_1 = require("@nestjs/typeorm");
 const locations_controller_1 = require("./locations.controller");
 const locations_service_1 = require("./locations.service");
+const country_entity_1 = require("./entities/country.entity");
+const city_entity_1 = require("./entities/city.entity");
+const district_entity_1 = require("./entities/district.entity");
+const neighborhood_entity_1 = require("./entities/neighborhood.entity");
 let LocationsModule = class LocationsModule {
 };
 exports.LocationsModule = LocationsModule;
 exports.LocationsModule = LocationsModule = __decorate([
     (0, common_1.Module)({
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([country_entity_1.Country, city_entity_1.City, district_entity_1.District, neighborhood_entity_1.Neighborhood]),
+        ],
         controllers: [locations_controller_1.LocationsController],
         providers: [locations_service_1.LocationsService],
         exports: [locations_service_1.LocationsService],

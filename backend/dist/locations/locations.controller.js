@@ -16,15 +16,28 @@ exports.LocationsController = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const locations_service_1 = require("./locations.service");
+const country_entity_1 = require("./entities/country.entity");
+const city_entity_1 = require("./entities/city.entity");
+const district_entity_1 = require("./entities/district.entity");
+const neighborhood_entity_1 = require("./entities/neighborhood.entity");
 let LocationsController = class LocationsController {
     constructor(locationsService) {
         this.locationsService = locationsService;
     }
-    async getCities() {
-        return this.locationsService.getCities();
+    async getCountries() {
+        return this.locationsService.getCountries();
     }
-    async getDistricts(city) {
-        return this.locationsService.getDistricts(city);
+    async getCitiesByCountry(countryId) {
+        return this.locationsService.getCitiesByCountry(countryId);
+    }
+    async getDistrictsByCity(cityId) {
+        return this.locationsService.getDistrictsByCity(cityId);
+    }
+    async getNeighborhoodsByDistrict(districtId) {
+        return this.locationsService.getNeighborhoodsByDistrict(districtId);
+    }
+    async syncFromExternalAPI(force = false) {
+        return this.locationsService.manualSync(force);
     }
     async calculateDistance(lat1, lon1, lat2, lon2) {
         const distance = await this.locationsService.calculateDistance(lat1, lon1, lat2, lon2);
@@ -33,23 +46,53 @@ let LocationsController = class LocationsController {
 };
 exports.LocationsController = LocationsController;
 __decorate([
-    (0, common_1.Get)('cities'),
-    (0, swagger_1.ApiOperation)({ summary: 'Şehirleri listele' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Şehirler listelendi' }),
+    (0, common_1.Get)('countries'),
+    (0, swagger_1.ApiOperation)({ summary: 'Ülkeleri listele' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Ülkeler listelendi', type: [country_entity_1.Country] }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], LocationsController.prototype, "getCities", null);
+], LocationsController.prototype, "getCountries", null);
 __decorate([
-    (0, common_1.Get)('districts'),
-    (0, swagger_1.ApiOperation)({ summary: 'İlçeleri listele' }),
-    (0, swagger_1.ApiQuery)({ name: 'city', required: true }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'İlçeler listelendi' }),
-    __param(0, (0, common_1.Query)('city')),
+    (0, common_1.Get)('cities'),
+    (0, swagger_1.ApiOperation)({ summary: 'Ülkeye göre şehirleri listele' }),
+    (0, swagger_1.ApiQuery)({ name: 'countryId', required: true, description: 'Ülke ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Şehirler listelendi', type: [city_entity_1.City] }),
+    __param(0, (0, common_1.Query)('countryId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], LocationsController.prototype, "getDistricts", null);
+], LocationsController.prototype, "getCitiesByCountry", null);
+__decorate([
+    (0, common_1.Get)('districts'),
+    (0, swagger_1.ApiOperation)({ summary: 'Şehre göre ilçeleri listele' }),
+    (0, swagger_1.ApiQuery)({ name: 'cityId', required: true, description: 'Şehir ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'İlçeler listelendi', type: [district_entity_1.District] }),
+    __param(0, (0, common_1.Query)('cityId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], LocationsController.prototype, "getDistrictsByCity", null);
+__decorate([
+    (0, common_1.Get)('neighborhoods'),
+    (0, swagger_1.ApiOperation)({ summary: 'İlçeye göre mahalleleri listele' }),
+    (0, swagger_1.ApiQuery)({ name: 'districtId', required: true, description: 'İlçe ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Mahalleler listelendi', type: [neighborhood_entity_1.Neighborhood] }),
+    __param(0, (0, common_1.Query)('districtId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], LocationsController.prototype, "getNeighborhoodsByDistrict", null);
+__decorate([
+    (0, common_1.Post)('sync'),
+    (0, swagger_1.ApiOperation)({ summary: 'External API\'den verileri senkronize et (Admin)' }),
+    (0, swagger_1.ApiQuery)({ name: 'force', required: false, type: Boolean, description: 'Force sync - mevcut verileri sil ve yeniden ekle' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Senkronizasyon tamamlandı' }),
+    __param(0, (0, common_1.Query)('force')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Boolean]),
+    __metadata("design:returntype", Promise)
+], LocationsController.prototype, "syncFromExternalAPI", null);
 __decorate([
     (0, common_1.Get)('distance'),
     (0, swagger_1.ApiOperation)({ summary: 'İki nokta arası mesafe hesapla' }),

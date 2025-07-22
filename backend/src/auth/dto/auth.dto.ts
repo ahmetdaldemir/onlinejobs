@@ -36,8 +36,8 @@ export class RegisterDto {
 
 export class LoginDto {
   @ApiProperty()
-  @IsEmail()
-  email: string;
+  @IsString()
+  phone: string;
 
   @ApiProperty()
   @IsString()
@@ -68,6 +68,7 @@ export class AuthResponseDto {
     totalReviews: number;
     profileImage?: string;
     bio?: string;
+
     category?: {
       id: string;
       name: string;
