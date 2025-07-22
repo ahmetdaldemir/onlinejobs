@@ -20,6 +20,14 @@ export class UsersService {
     });
   }
 
+  async findRealUsers(): Promise<User[]> {
+    return this.userRepository.find({
+      select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userType', 'status'],
+      order: { createdAt: 'DESC' },
+      take: 10 // Son 10 kullanıcıyı getir
+    });
+  }
+
   async findAll(): Promise<User[]> {
     return this.userRepository.find();
   }

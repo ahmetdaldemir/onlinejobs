@@ -44,6 +44,9 @@
             color: white;
             margin-left: auto;
         }
+        .message.sent.read {
+            background: #28a745; /* Okunan mesajlar için hafif yeşil */
+        }
         .message.received {
             background: #e9ecef;
             color: #333;
@@ -52,21 +55,22 @@
             position: absolute;
             bottom: 2px;
             right: 5px;
-            font-size: 10px;
-            opacity: 0.7;
+            font-size: 12px;
+            opacity: 0.9;
+            font-weight: bold;
         }
         .message.sent .message-status {
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.9);
         }
         .message.received .message-status {
-            color: rgba(0, 0, 0, 0.6);
+            color: rgba(0, 0, 0, 0.7);
         }
         .status-icon {
             margin-left: 2px;
         }
         .status-sent { content: "✓"; }
         .status-delivered { content: "✓✓"; }
-        .status-read { content: "✓✓"; color: #34b7f1 !important; }
+        .status-read { content: "✓✓"; color: #ffffff !important; }
         .chat-input {
             display: flex;
             padding: 15px;
@@ -162,22 +166,40 @@
         </div>
         <input type="text" id="receiverId" placeholder="Alıcı ID (UUID)" value="">
         <input type="text" id="jwtToken" placeholder="JWT Token (opsiyonel)">
-                    <button onclick="connect()">Bağlan</button>
+        <div class="controls">
+            <button onclick="loadUsers()">Test Kullanıcıları Yükle</button>
+            <button onclick="loadRealUsers()">Gerçek Kullanıcıları Yükle</button>
+            <button onclick="generateNewUserId()">Yeni ID Oluştur</button>
+            <button onclick="setAsUser1()">Kullanıcı 1 Ol</button>
+            <button onclick="setAsUser2()">Kullanıcı 2 Ol</button>
+            <button onclick="setReceiverAsUser1()">Alıcı: Kullanıcı 1</button>
+            <button onclick="setReceiverAsUser2()">Alıcı: Kullanıcı 2</button>
+            <button onclick="connect()">Bağlan</button>
             <button onclick="disconnect()">Bağlantıyı Kes</button>
             <button onclick="testConnection()">Bağlantıyı Test Et</button>
-        <button onclick="generateNewUserId()">Yeni ID Oluştur</button>
-    </div>
-
-    <div class="test-users">
-        <h4>🧪 Test Kullanıcıları</h4>
-        <p>Bu butonlara tıklayarak test kullanıcı ID'lerini otomatik olarak alabilirsiniz:</p>
-        <button onclick="setAsUser1()">Kullanıcı 1 Ol</button>
-        <button onclick="setAsUser2()">Kullanıcı 2 Ol</button>
-        <button onclick="setReceiverAsUser1()">Alıcı: Kullanıcı 1</button>
-        <button onclick="setReceiverAsUser2()">Alıcı: Kullanıcı 2</button>
-        <div style="margin-top: 10px;">
-            <strong>Kullanıcı 1 ID:</strong> <span id="user1Id" class="loading">Yükleniyor...</span><br>
-            <strong>Kullanıcı 2 ID:</strong> <span id="user2Id" class="loading">Yükleniyor...</span>
+        </div>
+        
+        <div class="real-users-controls" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
+            <h4>Gerçek Kullanıcı Seçimi:</h4>
+            <div id="realUsersList" style="margin-bottom: 10px;">
+                <p>Önce "Gerçek Kullanıcıları Yükle" butonuna tıklayın</p>
+            </div>
+            <div>
+                <label>Ben Olarak Seç:</label>
+                <button onclick="selectRealUser(0)">Kullanıcı 1</button>
+                <button onclick="selectRealUser(1)">Kullanıcı 2</button>
+                <button onclick="selectRealUser(2)">Kullanıcı 3</button>
+                <button onclick="selectRealUser(3)">Kullanıcı 4</button>
+                <button onclick="selectRealUser(4)">Kullanıcı 5</button>
+            </div>
+            <div style="margin-top: 5px;">
+                <label>Alıcı Olarak Seç:</label>
+                <button onclick="setReceiverAsRealUser(0)">Alıcı 1</button>
+                <button onclick="setReceiverAsRealUser(1)">Alıcı 2</button>
+                <button onclick="setReceiverAsRealUser(2)">Alıcı 3</button>
+                <button onclick="setReceiverAsRealUser(3)">Alıcı 4</button>
+                <button onclick="setReceiverAsRealUser(4)">Alıcı 5</button>
+            </div>
         </div>
     </div>
 
@@ -204,7 +226,10 @@
         let currentReceiverId;
         let user1Id = null;
         let user2Id = null;
+        let realUsers = []; // Gerçek kullanıcıları sakla
         let sentMessages = new Map(); // Gönderilen mesajları takip et
+        let currentUserName = ''; // Mevcut kullanıcının adı
+        let receiverName = ''; // Alıcının adı
 
         // API'den kullanıcıları yükle
         async function loadUsers() {
@@ -223,19 +248,72 @@
                     
                     // Varsayılan olarak kullanıcı 1'i seç
                     currentUserId = user1Id;
+                    currentUserName = `${users[0].firstName} ${users[0].lastName}`;
                     document.getElementById('myUserId').textContent = currentUserId;
                     
-                    addMessage('Sistem', 'Kullanıcılar yüklendi!', 'received');
+                    addMessage('Sistem', 'Test kullanıcıları yüklendi!', 'received');
                     addMessage('Sistem', `Kullanıcı 1: ${users[0].firstName} ${users[0].lastName}`, 'received');
                     addMessage('Sistem', `Kullanıcı 2: ${users[1].firstName} ${users[1].lastName}`, 'received');
                 } else {
-                    addMessage('Hata', 'Yeterli kullanıcı bulunamadı!', 'received');
+                    addMessage('Hata', 'Yeterli test kullanıcısı bulunamadı!', 'received');
                 }
             } catch (error) {
                 console.error('Error loading users:', error);
                 addMessage('Hata', 'Kullanıcılar yüklenirken hata oluştu!', 'received');
                 addMessage('Hata', `Hata detayı: ${error.message}`, 'received');
             }
+        }
+
+        // Gerçek kullanıcıları yükle
+        async function loadRealUsers() {
+            try {
+                const serverUrl = 'https://onlinejobs.onrender.com';
+                const response = await fetch(`${serverUrl}/users/real`);
+                const users = await response.json();
+                
+                if (users && users.length > 0) {
+                    realUsers = users;
+                    
+                    addMessage('Sistem', `${users.length} gerçek kullanıcı yüklendi!`, 'received');
+                    
+                    // Kullanıcıları listele
+                    users.forEach((user, index) => {
+                        addMessage('Sistem', `${index + 1}. ${user.firstName} ${user.lastName} (${user.email}) - ID: ${user.id}`, 'received');
+                    });
+                    
+                    // Kullanıcı listesini güncelle
+                    updateRealUsersList(users);
+                    
+                    // İlk kullanıcıyı varsayılan olarak seç
+                    if (users.length > 0) {
+                        currentUserId = users[0].id;
+                        currentUserName = `${users[0].firstName} ${users[0].lastName}`;
+                        document.getElementById('myUserId').textContent = currentUserId;
+                        addMessage('Sistem', `Varsayılan kullanıcı seçildi: ${currentUserName}`, 'received');
+                    }
+                } else {
+                    addMessage('Hata', 'Gerçek kullanıcı bulunamadı!', 'received');
+                }
+            } catch (error) {
+                console.error('Error loading real users:', error);
+                addMessage('Hata', 'Gerçek kullanıcılar yüklenirken hata oluştu!', 'received');
+                addMessage('Hata', `Hata detayı: ${error.message}`, 'received');
+            }
+        }
+
+        function updateRealUsersList(users) {
+            const listElement = document.getElementById('realUsersList');
+            let html = '<h5>Yüklenen Kullanıcılar:</h5>';
+            
+            users.forEach((user, index) => {
+                html += `<div style="margin: 5px 0; padding: 5px; background: white; border-radius: 3px;">
+                    <strong>${index + 1}.</strong> ${user.firstName} ${user.lastName}<br>
+                    <small>Email: ${user.email}</small><br>
+                    <small>ID: ${user.id}</small>
+                </div>`;
+            });
+            
+            listElement.innerHTML = html;
         }
 
         // Sayfa yüklendiğinde otomatik UUID oluştur
@@ -248,8 +326,9 @@
         function setAsUser1() {
             if (user1Id) {
                 currentUserId = user1Id;
+                currentUserName = 'John Doe'; // Test kullanıcı 1 adı
                 document.getElementById('myUserId').textContent = currentUserId;
-                addMessage('Sistem', `Kullanıcı 1 olarak ayarlandı: ${currentUserId}`, 'received');
+                addMessage('Sistem', `Kullanıcı 1 olarak ayarlandı: ${currentUserName}`, 'received');
             } else {
                 addMessage('Hata', 'Kullanıcı 1 henüz yüklenmedi!', 'received');
             }
@@ -258,17 +337,41 @@
         function setAsUser2() {
             if (user2Id) {
                 currentUserId = user2Id;
+                currentUserName = 'Jane Smith'; // Test kullanıcı 2 adı
                 document.getElementById('myUserId').textContent = currentUserId;
-                addMessage('Sistem', `Kullanıcı 2 olarak ayarlandı: ${currentUserId}`, 'received');
+                addMessage('Sistem', `Kullanıcı 2 olarak ayarlandı: ${currentUserName}`, 'received');
             } else {
                 addMessage('Hata', 'Kullanıcı 2 henüz yüklenmedi!', 'received');
+            }
+        }
+
+        // Gerçek kullanıcı seçme fonksiyonları
+        function selectRealUser(index) {
+            if (realUsers && realUsers[index]) {
+                currentUserId = realUsers[index].id;
+                currentUserName = `${realUsers[index].firstName} ${realUsers[index].lastName}`;
+                document.getElementById('myUserId').textContent = currentUserId;
+                addMessage('Sistem', `Kullanıcı seçildi: ${currentUserName} (${realUsers[index].id})`, 'received');
+            } else {
+                addMessage('Hata', 'Kullanıcı bulunamadı!', 'received');
+            }
+        }
+
+        function setReceiverAsRealUser(index) {
+            if (realUsers && realUsers[index]) {
+                document.getElementById('receiverId').value = realUsers[index].id;
+                receiverName = `${realUsers[index].firstName} ${realUsers[index].lastName}`;
+                addMessage('Sistem', `Alıcı ayarlandı: ${receiverName} (${realUsers[index].id})`, 'received');
+            } else {
+                addMessage('Hata', 'Kullanıcı bulunamadı!', 'received');
             }
         }
 
         function setReceiverAsUser1() {
             if (user1Id) {
                 document.getElementById('receiverId').value = user1Id;
-                addMessage('Sistem', `Alıcı Kullanıcı 1 olarak ayarlandı: ${user1Id}`, 'received');
+                receiverName = 'John Doe'; // Test kullanıcı 1 adı
+                addMessage('Sistem', `Alıcı John Doe olarak ayarlandı: ${user1Id}`, 'received');
             } else {
                 addMessage('Hata', 'Kullanıcı 1 henüz yüklenmedi!', 'received');
             }
@@ -277,7 +380,8 @@
         function setReceiverAsUser2() {
             if (user2Id) {
                 document.getElementById('receiverId').value = user2Id;
-                addMessage('Sistem', `Alıcı Kullanıcı 2 olarak ayarlandı: ${user2Id}`, 'received');
+                receiverName = 'Jane Smith'; // Test kullanıcı 2 adı
+                addMessage('Sistem', `Alıcı Jane Smith olarak ayarlandı: ${user2Id}`, 'received');
             } else {
                 addMessage('Hata', 'Kullanıcı 2 henüz yüklenmedi!', 'received');
             }
@@ -330,7 +434,9 @@
             socket.on('new_message', (data) => {
                 console.log('New message received:', data);
                 if (data.senderId === currentReceiverId) {
-                    addMessage('Alıcı', data.content, 'received');
+                    // Alıcının adını kullan
+                    const receiverDisplayName = receiverName || 'Alıcı';
+                    addMessage(receiverDisplayName, data.content, 'received');
                     // Mesajı okundu olarak işaretle
                     markMessageAsRead(data.id);
                 } else {
@@ -343,6 +449,16 @@
                 // Gönderilen mesajı takip et
                 sentMessages.set(data.id, { status: 'sent', timestamp: new Date() });
                 updateMessageStatus(data.id, 'sent');
+                
+                // Tüm gönderilen mesajların status'unu güncelle
+                const sentMessageElements = document.querySelectorAll('.message.sent');
+                sentMessageElements.forEach(message => {
+                    const statusElement = message.querySelector('.message-status');
+                    if (statusElement && statusElement.textContent === '✓') {
+                        statusElement.textContent = '✓✓';
+                        statusElement.className = 'message-status status-delivered';
+                    }
+                });
             });
 
             socket.on('message_error', (data) => {
@@ -394,9 +510,10 @@
                 type: 'TEXT'
             });
 
-            // UI'da mesajı göster
+            // UI'da mesajı göster - gönderen kişinin adını kullan
             const messageId = 'temp-' + Date.now();
-            addMessage('Ben', content, 'sent', messageId);
+            const senderName = currentUserName || 'Ben';
+            addMessage(senderName, content, 'sent', messageId);
             messageInput.value = '';
         }
 
@@ -414,7 +531,8 @@
                     statusElement.className = `message-status status-${status}`;
                     statusElement.textContent = status === 'sent' ? '✓' : status === 'delivered' ? '✓✓' : '✓✓';
                     if (status === 'read') {
-                        statusElement.style.color = '#34b7f1';
+                        statusElement.style.color = '#ffffff'; // Okunan mesajlar için beyaz
+                        messageElement.classList.add('read'); // Background'ı yeşil yap
                     }
                 }
             }
@@ -428,7 +546,8 @@
                     statusElement.className = `message-status status-${status}`;
                     statusElement.textContent = status === 'sent' ? '✓' : status === 'delivered' ? '✓✓' : '✓✓';
                     if (status === 'read') {
-                        statusElement.style.color = '#34b7f1';
+                        statusElement.style.color = '#ffffff'; // Okunan mesajlar için beyaz
+                        message.classList.add('read'); // Background'ı yeşil yap
                     }
                 }
             });
@@ -458,6 +577,8 @@
             if (type === 'sent') {
                 statusElement.textContent = '✓';
                 statusElement.className = 'message-status status-sent';
+                statusElement.style.color = 'rgba(255, 255, 255, 0.9)';
+                statusElement.style.fontWeight = 'bold';
             }
             messageDiv.appendChild(statusElement);
             

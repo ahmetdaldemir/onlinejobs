@@ -16,6 +16,13 @@ export class UsersController {
     return this.usersService.findTestUsers();
   }
 
+  @Get('real')
+  @ApiOperation({ summary: 'Gerçek kullanıcıları listele (Public)' })
+  @ApiResponse({ status: 200, description: 'Gerçek kullanıcılar listelendi' })
+  async findRealUsers() {
+    return this.usersService.findRealUsers();
+  }
+
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
