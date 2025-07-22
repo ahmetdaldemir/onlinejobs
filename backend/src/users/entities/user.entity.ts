@@ -15,14 +15,10 @@ import { IsOptional } from 'class-validator';
 export enum UserType {
   JOB_SEEKER = 'job_seeker',
   EMPLOYER = 'employer',
-}
-
-export enum UserRole {
-  JOB_SEEKER = 'job_seeker',
-  EMPLOYER = 'employer',
   BOTH = 'both', // Hem iş arayan hem işveren
 }
 
+ 
 export enum UserStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',

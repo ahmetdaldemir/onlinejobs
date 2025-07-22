@@ -5,6 +5,7 @@ export declare class Category {
     icon: string;
     isActive: boolean;
     orderIndex: number;
+    parentId: string;
     createdAt: Date;
     updatedAt: Date;
     users: any[];

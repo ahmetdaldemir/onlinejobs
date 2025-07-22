@@ -50,6 +50,12 @@ let CategoriesService = class CategoriesService {
         category.isActive = false;
         await this.categoryRepository.save(category);
     }
+    async findByParentId(parentId) {
+        return this.categoryRepository.find({
+            where: { parentId, isActive: true },
+            order: { orderIndex: 'ASC' },
+        });
+    }
 };
 exports.CategoriesService = CategoriesService;
 exports.CategoriesService = CategoriesService = __decorate([

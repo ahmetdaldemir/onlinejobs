@@ -7,4 +7,5 @@ export declare class CategoriesController {
     create(createCategoryDto: any): Promise<import("./entities/category.entity").Category>;
     update(id: string, updateCategoryDto: any): Promise<import("./entities/category.entity").Category>;
     delete(id: string): Promise<void>;
+    findByParentId(parentId: string): Promise<import("./entities/category.entity").Category[]>;
 }

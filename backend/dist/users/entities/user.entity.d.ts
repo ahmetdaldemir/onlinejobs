@@ -1,9 +1,5 @@
 export declare enum UserType {
     JOB_SEEKER = "job_seeker",
-    EMPLOYER = "employer"
-}
-export declare enum UserRole {
-    JOB_SEEKER = "job_seeker",
     EMPLOYER = "employer",
     BOTH = "both"
 }

@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = exports.UserStatus = exports.UserRole = exports.UserType = void 0;
+exports.User = exports.UserStatus = exports.UserType = void 0;
 const typeorm_1 = require("typeorm");
 const class_transformer_1 = require("class-transformer");
 const swagger_1 = require("@nestjs/swagger");
@@ -18,13 +18,8 @@ var UserType;
 (function (UserType) {
     UserType["JOB_SEEKER"] = "job_seeker";
     UserType["EMPLOYER"] = "employer";
+    UserType["BOTH"] = "both";
 })(UserType || (exports.UserType = UserType = {}));
-var UserRole;
-(function (UserRole) {
-    UserRole["JOB_SEEKER"] = "job_seeker";
-    UserRole["EMPLOYER"] = "employer";
-    UserRole["BOTH"] = "both";
-})(UserRole || (exports.UserRole = UserRole = {}));
 var UserStatus;
 (function (UserStatus) {
     UserStatus["ACTIVE"] = "active";

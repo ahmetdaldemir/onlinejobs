@@ -13,11 +13,11 @@ export class UsersService {
   async findTestUsers(): Promise<User[]> {
     return this.userRepository.find({
       where: [
-        { email: 'ahmet.yilmaz@example.com' },
-        { email: 'ayse.demir@example.com' },
-        { email: 'mehmet.kaya@example.com' },
-        { email: 'zeynep.aydin@example.com' },
-        { email: 'emre.sahin@example.com' }
+        { phone: '+905550000001' },
+        { phone: '+905550000002' },
+        { phone: '+905550000003' },
+        { phone: '+905550000004' },
+        { phone: '+905550000005' }
       ],
       select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userTypes', 'status']
     });

@@ -23,7 +23,9 @@ let UsersSeedService = class UsersSeedService {
         this.userRepository = userRepository;
     }
     async seed() {
+        console.log('Starting user seed...');
         const existingUsers = await this.userRepository.count();
+        console.log(`Existing users count: ${existingUsers}`);
         if (existingUsers > 0) {
             console.log('Users already exist, skipping seed...');
             return;
@@ -254,7 +256,9 @@ let UsersSeedService = class UsersSeedService {
         for (const userData of demoUsers) {
             const user = this.userRepository.create(userData);
             await this.userRepository.save(user);
+            console.log(`Created user: ${userData.firstName} ${userData.lastName} (${userData.phone})`);
         }
+        console.log(`Successfully created ${demoUsers.length} test users`);
         return true;
     }
 };

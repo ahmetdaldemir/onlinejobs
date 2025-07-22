@@ -46,6 +46,11 @@ __decorate([
     __metadata("design:type", Number)
 ], Category.prototype, "orderIndex", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], Category.prototype, "parentId", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)(),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", Date)

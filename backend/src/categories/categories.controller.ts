@@ -42,4 +42,11 @@ export class CategoriesController {
   async delete(@Param('id') id: string) {
     return this.categoriesService.delete(id);
   }
+
+  @Get('parent/:parentId')
+  @ApiOperation({ summary: 'Üst kategoriye göre kategorileri listele' })
+  @ApiResponse({ status: 200, description: 'Kategoriler listelendi' })
+  async findByParentId(@Param('parentId') parentId: string) {
+    return this.categoriesService.findByParentId(parentId);
+  }
 } 

@@ -35,6 +35,9 @@ let CategoriesController = class CategoriesController {
     async delete(id) {
         return this.categoriesService.delete(id);
     }
+    async findByParentId(parentId) {
+        return this.categoriesService.findByParentId(parentId);
+    }
 };
 exports.CategoriesController = CategoriesController;
 __decorate([
@@ -83,6 +86,15 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], CategoriesController.prototype, "delete", null);
+__decorate([
+    (0, common_1.Get)('parent/:parentId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Üst kategoriye göre kategorileri listele' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kategoriler listelendi' }),
+    __param(0, (0, common_1.Param)('parentId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], CategoriesController.prototype, "findByParentId", null);
 exports.CategoriesController = CategoriesController = __decorate([
     (0, swagger_1.ApiTags)('Categories'),
     (0, common_1.Controller)('categories'),

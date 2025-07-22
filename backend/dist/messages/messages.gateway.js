@@ -35,7 +35,10 @@ let MessagesGateway = class MessagesGateway {
                 return;
             }
             const testUsers = await this.usersService.findTestUsers();
+            console.log('Found test users:', testUsers.length);
+            console.log('Test users:', testUsers.map(u => ({ id: u.id, name: `${u.firstName} ${u.lastName}`, phone: u.phone })));
             if (testUsers.length === 0) {
+                console.error('No test users found!');
                 client.disconnect();
                 return;
             }

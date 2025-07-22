@@ -45,4 +45,11 @@ export class CategoriesService {
     category.isActive = false;
     await this.categoryRepository.save(category);
   }
+
+  async findByParentId(parentId: string): Promise<Category[]> {
+    return this.categoryRepository.find({
+      where: { parentId, isActive: true },
+      order: { orderIndex: 'ASC' },
+    });
+  }
 } 

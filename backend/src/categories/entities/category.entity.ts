@@ -36,6 +36,10 @@ export class Category {
   @ApiProperty()
   orderIndex: number;
 
+  @Column({ nullable: true })
+  @ApiProperty()
+  parentId: string;
+  
   @CreateDateColumn()
   @ApiProperty()
   createdAt: Date;
