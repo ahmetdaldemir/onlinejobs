@@ -22,12 +22,23 @@ let MessagesService = class MessagesService {
         this.messageRepository = messageRepository;
     }
     async sendMessage(senderId, receiverId, content, type = message_entity_1.MessageType.TEXT) {
+        if (!senderId) {
+            throw new Error('senderId gerekli');
+        }
+        if (!receiverId) {
+            throw new Error('receiverId gerekli');
+        }
+        if (!content) {
+            throw new Error('content gerekli');
+        }
+        console.log('MessagesService.sendMessage çağrıldı:', { senderId, receiverId, content, type });
         const message = this.messageRepository.create({
             senderId,
             receiverId,
             content,
             type,
         });
+        console.log('Oluşturulan message objesi:', message);
         return this.messageRepository.save(message);
     }
     async getConversation(userId1, userId2) {

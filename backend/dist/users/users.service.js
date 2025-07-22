@@ -24,8 +24,11 @@ let UsersService = class UsersService {
     async findTestUsers() {
         return this.userRepository.find({
             where: [
-                { email: 'testuser1@example.com' },
-                { email: 'testuser2@example.com' }
+                { email: 'ahmet.yilmaz@example.com' },
+                { email: 'ayse.demir@example.com' },
+                { email: 'mehmet.kaya@example.com' },
+                { email: 'zeynep.aydin@example.com' },
+                { email: 'emre.sahin@example.com' }
             ],
             select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userTypes', 'status']
         });

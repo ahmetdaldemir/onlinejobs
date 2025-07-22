@@ -11,12 +11,27 @@ export class MessagesService {
   ) {}
 
   async sendMessage(senderId: string, receiverId: string, content: string, type: MessageType = MessageType.TEXT): Promise<Message> {
+    // Parametre kontrolü
+    if (!senderId) {
+      throw new Error('senderId gerekli');
+    }
+    if (!receiverId) {
+      throw new Error('receiverId gerekli');
+    }
+    if (!content) {
+      throw new Error('content gerekli');
+    }
+
+    console.log('MessagesService.sendMessage çağrıldı:', { senderId, receiverId, content, type });
+
     const message = this.messageRepository.create({
       senderId,
       receiverId,
       content,
       type,
     });
+
+    console.log('Oluşturulan message objesi:', message);
 
     return this.messageRepository.save(message);
   }

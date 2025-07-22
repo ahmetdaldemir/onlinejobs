@@ -67,6 +67,8 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
       client.data.userId = userId;
       
       console.log(`User ${userId} connected (connection #${this.connectionCount})`);
+      console.log('Client data after connection:', client.data);
+      console.log('Connected users map:', Array.from(this.connectedUsers.entries()));
     } catch (error) {
       console.error('Connection error:', error);
       client.disconnect();
@@ -96,11 +98,25 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
       
       // Debug bilgileri
       console.log('=== MESAJ GÖNDERME DEBUG ===');
+      console.log('Client data:', client.data);
       console.log('Gönderici ID:', senderId);
       console.log('Alıcı ID:', data.receiverId);
       console.log('Mesaj içeriği:', data.content);
       console.log('Bağlı kullanıcılar:', Array.from(this.connectedUsers.keys()));
       console.log('Alıcı bağlı mı:', this.connectedUsers.has(data.receiverId));
+      
+      // senderId kontrolü
+      if (!senderId) {
+        console.error('HATA: senderId null!');
+        client.emit('message_error', { error: 'Gönderici ID bulunamadı. Lütfen yeniden bağlanın.' });
+        return;
+      }
+      
+      if (!data.receiverId) {
+        console.error('HATA: receiverId null!');
+        client.emit('message_error', { error: 'Alıcı ID gerekli.' });
+        return;
+      }
       
       let messageType = MessageType.TEXT;
       if (data.type) {

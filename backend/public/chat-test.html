@@ -371,7 +371,7 @@
         function setAsUser1() {
             if (user1Id) {
                 currentUserId = user1Id;
-                currentUserName = 'John Doe'; // Test kullanıcı 1 adı
+                currentUserName = 'Ahmet Yılmaz'; // Test kullanıcı 1 adı
                 const myUserIdElement = document.getElementById('myUserId');
                 if (myUserIdElement) {
                     myUserIdElement.textContent = currentUserId;
@@ -385,7 +385,7 @@
         function setAsUser2() {
             if (user2Id) {
                 currentUserId = user2Id;
-                currentUserName = 'Jane Smith'; // Test kullanıcı 2 adı
+                currentUserName = 'Ayşe Demir'; // Test kullanıcı 2 adı
                 const myUserIdElement = document.getElementById('myUserId');
                 if (myUserIdElement) {
                     myUserIdElement.textContent = currentUserId;
@@ -430,8 +430,8 @@
                 if (receiverIdElement) {
                     receiverIdElement.value = user1Id;
                 }
-                receiverName = 'John Doe'; // Test kullanıcı 1 adı
-                addMessage('Sistem', `Alıcı John Doe olarak ayarlandı: ${user1Id}`, 'received');
+                receiverName = 'Ahmet Yılmaz'; // Test kullanıcı 1 adı
+                addMessage('Sistem', `Alıcı Ahmet Yılmaz olarak ayarlandı: ${user1Id}`, 'received');
             } else {
                 addMessage('Hata', 'Kullanıcı 1 henüz yüklenmedi!', 'received');
             }
@@ -443,8 +443,8 @@
                 if (receiverIdElement) {
                     receiverIdElement.value = user2Id;
                 }
-                receiverName = 'Jane Smith'; // Test kullanıcı 2 adı
-                addMessage('Sistem', `Alıcı Jane Smith olarak ayarlandı: ${user2Id}`, 'received');
+                receiverName = 'Ayşe Demir'; // Test kullanıcı 2 adı
+                addMessage('Sistem', `Alıcı Ayşe Demir olarak ayarlandı: ${user2Id}`, 'received');
             } else {
                 addMessage('Hata', 'Kullanıcı 2 henüz yüklenmedi!', 'received');
             }
@@ -698,6 +698,8 @@
             addMessage('Debug', `Gönderici: ${currentUserId}`, 'received');
             addMessage('Debug', `Alıcı: ${currentReceiverId}`, 'received');
             addMessage('Debug', `Mesaj: ${content}`, 'received');
+            addMessage('Debug', `Socket bağlı: ${socket ? 'Evet' : 'Hayır'}`, 'received');
+            addMessage('Debug', `Socket ID: ${socket ? socket.id : 'Yok'}`, 'received');
 
             // Mesajı gönder
             socket.emit('send_message', {

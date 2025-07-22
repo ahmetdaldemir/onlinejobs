@@ -46,6 +46,8 @@ let MessagesGateway = class MessagesGateway {
             this.connectedUsers.set(userId, client);
             client.data.userId = userId;
             console.log(`User ${userId} connected (connection #${this.connectionCount})`);
+            console.log('Client data after connection:', client.data);
+            console.log('Connected users map:', Array.from(this.connectedUsers.entries()));
         }
         catch (error) {
             console.error('Connection error:', error);
@@ -67,11 +69,22 @@ let MessagesGateway = class MessagesGateway {
         try {
             const senderId = client.data.userId;
             console.log('=== MESAJ GÖNDERME DEBUG ===');
+            console.log('Client data:', client.data);
             console.log('Gönderici ID:', senderId);
             console.log('Alıcı ID:', data.receiverId);
             console.log('Mesaj içeriği:', data.content);
             console.log('Bağlı kullanıcılar:', Array.from(this.connectedUsers.keys()));
             console.log('Alıcı bağlı mı:', this.connectedUsers.has(data.receiverId));
+            if (!senderId) {
+                console.error('HATA: senderId null!');
+                client.emit('message_error', { error: 'Gönderici ID bulunamadı. Lütfen yeniden bağlanın.' });
+                return;
+            }
+            if (!data.receiverId) {
+                console.error('HATA: receiverId null!');
+                client.emit('message_error', { error: 'Alıcı ID gerekli.' });
+                return;
+            }
             let messageType = message_entity_1.MessageType.TEXT;
             if (data.type) {
                 switch (data.type.toUpperCase()) {
