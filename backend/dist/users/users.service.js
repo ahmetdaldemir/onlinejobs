@@ -30,6 +30,13 @@ let UsersService = class UsersService {
             select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userType', 'status']
         });
     }
+    async findRealUsers() {
+        return this.userRepository.find({
+            select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userType', 'status'],
+            order: { createdAt: 'DESC' },
+            take: 10
+        });
+    }
     async findAll() {
         return this.userRepository.find();
     }

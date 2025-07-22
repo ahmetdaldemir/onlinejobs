@@ -10,8 +10,17 @@ const users_seed_1 = require("./seeds/users.seed");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors({
-        origin: true,
+        origin: [
+            'http://localhost:3000',
+            'http://localhost:3001',
+            'http://localhost:8080',
+            'https://onlinejobs.onrender.com',
+            'https://*.onrender.com',
+            /^https:\/\/.*\.onrender\.com$/,
+        ],
         credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     });
     app.useGlobalPipes(new common_1.ValidationPipe());
     app.use('/public', express.static((0, path_1.join)(__dirname, '..', 'public')));
@@ -31,7 +40,7 @@ async function bootstrap() {
         console.log('Seed service error:', error.message);
     }
     const port = process.env.PORT || 3000;
-    await app.listen(port);
+    await app.listen(port, '0.0.0.0');
     console.log(`🚀 Uygulama http://localhost:${port} adresinde çalışıyor`);
     console.log(`📚 API Dokümantasyonu: http://localhost:${port}/api`);
     console.log(`💬 Chat Test Sayfası: http://localhost:${port}/public/chat-test.html`);

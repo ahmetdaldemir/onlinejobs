@@ -4,6 +4,7 @@ export declare class UsersService {
     private userRepository;
     constructor(userRepository: Repository<User>);
     findTestUsers(): Promise<User[]>;
+    findRealUsers(): Promise<User[]>;
     findAll(): Promise<User[]>;
     findById(id: string): Promise<User>;
     findOnlineJobSeekers(latitude?: number, longitude?: number, radius?: number, categoryId?: string): Promise<User[]>;

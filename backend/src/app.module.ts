@@ -13,6 +13,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { LocationsModule } from './locations/locations.module';
 import { DatabaseModule } from './database/database.module';
 import { SeedsModule } from './seeds/seeds.module';
+import { AiModule } from './ai/ai.module';
 import { AppController } from './app.controller';
 
 @Module({
@@ -35,6 +36,7 @@ import { AppController } from './app.controller';
     CategoriesModule,
     LocationsModule,
     SeedsModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [],

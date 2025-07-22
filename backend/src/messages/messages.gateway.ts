@@ -11,6 +11,7 @@ import { Server, Socket } from 'socket.io';
 import { MessagesService } from './messages.service';
 import { MessageType } from './entities/message.entity';
 import { UsersService } from '../users/users.service';
+import { AiService } from '../ai/ai.service';
 
 @WebSocketGateway({
   cors: {
@@ -38,6 +39,7 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
   constructor(
     private readonly messagesService: MessagesService,
     private readonly usersService: UsersService,
+    private readonly aiService: AiService,
   ) {}
 
   async handleConnection(client: Socket) {
@@ -115,30 +117,63 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
         messageType,
       );
 
-      // Alıcıya real-time mesaj gönder
+      // Göndericiye mesaj gönderildi bilgisi
+      client.emit('message_sent', {
+        id: message.id,
+        content: message.content,
+        receiverId: data.receiverId,
+      });
+
+      // Alıcıya mesajı gönder
       const receiverSocket = this.connectedUsers.get(data.receiverId);
       if (receiverSocket) {
         receiverSocket.emit('new_message', {
           id: message.id,
-          senderId: message.senderId,
-          receiverId: message.receiverId,
+          senderId: senderId,
           content: message.content,
           type: message.type,
           createdAt: message.createdAt,
         });
+
+        // AI yanıtı oluştur (eğer aktifse)
+        try {
+          const aiResponse = await this.aiService.generateResponse(data.receiverId, data.content);
+          if (aiResponse) {
+            // AI yanıtını veritabanına kaydet
+            const aiMessage = await this.messagesService.sendMessage(
+              data.receiverId, // AI'dan gelen yanıt
+              senderId, // Orijinal göndericiye geri gönder
+              aiResponse,
+              MessageType.TEXT,
+            );
+
+            // AI yanıtını orijinal göndericiye gönder
+            client.emit('new_message', {
+              id: aiMessage.id,
+              senderId: data.receiverId,
+              content: aiResponse,
+              type: MessageType.TEXT,
+              createdAt: aiMessage.createdAt,
+              isAiResponse: true,
+            });
+
+            // AI yanıtını AI kullanıcısına da gönder
+            receiverSocket.emit('new_message', {
+              id: aiMessage.id,
+              senderId: data.receiverId,
+              content: aiResponse,
+              type: MessageType.TEXT,
+              createdAt: aiMessage.createdAt,
+              isAiResponse: true,
+            });
+          }
+        } catch (aiError) {
+          console.error('AI response error:', aiError);
+        }
       }
-
-      // Göndericiye onay gönder
-      client.emit('message_sent', {
-        id: message.id,
-        status: 'sent',
-      });
-
-      return { success: true, messageId: message.id };
     } catch (error) {
       console.error('Send message error:', error);
       client.emit('message_error', { error: error.message });
-      return { success: false, error: error.message };
     }
   }
 

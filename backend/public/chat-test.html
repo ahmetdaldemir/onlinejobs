@@ -164,8 +164,13 @@
         <div class="user-id-display">
             <strong>Benim ID:</strong> <span id="myUserId" class="loading">Yükleniyor...</span>
         </div>
-        <input type="text" id="receiverId" placeholder="Alıcı ID (UUID)" value="">
-        <input type="text" id="jwtToken" placeholder="JWT Token (opsiyonel)">
+        <div class="connection-form">
+            <h3>Bağlantı Ayarları</h3>
+            <input type="text" id="myUserId" placeholder="Benim ID (Otomatik)" readonly>
+            <input type="text" id="receiverId" placeholder="Alıcı ID (Opsiyonel)">
+            <input type="text" id="jwtToken" placeholder="JWT Token (opsiyonel)">
+        </div>
+        
         <div class="controls">
             <button onclick="loadUsers()">Test Kullanıcıları Yükle</button>
             <button onclick="loadRealUsers()">Gerçek Kullanıcıları Yükle</button>
@@ -178,7 +183,7 @@
             <button onclick="disconnect()">Bağlantıyı Kes</button>
             <button onclick="testConnection()">Bağlantıyı Test Et</button>
         </div>
-        
+
         <div class="real-users-controls" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
             <h4>Gerçek Kullanıcı Seçimi:</h4>
             <div id="realUsersList" style="margin-bottom: 10px;">
@@ -199,6 +204,34 @@
                 <button onclick="setReceiverAsRealUser(2)">Alıcı 3</button>
                 <button onclick="setReceiverAsRealUser(3)">Alıcı 4</button>
                 <button onclick="setReceiverAsRealUser(4)">Alıcı 5</button>
+            </div>
+        </div>
+
+        <div class="ai-controls" style="margin-top: 10px; padding: 10px; background: #e3f2fd; border-radius: 5px;">
+            <h4>🤖 AI Kontrol Paneli:</h4>
+            <div style="margin-bottom: 10px;">
+                <button onclick="createAiModel()">AI Model Oluştur</button>
+                <button onclick="getAiModels()">AI Modelleri Listele</button>
+                <button onclick="getActiveAiModel()">Aktif Model Getir</button>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <button onclick="trainAiModel()">AI Modeli Eğit</button>
+                <button onclick="activateAiModel()">AI Modeli Aktif Et</button>
+                <button onclick="deactivateAiModel()">AI Modeli Pasif Et</button>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <label>Eğitim Verisi Ekle:</label>
+                <input type="text" id="trainingInput" placeholder="Gelen mesaj" style="width: 200px;">
+                <input type="text" id="trainingResponse" placeholder="Yanıt" style="width: 200px;">
+                <button onclick="addTrainingData()">Ekle</button>
+            </div>
+            <div>
+                <label>AI Test:</label>
+                <input type="text" id="aiTestInput" placeholder="Test mesajı" style="width: 200px;">
+                <button onclick="testAiResponse()">Test Et</button>
+            </div>
+            <div id="aiStatus" style="margin-top: 10px; padding: 5px; background: white; border-radius: 3px;">
+                <p>AI Durumu: <span id="aiStatusText">Bilinmiyor</span></p>
             </div>
         </div>
     </div>
@@ -230,6 +263,7 @@
         let sentMessages = new Map(); // Gönderilen mesajları takip et
         let currentUserName = ''; // Mevcut kullanıcının adı
         let receiverName = ''; // Alıcının adı
+        let currentAiModelId = null; // Mevcut AI model ID'si
 
         // API'den kullanıcıları yükle
         async function loadUsers() {
@@ -388,7 +422,6 @@
         }
 
         function connect() {
-            currentReceiverId = document.getElementById('receiverId').value;
             const token = document.getElementById('jwtToken').value;
 
             if (!currentUserId) {
@@ -396,13 +429,11 @@
                 return;
             }
 
-            if (!currentReceiverId) {
-                alert('Alıcı ID gerekli!');
-                return;
-            }
+            // Alıcı seçimi opsiyonel hale getirildi
+            currentReceiverId = document.getElementById('receiverId').value;
 
-            // UUID formatını kontrol et
-            if (!isValidUUID(currentReceiverId)) {
+            // UUID formatını kontrol et (eğer alıcı girilmişse)
+            if (currentReceiverId && !isValidUUID(currentReceiverId)) {
                 alert('Geçerli bir UUID girin!');
                 return;
             }
@@ -423,7 +454,11 @@
                 updateStatus('Bağlandı', 'connected');
                 addMessage('Sistem', 'Bağlantı kuruldu!', 'received');
                 addMessage('Sistem', `Kullanıcı ID: ${currentUserId}`, 'received');
-                addMessage('Sistem', `Alıcı ID: ${currentReceiverId}`, 'received');
+                if (currentReceiverId) {
+                    addMessage('Sistem', `Alıcı ID: ${currentReceiverId}`, 'received');
+                } else {
+                    addMessage('Sistem', 'Alıcı seçilmedi - Tüm mesajları alabilirsiniz', 'received');
+                }
             });
 
             socket.on('disconnect', () => {
@@ -433,14 +468,16 @@
 
             socket.on('new_message', (data) => {
                 console.log('New message received:', data);
-                if (data.senderId === currentReceiverId) {
-                    // Alıcının adını kullan
-                    const receiverDisplayName = receiverName || 'Alıcı';
-                    addMessage(receiverDisplayName, data.content, 'received');
-                    // Mesajı okundu olarak işaretle
+                
+                // Mesajı göster (alıcı seçimi olmadan da)
+                const senderDisplayName = data.senderId === currentUserId ? 'Ben' : 
+                    (data.senderId === currentReceiverId ? receiverName : `Kullanıcı ${data.senderId.substring(0, 8)}`);
+                
+                addMessage(senderDisplayName, data.content, 'received');
+                
+                // Mesajı okundu olarak işaretle (eğer bu kullanıcıya geldiyse)
+                if (data.senderId !== currentUserId) {
                     markMessageAsRead(data.id);
-                } else {
-                    addMessage('Sistem', `Mesaj alındı (Gönderen: ${data.senderId})`, 'received');
                 }
             });
 
@@ -500,6 +537,12 @@
             const content = messageInput.value.trim();
 
             if (!content || !socket) {
+                return;
+            }
+
+            // Alıcı kontrolü
+            if (!currentReceiverId) {
+                addMessage('Hata', 'Mesaj göndermek için alıcı seçin!', 'received');
                 return;
             }
 
@@ -628,6 +671,214 @@
             testSocket.on('connect_error', (error) => {
                 addMessage('Test', `❌ WebSocket bağlantı hatası: ${error.message}`, 'received');
             });
+        }
+
+        // AI Kontrol Fonksiyonları
+        async function createAiModel() {
+            try {
+                const serverUrl = 'https://onlinejobs.onrender.com';
+                const response = await fetch(`${serverUrl}/ai/models`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer temp-token'
+                    },
+                    body: JSON.stringify({
+                        name: 'ChatBot AI',
+                        description: 'Kullanıcı mesajlaşma tarzlarını öğrenen AI modeli'
+                    })
+                });
+                
+                const model = await response.json();
+                currentAiModelId = model.id;
+                addMessage('AI', `AI model oluşturuldu: ${model.name} (ID: ${model.id})`, 'received');
+                updateAiStatus('Model oluşturuldu');
+            } catch (error) {
+                addMessage('AI Hata', `AI model oluşturma hatası: ${error.message}`, 'received');
+            }
+        }
+
+        async function getAiModels() {
+            try {
+                const serverUrl = 'https://onlinejobs.onrender.com';
+                const response = await fetch(`${serverUrl}/ai/models`);
+                const models = await response.json();
+                
+                addMessage('AI', `${models.length} AI modeli bulundu:`, 'received');
+                models.forEach((model, index) => {
+                    addMessage('AI', `${index + 1}. ${model.name} - Durum: ${model.status} - Doğruluk: ${(model.accuracy * 100).toFixed(1)}%`, 'received');
+                });
+            } catch (error) {
+                addMessage('AI Hata', `AI modelleri listeleme hatası: ${error.message}`, 'received');
+            }
+        }
+
+        async function getActiveAiModel() {
+            try {
+                const serverUrl = 'https://onlinejobs.onrender.com';
+                const response = await fetch(`${serverUrl}/ai/models/active`);
+                const model = await response.json();
+                
+                if (model) {
+                    currentAiModelId = model.id;
+                    addMessage('AI', `Aktif model: ${model.name} - Doğruluk: ${(model.accuracy * 100).toFixed(1)}%`, 'received');
+                    updateAiStatus(`Aktif: ${model.name}`);
+                } else {
+                    addMessage('AI', 'Aktif AI modeli bulunamadı', 'received');
+                    updateAiStatus('Aktif model yok');
+                }
+            } catch (error) {
+                addMessage('AI Hata', `Aktif model getirme hatası: ${error.message}`, 'received');
+            }
+        }
+
+        async function trainAiModel() {
+            if (!currentAiModelId) {
+                addMessage('AI Hata', 'Önce bir AI modeli oluşturun veya seçin', 'received');
+                return;
+            }
+
+            try {
+                const serverUrl = 'https://onlinejobs.onrender.com';
+                const response = await fetch(`${serverUrl}/ai/models/${currentAiModelId}/train`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer temp-token'
+                    }
+                });
+                
+                const result = await response.json();
+                addMessage('AI', `AI modeli eğitildi! Doğruluk: ${(result.accuracy * 100).toFixed(1)}%`, 'received');
+                updateAiStatus(`Eğitildi - Doğruluk: ${(result.accuracy * 100).toFixed(1)}%`);
+            } catch (error) {
+                addMessage('AI Hata', `AI modeli eğitme hatası: ${error.message}`, 'received');
+            }
+        }
+
+        async function activateAiModel() {
+            if (!currentAiModelId) {
+                addMessage('AI Hata', 'Önce bir AI modeli oluşturun veya seçin', 'received');
+                return;
+            }
+
+            try {
+                const serverUrl = 'https://onlinejobs.onrender.com';
+                const response = await fetch(`${serverUrl}/ai/models/${currentAiModelId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer temp-token'
+                    },
+                    body: JSON.stringify({ status: 'active' })
+                });
+                
+                const result = await response.json();
+                addMessage('AI', `AI modeli aktif edildi: ${result.name}`, 'received');
+                updateAiStatus(`Aktif: ${result.name}`);
+            } catch (error) {
+                addMessage('AI Hata', `AI modeli aktif etme hatası: ${error.message}`, 'received');
+            }
+        }
+
+        async function deactivateAiModel() {
+            if (!currentAiModelId) {
+                addMessage('AI Hata', 'Önce bir AI modeli oluşturun veya seçin', 'received');
+                return;
+            }
+
+            try {
+                const serverUrl = 'https://onlinejobs.onrender.com';
+                const response = await fetch(`${serverUrl}/ai/models/${currentAiModelId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer temp-token'
+                    },
+                    body: JSON.stringify({ status: 'inactive' })
+                });
+                
+                const result = await response.json();
+                addMessage('AI', `AI modeli pasif edildi: ${result.name}`, 'received');
+                updateAiStatus(`Pasif: ${result.name}`);
+            } catch (error) {
+                addMessage('AI Hata', `AI modeli pasif etme hatası: ${error.message}`, 'received');
+            }
+        }
+
+        async function addTrainingData() {
+            if (!currentAiModelId) {
+                addMessage('AI Hata', 'Önce bir AI modeli oluşturun veya seçin', 'received');
+                return;
+            }
+
+            const input = document.getElementById('trainingInput').value;
+            const response = document.getElementById('trainingResponse').value;
+
+            if (!input || !response) {
+                addMessage('AI Hata', 'Gelen mesaj ve yanıt alanlarını doldurun', 'received');
+                return;
+            }
+
+            try {
+                const serverUrl = 'https://onlinejobs.onrender.com';
+                const apiResponse = await fetch(`${serverUrl}/ai/models/${currentAiModelId}/training-data`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer temp-token'
+                    },
+                    body: JSON.stringify({
+                        userId: currentUserId || 'test-user',
+                        inputMessage: input,
+                        responseMessage: response
+                    })
+                });
+                
+                const result = await apiResponse.json();
+                addMessage('AI', `Eğitim verisi eklendi: "${input}" → "${response}"`, 'received');
+                
+                // Input alanlarını temizle
+                document.getElementById('trainingInput').value = '';
+                document.getElementById('trainingResponse').value = '';
+            } catch (error) {
+                addMessage('AI Hata', `Eğitim verisi ekleme hatası: ${error.message}`, 'received');
+            }
+        }
+
+        async function testAiResponse() {
+            const testInput = document.getElementById('aiTestInput').value;
+            if (!testInput) {
+                addMessage('AI Hata', 'Test mesajı girin', 'received');
+                return;
+            }
+
+            try {
+                const serverUrl = 'https://onlinejobs.onrender.com';
+                const response = await fetch(`${serverUrl}/ai/test-response`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: testInput })
+                });
+                
+                const result = await response.json();
+                if (result.response) {
+                    addMessage('AI Test', `Girdi: "${testInput}" → Yanıt: "${result.response}"`, 'received');
+                } else {
+                    addMessage('AI Test', `Girdi: "${testInput}" → Yanıt bulunamadı`, 'received');
+                }
+            } catch (error) {
+                addMessage('AI Hata', `AI test hatası: ${error.message}`, 'received');
+            }
+        }
+
+        function updateAiStatus(status) {
+            const statusElement = document.getElementById('aiStatusText');
+            if (statusElement) {
+                statusElement.textContent = status;
+            }
         }
 
         // Sayfa yüklendiğinde kullanıcıları yükle

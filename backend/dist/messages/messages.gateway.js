@@ -18,10 +18,12 @@ const socket_io_1 = require("socket.io");
 const messages_service_1 = require("./messages.service");
 const message_entity_1 = require("./entities/message.entity");
 const users_service_1 = require("../users/users.service");
+const ai_service_1 = require("../ai/ai.service");
 let MessagesGateway = class MessagesGateway {
-    constructor(messagesService, usersService) {
+    constructor(messagesService, usersService, aiService) {
         this.messagesService = messagesService;
         this.usersService = usersService;
+        this.aiService = aiService;
         this.connectedUsers = new Map();
         this.connectionCount = 0;
     }
@@ -77,27 +79,50 @@ let MessagesGateway = class MessagesGateway {
                 }
             }
             const message = await this.messagesService.sendMessage(senderId, data.receiverId, data.content, messageType);
+            client.emit('message_sent', {
+                id: message.id,
+                content: message.content,
+                receiverId: data.receiverId,
+            });
             const receiverSocket = this.connectedUsers.get(data.receiverId);
             if (receiverSocket) {
                 receiverSocket.emit('new_message', {
                     id: message.id,
-                    senderId: message.senderId,
-                    receiverId: message.receiverId,
+                    senderId: senderId,
                     content: message.content,
                     type: message.type,
                     createdAt: message.createdAt,
                 });
+                try {
+                    const aiResponse = await this.aiService.generateResponse(data.receiverId, data.content);
+                    if (aiResponse) {
+                        const aiMessage = await this.messagesService.sendMessage(data.receiverId, senderId, aiResponse, message_entity_1.MessageType.TEXT);
+                        client.emit('new_message', {
+                            id: aiMessage.id,
+                            senderId: data.receiverId,
+                            content: aiResponse,
+                            type: message_entity_1.MessageType.TEXT,
+                            createdAt: aiMessage.createdAt,
+                            isAiResponse: true,
+                        });
+                        receiverSocket.emit('new_message', {
+                            id: aiMessage.id,
+                            senderId: data.receiverId,
+                            content: aiResponse,
+                            type: message_entity_1.MessageType.TEXT,
+                            createdAt: aiMessage.createdAt,
+                            isAiResponse: true,
+                        });
+                    }
+                }
+                catch (aiError) {
+                    console.error('AI response error:', aiError);
+                }
             }
-            client.emit('message_sent', {
-                id: message.id,
-                status: 'sent',
-            });
-            return { success: true, messageId: message.id };
         }
         catch (error) {
             console.error('Send message error:', error);
             client.emit('message_error', { error: error.message });
-            return { success: false, error: error.message };
         }
     }
     async handleJoinConversation(data, client) {
@@ -222,10 +247,22 @@ __decorate([
 exports.MessagesGateway = MessagesGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {
-            origin: '*',
+            origin: [
+                'http://localhost:3000',
+                'http://localhost:3001',
+                'http://localhost:8080',
+                'https://onlinejobs.onrender.com',
+                'https://*.onrender.com',
+                /^https:\/\/.*\.onrender\.com$/,
+                '*',
+            ],
+            credentials: true,
+            methods: ['GET', 'POST'],
         },
+        transports: ['websocket', 'polling'],
     }),
     __metadata("design:paramtypes", [messages_service_1.MessagesService,
-        users_service_1.UsersService])
+        users_service_1.UsersService,
+        ai_service_1.AiService])
 ], MessagesGateway);
 //# sourceMappingURL=messages.gateway.js.map

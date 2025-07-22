@@ -2,28 +2,22 @@ import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { MessagesService } from './messages.service';
 import { UsersService } from '../users/users.service';
+import { AiService } from '../ai/ai.service';
 export declare class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly messagesService;
     private readonly usersService;
+    private readonly aiService;
     server: Server;
     private connectedUsers;
     private connectionCount;
-    constructor(messagesService: MessagesService, usersService: UsersService);
+    constructor(messagesService: MessagesService, usersService: UsersService, aiService: AiService);
     handleConnection(client: Socket): Promise<void>;
     handleDisconnect(client: Socket): void;
     handleSendMessage(data: {
         receiverId: string;
         content: string;
         type?: string;
-    }, client: Socket): Promise<{
-        success: boolean;
-        messageId: string;
-        error?: undefined;
-    } | {
-        success: boolean;
-        error: any;
-        messageId?: undefined;
-    }>;
+    }, client: Socket): Promise<void>;
     handleJoinConversation(data: {
         otherUserId: string;
     }, client: Socket): Promise<void>;

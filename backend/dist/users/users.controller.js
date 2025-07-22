@@ -25,6 +25,9 @@ let UsersController = class UsersController {
     async findTestUsers() {
         return this.usersService.findTestUsers();
     }
+    async findRealUsers() {
+        return this.usersService.findRealUsers();
+    }
     async findAll() {
         return this.usersService.findAll();
     }
@@ -53,6 +56,14 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "findTestUsers", null);
+__decorate([
+    (0, common_1.Get)('real'),
+    (0, swagger_1.ApiOperation)({ summary: 'Gerçek kullanıcıları listele (Public)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Gerçek kullanıcılar listelendi' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "findRealUsers", null);
 __decorate([
     (0, common_1.Get)(),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
