@@ -21,27 +21,27 @@ export class UsersSeedService {
 
     console.log('Creating test users...');
 
-    // Test kullanıcısı 1
+    // Test kullanıcısı 1 - İş Arayan
     const user1 = this.userRepository.create({
       firstName: 'Test',
       lastName: 'User 1',
       email: 'testuser1@example.com',
       phone: '+905551234567',
       password: await bcrypt.hash('password123', 10),
-      userType: UserType.JOB_SEEKER,
+      userTypes: [UserType.JOB_SEEKER],
       status: UserStatus.ACTIVE,
       isVerified: true,
       isOnline: true,
     });
 
-    // Test kullanıcısı 2
+    // Test kullanıcısı 2 - İşveren
     const user2 = this.userRepository.create({
       firstName: 'Test',
       lastName: 'User 2',
       email: 'testuser2@example.com',
       phone: '+905559876543',
       password: await bcrypt.hash('password123', 10),
-      userType: UserType.EMPLOYER,
+      userTypes: [UserType.EMPLOYER],
       status: UserStatus.ACTIVE,
       isVerified: true,
       isOnline: true,

@@ -1,5 +1,5 @@
 import { Controller, Get, Put, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserStatus } from './entities/user.entity';
@@ -32,6 +32,24 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  @Get('active')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Aktif kullanıcıları listele' })
+  @ApiResponse({ status: 200, description: 'Aktif kullanıcılar listelendi' })
+  async findActiveUsers() {
+    return this.usersService.findActiveUsers();
+  }
+
+  @Get('online')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Online kullanıcıları listele' })
+  @ApiResponse({ status: 200, description: 'Online kullanıcılar listelendi' })
+  async findOnlineUsers() {
+    return this.usersService.findOnlineUsers();
+  }
+
   @Get('online-job-seekers')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -48,6 +66,46 @@ export class UsersController {
     @Query('categoryId') categoryId?: string,
   ) {
     return this.usersService.findOnlineJobSeekers(latitude, longitude, radius, categoryId);
+  }
+
+  @Get('online-employers')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Online işverenleri listele' })
+  @ApiQuery({ name: 'latitude', required: false, type: Number })
+  @ApiQuery({ name: 'longitude', required: false, type: Number })
+  @ApiQuery({ name: 'radius', required: false, type: Number })
+  @ApiQuery({ name: 'categoryId', required: false, type: String })
+  @ApiResponse({ status: 200, description: 'Online işverenler listelendi' })
+  async findOnlineEmployers(
+    @Query('latitude') latitude?: number,
+    @Query('longitude') longitude?: number,
+    @Query('radius') radius?: number,
+    @Query('categoryId') categoryId?: string,
+  ) {
+    return this.usersService.findOnlineEmployers(latitude, longitude, radius, categoryId);
+  }
+
+  @Get('by-type/:userType')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Kullanıcıları tipe göre listele' })
+  @ApiParam({ name: 'userType', description: 'Kullanıcı tipi: job_seeker, employer, both' })
+  @ApiResponse({ status: 200, description: 'Kullanıcılar listelendi' })
+  async findUsersByType(@Param('userType') userType: string) {
+    return this.usersService.findUsersByType(userType);
+  }
+
+  @Put('user-types')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Kullanıcı tiplerini güncelle' })
+  @ApiResponse({ status: 200, description: 'Kullanıcı tipleri güncellendi' })
+  async updateUserTypes(
+    @Request() req,
+    @Body('userTypes') userTypes: string[],
+  ) {
+    return this.usersService.updateUserTypes(req.user.sub, userTypes);
   }
 
   @Get(':id')
@@ -70,6 +128,19 @@ export class UsersController {
     @Body('status') status: UserStatus,
   ) {
     return this.usersService.updateStatus(req.user.sub, status);
+  }
+
+
+  @Put('is-online')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Kullanıcı online durumunu güncelle' })
+  @ApiResponse({ status: 200, description: 'Online durum güncellendi' })
+  async updateIsOnline(
+    @Request() req,
+    @Body('isOnline') isOnline: boolean,
+  ) {
+    return this.usersService.updateIsOnline(req.user.sub, isOnline);
   }
 
   @Put('location')

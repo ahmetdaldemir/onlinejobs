@@ -1,11 +1,10 @@
-import { UserType } from '../../users/entities/user.entity';
 export declare class RegisterDto {
     firstName: string;
     lastName: string;
     email: string;
     phone: string;
     password: string;
-    userType: UserType;
+    userTypes: string[];
     categoryId?: string;
 }
 export declare class LoginDto {
@@ -23,7 +22,7 @@ export declare class AuthResponseDto {
         lastName: string;
         email: string;
         phone: string;
-        userType: UserType;
+        userTypes: string[];
         status: string;
         isVerified: boolean;
         isOnline: boolean;

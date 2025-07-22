@@ -174,6 +174,10 @@
         <div class="controls">
             <button onclick="loadUsers()">Test Kullanıcıları Yükle</button>
             <button onclick="loadRealUsers()">Gerçek Kullanıcıları Yükle</button>
+            <button onclick="loadActiveUsers()">Aktif Kullanıcıları Yükle</button>
+            <button onclick="loadOnlineUsers()">Online Kullanıcıları Yükle</button>
+            <button onclick="loadOnlineJobSeekers()">Online İş Arayanlar</button>
+            <button onclick="loadOnlineEmployers()">Online İşverenler</button>
             <button onclick="generateNewUserId()">Yeni ID Oluştur</button>
             <button onclick="setAsUser1()">Kullanıcı 1 Ol</button>
             <button onclick="setAsUser2()">Kullanıcı 2 Ol</button>
@@ -442,6 +446,105 @@
                 addMessage('Sistem', `Alıcı Jane Smith olarak ayarlandı: ${user2Id}`, 'received');
             } else {
                 addMessage('Hata', 'Kullanıcı 2 henüz yüklenmedi!', 'received');
+            }
+        }
+
+        // Aktif kullanıcıları yükle
+        async function loadActiveUsers() {
+            try {
+                const serverUrl = 'https://onlinejobs.onrender.com';
+                const response = await fetch(`${serverUrl}/users/active`);
+                const users = await response.json();
+                
+                if (users && users.length > 0) {
+                    addMessage('Sistem', `${users.length} aktif kullanıcı bulundu!`, 'received');
+                    
+                    // Kullanıcıları listele
+                    users.forEach((user, index) => {
+                        const onlineStatus = user.isOnline ? '🟢 Online' : '🔴 Offline';
+                        addMessage('Sistem', `${index + 1}. ${user.firstName} ${user.lastName} - ${onlineStatus} - Son görülme: ${new Date(user.lastSeen).toLocaleString()}`, 'received');
+                    });
+                } else {
+                    addMessage('Hata', 'Aktif kullanıcı bulunamadı!', 'received');
+                }
+            } catch (error) {
+                console.error('Error loading active users:', error);
+                addMessage('Hata', 'Aktif kullanıcılar yüklenirken hata oluştu!', 'received');
+                addMessage('Hata', `Hata detayı: ${error.message}`, 'received');
+            }
+        }
+
+        // Online kullanıcıları yükle
+        async function loadOnlineUsers() {
+            try {
+                const serverUrl = 'https://onlinejobs.onrender.com';
+                const response = await fetch(`${serverUrl}/users/online`);
+                const users = await response.json();
+                
+                if (users && users.length > 0) {
+                    addMessage('Sistem', `${users.length} online kullanıcı bulundu!`, 'received');
+                    
+                    // Kullanıcıları listele
+                    users.forEach((user, index) => {
+                        addMessage('Sistem', `${index + 1}. ${user.firstName} ${user.lastName} - Son görülme: ${new Date(user.lastSeen).toLocaleString()}`, 'received');
+                    });
+                } else {
+                    addMessage('Hata', 'Online kullanıcı bulunamadı!', 'received');
+                }
+            } catch (error) {
+                console.error('Error loading online users:', error);
+                addMessage('Hata', 'Online kullanıcılar yüklenirken hata oluştu!', 'received');
+                addMessage('Hata', `Hata detayı: ${error.message}`, 'received');
+            }
+        }
+
+        // Online iş arayanları yükle
+        async function loadOnlineJobSeekers() {
+            try {
+                const serverUrl = 'https://onlinejobs.onrender.com';
+                const response = await fetch(`${serverUrl}/users/online-job-seekers`);
+                const users = await response.json();
+                
+                if (users && users.length > 0) {
+                    addMessage('Sistem', `${users.length} online iş arayan bulundu!`, 'received');
+                    
+                    // Kullanıcıları listele
+                    users.forEach((user, index) => {
+                        const userTypes = user.userTypes ? user.userTypes.join(', ') : 'Bilinmiyor';
+                        addMessage('Sistem', `${index + 1}. ${user.firstName} ${user.lastName} - Tipler: ${userTypes} - Son görülme: ${new Date(user.lastSeen).toLocaleString()}`, 'received');
+                    });
+                } else {
+                    addMessage('Hata', 'Online iş arayan bulunamadı!', 'received');
+                }
+            } catch (error) {
+                console.error('Error loading online job seekers:', error);
+                addMessage('Hata', 'Online iş arayanlar yüklenirken hata oluştu!', 'received');
+                addMessage('Hata', `Hata detayı: ${error.message}`, 'received');
+            }
+        }
+
+        // Online işverenleri yükle
+        async function loadOnlineEmployers() {
+            try {
+                const serverUrl = 'https://onlinejobs.onrender.com';
+                const response = await fetch(`${serverUrl}/users/online-employers`);
+                const users = await response.json();
+                
+                if (users && users.length > 0) {
+                    addMessage('Sistem', `${users.length} online işveren bulundu!`, 'received');
+                    
+                    // Kullanıcıları listele
+                    users.forEach((user, index) => {
+                        const userTypes = user.userTypes ? user.userTypes.join(', ') : 'Bilinmiyor';
+                        addMessage('Sistem', `${index + 1}. ${user.firstName} ${user.lastName} - Tipler: ${userTypes} - Son görülme: ${new Date(user.lastSeen).toLocaleString()}`, 'received');
+                    });
+                } else {
+                    addMessage('Hata', 'Online işveren bulunamadı!', 'received');
+                }
+            } catch (error) {
+                console.error('Error loading online employers:', error);
+                addMessage('Hata', 'Online işverenler yüklenirken hata oluştu!', 'received');
+                addMessage('Hata', `Hata detayı: ${error.message}`, 'received');
             }
         }
 

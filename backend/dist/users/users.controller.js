@@ -31,14 +31,32 @@ let UsersController = class UsersController {
     async findAll() {
         return this.usersService.findAll();
     }
+    async findActiveUsers() {
+        return this.usersService.findActiveUsers();
+    }
+    async findOnlineUsers() {
+        return this.usersService.findOnlineUsers();
+    }
     async findOnlineJobSeekers(latitude, longitude, radius, categoryId) {
         return this.usersService.findOnlineJobSeekers(latitude, longitude, radius, categoryId);
+    }
+    async findOnlineEmployers(latitude, longitude, radius, categoryId) {
+        return this.usersService.findOnlineEmployers(latitude, longitude, radius, categoryId);
+    }
+    async findUsersByType(userType) {
+        return this.usersService.findUsersByType(userType);
+    }
+    async updateUserTypes(req, userTypes) {
+        return this.usersService.updateUserTypes(req.user.sub, userTypes);
     }
     async findById(id) {
         return this.usersService.findById(id);
     }
     async updateStatus(req, status) {
         return this.usersService.updateStatus(req.user.sub, status);
+    }
+    async updateIsOnline(req, isOnline) {
+        return this.usersService.updateIsOnline(req.user.sub, isOnline);
     }
     async updateLocation(req, latitude, longitude) {
         return this.usersService.updateLocation(req.user.sub, latitude, longitude);
@@ -75,6 +93,26 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.Get)('active'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Aktif kullanıcıları listele' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Aktif kullanıcılar listelendi' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "findActiveUsers", null);
+__decorate([
+    (0, common_1.Get)('online'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Online kullanıcıları listele' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Online kullanıcılar listelendi' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "findOnlineUsers", null);
+__decorate([
     (0, common_1.Get)('online-job-seekers'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
@@ -92,6 +130,48 @@ __decorate([
     __metadata("design:paramtypes", [Number, Number, Number, String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "findOnlineJobSeekers", null);
+__decorate([
+    (0, common_1.Get)('online-employers'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Online işverenleri listele' }),
+    (0, swagger_1.ApiQuery)({ name: 'latitude', required: false, type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'longitude', required: false, type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'radius', required: false, type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'categoryId', required: false, type: String }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Online işverenler listelendi' }),
+    __param(0, (0, common_1.Query)('latitude')),
+    __param(1, (0, common_1.Query)('longitude')),
+    __param(2, (0, common_1.Query)('radius')),
+    __param(3, (0, common_1.Query)('categoryId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number, Number, String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "findOnlineEmployers", null);
+__decorate([
+    (0, common_1.Get)('by-type/:userType'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcıları tipe göre listele' }),
+    (0, swagger_1.ApiParam)({ name: 'userType', description: 'Kullanıcı tipi: job_seeker, employer, both' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcılar listelendi' }),
+    __param(0, (0, common_1.Param)('userType')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "findUsersByType", null);
+__decorate([
+    (0, common_1.Put)('user-types'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı tiplerini güncelle' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı tipleri güncellendi' }),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)('userTypes')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Array]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateUserTypes", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
@@ -116,6 +196,18 @@ __decorate([
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateStatus", null);
+__decorate([
+    (0, common_1.Put)('is-online'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı online durumunu güncelle' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Online durum güncellendi' }),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)('isOnline')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Boolean]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateIsOnline", null);
 __decorate([
     (0, common_1.Put)('location'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

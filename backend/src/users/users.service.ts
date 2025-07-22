@@ -16,15 +16,31 @@ export class UsersService {
         { email: 'testuser1@example.com' },
         { email: 'testuser2@example.com' }
       ],
-      select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userType', 'status']
+      select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userTypes', 'status']
     });
   }
 
   async findRealUsers(): Promise<User[]> {
     return this.userRepository.find({
-      select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userType', 'status'],
+      select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userTypes', 'status'],
       order: { createdAt: 'DESC' },
       take: 10 // Son 10 kullanıcıyı getir
+    });
+  }
+
+  async findActiveUsers(): Promise<User[]> {
+    return this.userRepository.find({
+      where: { status: UserStatus.ACTIVE },
+      select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userTypes', 'status', 'isOnline', 'lastSeen'],
+      order: { createdAt: 'DESC' }
+    });
+  }
+
+  async findOnlineUsers(): Promise<User[]> {
+    return this.userRepository.find({
+      where: { isOnline: true },
+      select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userTypes', 'status', 'isOnline', 'lastSeen'],
+      order: { lastSeen: 'DESC' }
     });
   }
 
@@ -48,8 +64,9 @@ export class UsersService {
   ): Promise<User[]> {
     let query = this.userRepository
       .createQueryBuilder('user')
-      .where('user.userType = :userType', { userType: 'job_seeker' })
-      .andWhere('user.status = :status', { status: UserStatus.ONLINE });
+      .where("'job_seeker' = ANY(user.userTypes)")
+      .andWhere('user.isOnline = :isOnline', { isOnline: true })
+      .andWhere('user.status = :status', { status: UserStatus.ACTIVE });
 
     if (categoryId) {
       query = query.andWhere('user.categoryId = :categoryId', { categoryId });
@@ -70,6 +87,54 @@ export class UsersService {
     }
 
     return query.getMany();
+  }
+
+  // Yeni fonksiyonlar ekleyelim
+  async findOnlineEmployers(
+    latitude?: number,
+    longitude?: number,
+    radius?: number,
+    categoryId?: string,
+  ): Promise<User[]> {
+    let query = this.userRepository
+      .createQueryBuilder('user')
+      .where("'employer' = ANY(user.userTypes)")
+      .andWhere('user.isOnline = :isOnline', { isOnline: true })
+      .andWhere('user.status = :status', { status: UserStatus.ACTIVE });
+
+    if (categoryId) {
+      query = query.andWhere('user.categoryId = :categoryId', { categoryId });
+    }
+
+    if (latitude && longitude && radius) {
+      query = query.andWhere(
+        `(
+          6371 * acos(
+            cos(radians(:latitude)) * cos(radians(user.latitude)) *
+            cos(radians(user.longitude) - radians(:longitude)) +
+            sin(radians(:latitude)) * sin(radians(user.latitude))
+          )
+        ) <= :radius`,
+        { latitude, longitude, radius }
+      );
+    }
+
+    return query.getMany();
+  }
+
+  async findUsersByType(userType: string): Promise<User[]> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where(":userType = ANY(user.userTypes)")
+      .andWhere('user.status = :status', { status: UserStatus.ACTIVE })
+      .setParameter('userType', userType)
+      .getMany();
+  }
+
+  async updateUserTypes(userId: string, userTypes: string[]): Promise<User> {
+    const user = await this.findById(userId);
+    user.userTypes = userTypes;
+    return this.userRepository.save(user);
   }
 
   async updateStatus(userId: string, status: UserStatus): Promise<User> {
@@ -95,7 +160,6 @@ export class UsersService {
   async setUserOnline(userId: string): Promise<User> {
     const user = await this.findById(userId);
     user.isOnline = true;
-    user.status = UserStatus.ONLINE;
     user.lastSeen = new Date();
     return this.userRepository.save(user);
   }
@@ -104,7 +168,6 @@ export class UsersService {
   async setUserOffline(userId: string): Promise<User> {
     const user = await this.findById(userId);
     user.isOnline = false;
-    user.status = UserStatus.OFFLINE;
     user.lastSeen = new Date();
     return this.userRepository.save(user);
   }
@@ -115,5 +178,12 @@ export class UsersService {
     for (const user of testUsers) {
       await this.setUserOnline(user.id);
     }
+  }
+
+  async updateIsOnline(userId: string, isOnline: boolean): Promise<User> {
+    const user = await this.findById(userId);
+    user.isOnline = isOnline;
+    user.lastSeen = new Date();
+    return this.userRepository.save(user);
   }
 } 

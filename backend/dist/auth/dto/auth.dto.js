@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthResponseDto = exports.CheckPhoneDto = exports.LoginDto = exports.RegisterDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
-const user_entity_1 = require("../../users/entities/user.entity");
 class RegisterDto {
 }
 exports.RegisterDto = RegisterDto;
@@ -43,10 +42,10 @@ __decorate([
     __metadata("design:type", String)
 ], RegisterDto.prototype, "password", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ enum: user_entity_1.UserType }),
-    (0, class_validator_1.IsEnum)(user_entity_1.UserType),
-    __metadata("design:type", String)
-], RegisterDto.prototype, "userType", void 0);
+    (0, swagger_1.ApiProperty)({ type: [String], description: 'Kullanıcı tipleri: job_seeker, employer' }),
+    (0, class_validator_1.IsString)({ each: true }),
+    __metadata("design:type", Array)
+], RegisterDto.prototype, "userTypes", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
     (0, class_validator_1.IsOptional)(),

@@ -24,9 +24,9 @@ export class RegisterDto {
   @MinLength(6)
   password: string;
 
-  @ApiProperty({ enum: UserType })
-  @IsEnum(UserType)
-  userType: UserType;
+  @ApiProperty({ type: [String], description: 'Kullanıcı tipleri: job_seeker, employer' })
+  @IsString({ each: true })
+  userTypes: string[];
 
   @ApiProperty({ required: false })
   @IsOptional()
@@ -61,7 +61,7 @@ export class AuthResponseDto {
     lastName: string;
     email: string;
     phone: string;
-    userType: UserType;
+    userTypes: string[];
     status: string;
     isVerified: boolean;
     isOnline: boolean;

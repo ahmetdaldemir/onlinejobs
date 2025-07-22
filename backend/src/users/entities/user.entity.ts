@@ -17,11 +17,15 @@ export enum UserType {
   EMPLOYER = 'employer',
 }
 
+export enum UserRole {
+  JOB_SEEKER = 'job_seeker',
+  EMPLOYER = 'employer',
+  BOTH = 'both', // Hem iş arayan hem işveren
+}
+
 export enum UserStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
-  ONLINE = 'online',
-  OFFLINE = 'offline',
 }
 
 @Entity('users')
@@ -53,12 +57,12 @@ export class User {
   password: string;
 
   @Column({
-    type: 'enum',
-    enum: UserType,
-    default: UserType.JOB_SEEKER,
+    type: 'text',
+    array: true,
+    default: [UserType.JOB_SEEKER],
   })
-  @ApiProperty({ enum: UserType })
-  userType: UserType;
+  @ApiProperty({ type: [String], description: 'Kullanıcı tipleri: job_seeker, employer, both' })
+  userTypes: string[];
 
   @Column({
     type: 'enum',

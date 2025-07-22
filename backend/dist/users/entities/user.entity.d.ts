@@ -2,11 +2,14 @@ export declare enum UserType {
     JOB_SEEKER = "job_seeker",
     EMPLOYER = "employer"
 }
+export declare enum UserRole {
+    JOB_SEEKER = "job_seeker",
+    EMPLOYER = "employer",
+    BOTH = "both"
+}
 export declare enum UserStatus {
     ACTIVE = "active",
-    INACTIVE = "inactive",
-    ONLINE = "online",
-    OFFLINE = "offline"
+    INACTIVE = "inactive"
 }
 export declare class User {
     id: string;
@@ -15,7 +18,7 @@ export declare class User {
     email: string;
     phone: string;
     password: string;
-    userType: UserType;
+    userTypes: string[];
     status: UserStatus;
     bio: string;
     profileImage: string;
