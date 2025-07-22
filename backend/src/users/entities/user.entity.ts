@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
 
 export enum UserType {
   JOB_SEEKER = 'job_seeker',
@@ -40,7 +41,7 @@ export class User {
   lastName: string;
 
   @Column({ length: 255, unique: true })
-  @ApiProperty()
+  @IsOptional()
   email: string;
 
   @Column({ length: 20, unique: true })

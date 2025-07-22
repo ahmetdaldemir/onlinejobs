@@ -44,7 +44,7 @@ export class LoginDto {
   password: string;
 }
 
-export class ChckPhoneDto {
+export class CheckPhoneDto {
   @ApiProperty()
   @IsString()
   phone: string;

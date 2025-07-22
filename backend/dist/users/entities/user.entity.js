@@ -13,6 +13,7 @@ exports.User = exports.UserStatus = exports.UserType = void 0;
 const typeorm_1 = require("typeorm");
 const class_transformer_1 = require("class-transformer");
 const swagger_1 = require("@nestjs/swagger");
+const class_validator_1 = require("class-validator");
 var UserType;
 (function (UserType) {
     UserType["JOB_SEEKER"] = "job_seeker";
@@ -45,7 +46,7 @@ __decorate([
 ], User.prototype, "lastName", void 0);
 __decorate([
     (0, typeorm_1.Column)({ length: 255, unique: true }),
-    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([

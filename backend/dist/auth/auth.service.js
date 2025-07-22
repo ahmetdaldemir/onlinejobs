@@ -117,13 +117,17 @@ let AuthService = class AuthService {
         }
         return user;
     }
-    async chckPhone(chckPhoneDto) {
-        const { phone } = chckPhoneDto;
+    async checkPhone(checkPhoneDto) {
+        const { phone } = checkPhoneDto;
         const existingUser = await this.userRepository.findOne({
             where: { phone },
         });
         if (existingUser) {
-            throw new common_1.ConflictException('Telefon numarası zaten kullanımda');
+            return {
+                message: 'Telefon numarası zaten kullanımda',
+                status: 'error',
+                statusCode: 400,
+            };
         }
         return {
             message: 'Telefon numarası kontrolü başarılı',

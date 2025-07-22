@@ -1,11 +1,11 @@
 import { AuthService } from './auth.service';
-import { RegisterDto, LoginDto, AuthResponseDto, ChckPhoneDto } from './dto/auth.dto';
+import { RegisterDto, LoginDto, AuthResponseDto, CheckPhoneDto } from './dto/auth.dto';
 export declare class AuthController {
     private readonly authService;
     constructor(authService: AuthService);
     register(registerDto: RegisterDto): Promise<AuthResponseDto>;
     login(loginDto: LoginDto): Promise<AuthResponseDto>;
-    chckPhone(chckPhoneDto: ChckPhoneDto): Promise<{
+    checkPhone(checkPhoneDto: CheckPhoneDto): Promise<{
         message: string;
         status: string;
         statusCode: number;

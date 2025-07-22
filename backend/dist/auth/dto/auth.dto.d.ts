@@ -12,7 +12,7 @@ export declare class LoginDto {
     email: string;
     password: string;
 }
-export declare class ChckPhoneDto {
+export declare class CheckPhoneDto {
     phone: string;
 }
 export declare class AuthResponseDto {
