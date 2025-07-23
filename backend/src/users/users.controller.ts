@@ -103,9 +103,9 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Kullanıcı tipleri güncellendi' })
   async updateUserTypes(
     @Request() req,
-    @Body('userTypes') userTypes: string[],
+    @Body('userType') userType: string,
   ) {
-    return this.usersService.updateUserTypes(req.user.sub, userTypes);
+    return this.usersService.updateUserTypes(req.user.sub, userType);
   }
 
   @Get(':id')

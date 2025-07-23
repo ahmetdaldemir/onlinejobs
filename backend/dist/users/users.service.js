@@ -30,12 +30,12 @@ let UsersService = class UsersService {
                 { phone: '+905550000004' },
                 { phone: '+905550000005' }
             ],
-            select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userTypes', 'status']
+            select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userType', 'status']
         });
     }
     async findRealUsers() {
         return this.userRepository.find({
-            select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userTypes', 'status'],
+            select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userType', 'status'],
             order: { createdAt: 'DESC' },
             take: 10
         });
@@ -43,14 +43,14 @@ let UsersService = class UsersService {
     async findActiveUsers() {
         return this.userRepository.find({
             where: { status: user_entity_1.UserStatus.ACTIVE },
-            select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userTypes', 'status', 'isOnline', 'lastSeen'],
+            select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userType', 'status', 'isOnline', 'lastSeen'],
             order: { createdAt: 'DESC' }
         });
     }
     async findOnlineUsers() {
         return this.userRepository.find({
             where: { isOnline: true },
-            select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userTypes', 'status', 'isOnline', 'lastSeen'],
+            select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userType', 'status', 'isOnline', 'lastSeen'],
             order: { lastSeen: 'DESC' }
         });
     }
@@ -67,7 +67,7 @@ let UsersService = class UsersService {
     async findOnlineJobSeekers(latitude, longitude, radius, categoryId) {
         let query = this.userRepository
             .createQueryBuilder('user')
-            .where("'job_seeker' = ANY(user.userTypes)")
+            .where("'worker' = ANY(user.userType)")
             .andWhere('user.isOnline = :isOnline', { isOnline: true })
             .andWhere('user.status = :status', { status: user_entity_1.UserStatus.ACTIVE });
         if (categoryId) {
@@ -87,7 +87,7 @@ let UsersService = class UsersService {
     async findOnlineEmployers(latitude, longitude, radius, categoryId) {
         let query = this.userRepository
             .createQueryBuilder('user')
-            .where("'employer' = ANY(user.userTypes)")
+            .where("'employer' = ANY(user.userType)")
             .andWhere('user.isOnline = :isOnline', { isOnline: true })
             .andWhere('user.status = :status', { status: user_entity_1.UserStatus.ACTIVE });
         if (categoryId) {
@@ -107,14 +107,14 @@ let UsersService = class UsersService {
     async findUsersByType(userType) {
         return this.userRepository
             .createQueryBuilder('user')
-            .where(":userType = ANY(user.userTypes)")
+            .where(":userType = ANY(user.userType)")
             .andWhere('user.status = :status', { status: user_entity_1.UserStatus.ACTIVE })
             .setParameter('userType', userType)
             .getMany();
     }
-    async updateUserTypes(userId, userTypes) {
+    async updateUserTypes(userId, userType) {
         const user = await this.findById(userId);
-        user.userTypes = userTypes;
+        user.userType = userType;
         return this.userRepository.save(user);
     }
     async updateStatus(userId, status) {

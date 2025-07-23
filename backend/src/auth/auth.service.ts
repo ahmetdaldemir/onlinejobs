@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { User, UserType } from '../users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 import { RegisterDto, LoginDto, AuthResponseDto, CheckPhoneDto } from './dto/auth.dto';
 
 @Injectable()
@@ -15,11 +15,11 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
-    const { email, phone, password, ...rest } = registerDto;
+    const { email, phone, password, userType, ...rest } = registerDto;
 
     // Email ve telefon kontrolü
     const existingUser = await this.userRepository.findOne({
-      where: [{ email }, { phone }],
+      where: [{userType}, { phone }],
     });
 
     if (existingUser) {
@@ -34,6 +34,7 @@ export class AuthService {
       ...rest,
       email,
       phone,
+      userType,
       password: hashedPassword,
     });
 
@@ -51,7 +52,7 @@ export class AuthService {
         lastName: savedUser.lastName,
         email: savedUser.email,
         phone: savedUser.phone,
-        userTypes: savedUser.userTypes,
+        userType: savedUser.userType,
         status: savedUser.status,
         isVerified: savedUser.isVerified,
         isOnline: savedUser.isOnline,
@@ -71,14 +72,14 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto): Promise<AuthResponseDto> { 
-    const { phone, password } = loginDto;
+    const { phone, password, userType } = loginDto;
 
     // Kullanıcıyı bul
     const user = await this.userRepository.findOne({
-      where: { phone },
+      where: { phone, userType },
       relations: ['category'],
     });
-
+ 
     if (!user) {
       throw new UnauthorizedException('Geçersiz telefon numarası veya şifre');
     }
@@ -101,7 +102,7 @@ export class AuthService {
         lastName: user.lastName,
         email: user.email,
         phone: user.phone,
-        userTypes: user.userTypes,
+        userType: user.userType,
         status: user.status,
         isVerified: user.isVerified,
         isOnline: user.isOnline,

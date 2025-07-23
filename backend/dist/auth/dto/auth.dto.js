@@ -42,10 +42,10 @@ __decorate([
     __metadata("design:type", String)
 ], RegisterDto.prototype, "password", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ type: [String], description: 'Kullanıcı tipleri: job_seeker, employer' }),
-    (0, class_validator_1.IsString)({ each: true }),
-    __metadata("design:type", Array)
-], RegisterDto.prototype, "userTypes", void 0);
+    (0, swagger_1.ApiProperty)({ type: String, description: 'Kullanıcı tipi: worker, employer' }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], RegisterDto.prototype, "userType", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
     (0, class_validator_1.IsOptional)(),
@@ -65,6 +65,12 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], LoginDto.prototype, "password", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], LoginDto.prototype, "userType", void 0);
 class CheckPhoneDto {
 }
 exports.CheckPhoneDto = CheckPhoneDto;

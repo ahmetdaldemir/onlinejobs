@@ -4,12 +4,13 @@ export declare class RegisterDto {
     email: string;
     phone: string;
     password: string;
-    userTypes: string[];
+    userType: string;
     categoryId?: string;
 }
 export declare class LoginDto {
     phone: string;
     password: string;
+    userType: string;
 }
 export declare class CheckPhoneDto {
     phone: string;
@@ -22,7 +23,7 @@ export declare class AuthResponseDto {
         lastName: string;
         email: string;
         phone: string;
-        userTypes: string[];
+        userType: string;
         status: string;
         isVerified: boolean;
         isOnline: boolean;

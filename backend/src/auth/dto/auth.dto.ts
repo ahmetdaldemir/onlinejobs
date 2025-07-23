@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, MinLength, IsEnum, IsOptional } from 'class-validator';
-import { UserType } from '../../users/entities/user.entity';
+import { IsEmail, IsString, MinLength, IsOptional } from 'class-validator';
 
 export class RegisterDto {
   @ApiProperty()
@@ -24,9 +23,9 @@ export class RegisterDto {
   @MinLength(6)
   password: string;
 
-  @ApiProperty({ type: [String], description: 'Kullanıcı tipleri: job_seeker, employer' })
-  @IsString({ each: true })
-  userTypes: string[];
+  @ApiProperty({ type: String, description: 'Kullanıcı tipi: worker, employer' })
+  @IsString()
+  userType: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
@@ -42,6 +41,11 @@ export class LoginDto {
   @ApiProperty()
   @IsString()
   password: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  userType: string;
 }
 
 export class CheckPhoneDto {
@@ -61,7 +65,7 @@ export class AuthResponseDto {
     lastName: string;
     email: string;
     phone: string;
-    userTypes: string[];
+    userType: string;
     status: string;
     isVerified: boolean;
     isOnline: boolean;

@@ -12,7 +12,7 @@ export declare class UsersService {
     findOnlineJobSeekers(latitude?: number, longitude?: number, radius?: number, categoryId?: string): Promise<User[]>;
     findOnlineEmployers(latitude?: number, longitude?: number, radius?: number, categoryId?: string): Promise<User[]>;
     findUsersByType(userType: string): Promise<User[]>;
-    updateUserTypes(userId: string, userTypes: string[]): Promise<User>;
+    updateUserTypes(userId: string, userType: string): Promise<User>;
     updateStatus(userId: string, status: UserStatus): Promise<User>;
     updateLocation(userId: string, latitude: number, longitude: number): Promise<User>;
     updateProfile(userId: string, updateData: any): Promise<User>;

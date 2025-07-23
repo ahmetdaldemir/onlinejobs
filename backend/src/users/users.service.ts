@@ -19,13 +19,13 @@ export class UsersService {
         { phone: '+905550000004' },
         { phone: '+905550000005' }
       ],
-      select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userTypes', 'status']
+      select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userType', 'status']
     });
   }
 
   async findRealUsers(): Promise<User[]> {
     return this.userRepository.find({
-      select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userTypes', 'status'],
+      select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userType', 'status'],
       order: { createdAt: 'DESC' },
       take: 10 // Son 10 kullanıcıyı getir
     });
@@ -34,7 +34,7 @@ export class UsersService {
   async findActiveUsers(): Promise<User[]> {
     return this.userRepository.find({
       where: { status: UserStatus.ACTIVE },
-      select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userTypes', 'status', 'isOnline', 'lastSeen'],
+      select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userType', 'status', 'isOnline', 'lastSeen'],
       order: { createdAt: 'DESC' }
     });
   }
@@ -42,7 +42,7 @@ export class UsersService {
   async findOnlineUsers(): Promise<User[]> {
     return this.userRepository.find({
       where: { isOnline: true },
-      select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userTypes', 'status', 'isOnline', 'lastSeen'],
+      select: ['id', 'firstName', 'lastName', 'email', 'phone', 'userType', 'status', 'isOnline', 'lastSeen'],
       order: { lastSeen: 'DESC' }
     });
   }
@@ -67,7 +67,7 @@ export class UsersService {
   ): Promise<User[]> {
     let query = this.userRepository
       .createQueryBuilder('user')
-      .where("'job_seeker' = ANY(user.userTypes)")
+      .where("'worker' = ANY(user.userType)")
       .andWhere('user.isOnline = :isOnline', { isOnline: true })
       .andWhere('user.status = :status', { status: UserStatus.ACTIVE });
 
@@ -101,7 +101,7 @@ export class UsersService {
   ): Promise<User[]> {
     let query = this.userRepository
       .createQueryBuilder('user')
-      .where("'employer' = ANY(user.userTypes)")
+        .where("'employer' = ANY(user.userType)")
       .andWhere('user.isOnline = :isOnline', { isOnline: true })
       .andWhere('user.status = :status', { status: UserStatus.ACTIVE });
 
@@ -128,15 +128,15 @@ export class UsersService {
   async findUsersByType(userType: string): Promise<User[]> {
     return this.userRepository
       .createQueryBuilder('user')
-      .where(":userType = ANY(user.userTypes)")
+      .where(":userType = ANY(user.userType)")
       .andWhere('user.status = :status', { status: UserStatus.ACTIVE })
       .setParameter('userType', userType)
       .getMany();
   }
 
-  async updateUserTypes(userId: string, userTypes: string[]): Promise<User> {
+  async updateUserTypes(userId: string, userType: string): Promise<User> {
     const user = await this.findById(userId);
-    user.userTypes = userTypes;
+    user.userType = userType;
     return this.userRepository.save(user);
   }
 

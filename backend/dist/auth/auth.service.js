@@ -25,9 +25,9 @@ let AuthService = class AuthService {
         this.jwtService = jwtService;
     }
     async register(registerDto) {
-        const { email, phone, password, ...rest } = registerDto;
+        const { email, phone, password, userType, ...rest } = registerDto;
         const existingUser = await this.userRepository.findOne({
-            where: [{ email }, { phone }],
+            where: [{ userType }, { phone }],
         });
         if (existingUser) {
             throw new common_1.ConflictException('Email veya telefon numarası zaten kullanımda');
@@ -37,6 +37,7 @@ let AuthService = class AuthService {
             ...rest,
             email,
             phone,
+            userType,
             password: hashedPassword,
         });
         const savedUser = await this.userRepository.save(user);
@@ -50,7 +51,7 @@ let AuthService = class AuthService {
                 lastName: savedUser.lastName,
                 email: savedUser.email,
                 phone: savedUser.phone,
-                userTypes: savedUser.userTypes,
+                userType: savedUser.userType,
                 status: savedUser.status,
                 isVerified: savedUser.isVerified,
                 isOnline: savedUser.isOnline,
@@ -69,11 +70,12 @@ let AuthService = class AuthService {
         };
     }
     async login(loginDto) {
-        const { phone, password } = loginDto;
+        const { phone, password, userType } = loginDto;
         const user = await this.userRepository.findOne({
-            where: { phone },
+            where: { phone, userType },
             relations: ['category'],
         });
+        console.log('userbulkundu', user);
         if (!user) {
             throw new common_1.UnauthorizedException('Geçersiz telefon numarası veya şifre');
         }
@@ -91,7 +93,7 @@ let AuthService = class AuthService {
                 lastName: user.lastName,
                 email: user.email,
                 phone: user.phone,
-                userTypes: user.userTypes,
+                userType: user.userType,
                 status: user.status,
                 isVerified: user.isVerified,
                 isOnline: user.isOnline,

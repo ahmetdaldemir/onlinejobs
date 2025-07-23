@@ -46,8 +46,8 @@ let UsersController = class UsersController {
     async findUsersByType(userType) {
         return this.usersService.findUsersByType(userType);
     }
-    async updateUserTypes(req, userTypes) {
-        return this.usersService.updateUserTypes(req.user.sub, userTypes);
+    async updateUserTypes(req, userType) {
+        return this.usersService.updateUserTypes(req.user.sub, userType);
     }
     async findById(id) {
         return this.usersService.findById(id);
@@ -167,9 +167,9 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı tiplerini güncelle' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı tipleri güncellendi' }),
     __param(0, (0, common_1.Request)()),
-    __param(1, (0, common_1.Body)('userTypes')),
+    __param(1, (0, common_1.Body)('userType')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Array]),
+    __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateUserTypes", null);
 __decorate([

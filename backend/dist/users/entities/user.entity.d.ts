@@ -1,8 +1,3 @@
-export declare enum UserType {
-    JOB_SEEKER = "job_seeker",
-    EMPLOYER = "employer",
-    BOTH = "both"
-}
 export declare enum UserStatus {
     ACTIVE = "active",
     INACTIVE = "inactive"
@@ -14,7 +9,7 @@ export declare class User {
     email: string;
     phone: string;
     password: string;
-    userTypes: string[];
+    userType: string;
     status: UserStatus;
     bio: string;
     profileImage: string;

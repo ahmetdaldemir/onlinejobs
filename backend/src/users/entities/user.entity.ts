@@ -11,13 +11,7 @@ import {
 import { Exclude } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional } from 'class-validator';
-
-export enum UserType {
-  JOB_SEEKER = 'job_seeker',
-  EMPLOYER = 'employer',
-  BOTH = 'both', // Hem iş arayan hem işveren
-}
-
+ 
  
 export enum UserStatus {
   ACTIVE = 'active',
@@ -54,11 +48,10 @@ export class User {
 
   @Column({
     type: 'text',
-    array: true,
-    default: [UserType.JOB_SEEKER],
+    default: 'employer',
   })
-  @ApiProperty({ type: [String], description: 'Kullanıcı tipleri: job_seeker, employer, both' })
-  userTypes: string[];
+  @ApiProperty({ type: String, description: 'Kullanıcı tipleri: worker, employer' })
+  userType: string;
 
   @Column({
     type: 'enum',

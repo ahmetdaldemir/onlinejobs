@@ -9,17 +9,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = exports.UserStatus = exports.UserType = void 0;
+exports.User = exports.UserStatus = void 0;
 const typeorm_1 = require("typeorm");
 const class_transformer_1 = require("class-transformer");
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
-var UserType;
-(function (UserType) {
-    UserType["JOB_SEEKER"] = "job_seeker";
-    UserType["EMPLOYER"] = "employer";
-    UserType["BOTH"] = "both";
-})(UserType || (exports.UserType = UserType = {}));
 var UserStatus;
 (function (UserStatus) {
     UserStatus["ACTIVE"] = "active";
@@ -61,12 +55,11 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({
         type: 'text',
-        array: true,
-        default: [UserType.JOB_SEEKER],
+        default: 'employer',
     }),
-    (0, swagger_1.ApiProperty)({ type: [String], description: 'Kullanıcı tipleri: job_seeker, employer, both' }),
-    __metadata("design:type", Array)
-], User.prototype, "userTypes", void 0);
+    (0, swagger_1.ApiProperty)({ type: String, description: 'Kullanıcı tipleri: worker, employer' }),
+    __metadata("design:type", String)
+], User.prototype, "userType", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         type: 'enum',
