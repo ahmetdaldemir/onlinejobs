@@ -75,7 +75,6 @@ let AuthService = class AuthService {
             where: { phone, userType },
             relations: ['category'],
         });
-        console.log('userbulkundu', user);
         if (!user) {
             throw new common_1.UnauthorizedException('Geçersiz telefon numarası veya şifre');
         }

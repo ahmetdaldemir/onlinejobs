@@ -42,8 +42,7 @@ export class LoginDto {
   @IsString()
   password: string;
 
-  @ApiProperty({ required: false })
-  @IsOptional()
+  @ApiProperty()
   @IsString()
   userType: string;
 }
