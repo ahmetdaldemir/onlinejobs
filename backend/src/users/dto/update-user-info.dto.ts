@@ -1,44 +1,49 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, IsNumber, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsNumber } from 'class-validator';
 
 export class UpdateUserInfoDto {
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, description: 'Adres adı' })
   @IsOptional()
   @IsString()
   name?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, description: 'Enlem (latitude)' })
   @IsOptional()
   @IsNumber()
   latitude?: number;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, description: 'Boylam (longitude)' })
   @IsOptional()
   @IsNumber()
   longitude?: number;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, description: 'Genel adres' })
   @IsOptional()
   @IsString()
   address?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, description: 'Mahalle/Cadde/Sokak' })
   @IsOptional()
-  @IsUUID()
-  countryId?: string;
+  @IsString()
+  neighborhood?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, description: 'Bina numarası' })
   @IsOptional()
-  @IsUUID()
-  cityId?: string;
+  @IsString()
+  buildingNo?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, description: 'Kat bilgisi' })
   @IsOptional()
-  @IsUUID()
-  districtId?: string;
+  @IsString()
+  floor?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, description: 'Daire numarası' })
   @IsOptional()
-  @IsUUID()
-  neighborhoodId?: string;
+  @IsString()
+  apartmentNo?: string;
+
+  @ApiProperty({ required: false, description: 'Adres açıklaması' })
+  @IsOptional()
+  @IsString()
+  description?: string;
 } 

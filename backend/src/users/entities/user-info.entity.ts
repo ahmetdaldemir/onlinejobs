@@ -7,10 +7,6 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from './user.entity';
-import { City } from '../../locations/entities/city.entity';
-import { District } from '../../locations/entities/district.entity';
-import { Neighborhood } from '../../locations/entities/neighborhood.entity';
-import { Country } from '../../locations/entities/country.entity';
 
 @Entity('user_infos')
 export class UserInfo {
@@ -39,23 +35,23 @@ export class UserInfo {
   @ApiProperty()
   address: string;
 
-  @ManyToOne(() => Country, { nullable: true })
-  @JoinColumn({ name: 'countryId' })
-  @ApiProperty()
-  country: Country;
+  @Column({ type: 'text', nullable: true })
+  @ApiProperty({ description: 'Açıklama' })
+  description: string;
 
-  @ManyToOne(() => City, { nullable: true })
-  @JoinColumn({ name: 'cityId' })
-  @ApiProperty()
-  city: City;
+  @Column({ length: 100, nullable: true })
+  @ApiProperty({ description: 'Mahalle/Cadde/Sokak' })
+  neighborhood: string;
 
-  @ManyToOne(() => District, { nullable: true })
-  @JoinColumn({ name: 'districtId' })
-  @ApiProperty()
-  district: District;
+  @Column({ length: 50, nullable: true })
+  @ApiProperty({ description: 'Bina No' })
+  buildingNo: string;
 
-  @ManyToOne(() => Neighborhood, { nullable: true })
-  @JoinColumn({ name: 'neighborhoodId' })
-  @ApiProperty()
-  neighborhood: Neighborhood;
+  @Column({ length: 20, nullable: true })
+  @ApiProperty({ description: 'Kat' })
+  floor: string;
+
+  @Column({ length: 20, nullable: true })
+  @ApiProperty({ description: 'Daire No' })
+  apartmentNo: string;
 } 

@@ -13,10 +13,6 @@ exports.UserInfo = void 0;
 const typeorm_1 = require("typeorm");
 const swagger_1 = require("@nestjs/swagger");
 const user_entity_1 = require("./user.entity");
-const city_entity_1 = require("../../locations/entities/city.entity");
-const district_entity_1 = require("../../locations/entities/district.entity");
-const neighborhood_entity_1 = require("../../locations/entities/neighborhood.entity");
-const country_entity_1 = require("../../locations/entities/country.entity");
 let UserInfo = class UserInfo {
 };
 exports.UserInfo = UserInfo;
@@ -52,29 +48,30 @@ __decorate([
     __metadata("design:type", String)
 ], UserInfo.prototype, "address", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => country_entity_1.Country, { nullable: true }),
-    (0, typeorm_1.JoinColumn)({ name: 'countryId' }),
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", country_entity_1.Country)
-], UserInfo.prototype, "country", void 0);
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    (0, swagger_1.ApiProperty)({ description: 'Açıklama' }),
+    __metadata("design:type", String)
+], UserInfo.prototype, "description", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => city_entity_1.City, { nullable: true }),
-    (0, typeorm_1.JoinColumn)({ name: 'cityId' }),
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", city_entity_1.City)
-], UserInfo.prototype, "city", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(() => district_entity_1.District, { nullable: true }),
-    (0, typeorm_1.JoinColumn)({ name: 'districtId' }),
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", district_entity_1.District)
-], UserInfo.prototype, "district", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(() => neighborhood_entity_1.Neighborhood, { nullable: true }),
-    (0, typeorm_1.JoinColumn)({ name: 'neighborhoodId' }),
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", neighborhood_entity_1.Neighborhood)
+    (0, typeorm_1.Column)({ length: 100, nullable: true }),
+    (0, swagger_1.ApiProperty)({ description: 'Mahalle/Cadde/Sokak' }),
+    __metadata("design:type", String)
 ], UserInfo.prototype, "neighborhood", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ length: 50, nullable: true }),
+    (0, swagger_1.ApiProperty)({ description: 'Bina No' }),
+    __metadata("design:type", String)
+], UserInfo.prototype, "buildingNo", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ length: 20, nullable: true }),
+    (0, swagger_1.ApiProperty)({ description: 'Kat' }),
+    __metadata("design:type", String)
+], UserInfo.prototype, "floor", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ length: 20, nullable: true }),
+    (0, swagger_1.ApiProperty)({ description: 'Daire No' }),
+    __metadata("design:type", String)
+], UserInfo.prototype, "apartmentNo", void 0);
 exports.UserInfo = UserInfo = __decorate([
     (0, typeorm_1.Entity)('user_infos')
 ], UserInfo);

@@ -3,8 +3,9 @@ export declare class UpdateUserInfoDto {
     latitude?: number;
     longitude?: number;
     address?: string;
-    countryId?: string;
-    cityId?: string;
-    districtId?: string;
-    neighborhoodId?: string;
+    neighborhood?: string;
+    buildingNo?: string;
+    floor?: string;
+    apartmentNo?: string;
+    description?: string;
 }

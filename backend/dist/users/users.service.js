@@ -159,7 +159,7 @@ let UsersService = class UsersService {
     async getUserInfo(userId) {
         return this.userInfoRepository.findOne({
             where: { user: { id: userId } },
-            relations: ['user', 'country', 'city', 'district', 'neighborhood']
+            relations: ['user']
         });
     }
     async updateUserInfo(userId, updateUserInfoDto) {
@@ -193,14 +193,16 @@ let UsersService = class UsersService {
                 userInfo.longitude = updateUserInfoDto.longitude;
             if (updateUserInfoDto.address !== undefined)
                 userInfo.address = updateUserInfoDto.address;
-            if (updateUserInfoDto.countryId !== undefined)
-                userInfo.country = { id: updateUserInfoDto.countryId };
-            if (updateUserInfoDto.cityId !== undefined)
-                userInfo.city = { id: updateUserInfoDto.cityId };
-            if (updateUserInfoDto.districtId !== undefined)
-                userInfo.district = { id: updateUserInfoDto.districtId };
-            if (updateUserInfoDto.neighborhoodId !== undefined)
-                userInfo.neighborhood = { id: updateUserInfoDto.neighborhoodId };
+            if (updateUserInfoDto.neighborhood !== undefined)
+                userInfo.neighborhood = updateUserInfoDto.neighborhood;
+            if (updateUserInfoDto.buildingNo !== undefined)
+                userInfo.buildingNo = updateUserInfoDto.buildingNo;
+            if (updateUserInfoDto.floor !== undefined)
+                userInfo.floor = updateUserInfoDto.floor;
+            if (updateUserInfoDto.apartmentNo !== undefined)
+                userInfo.apartmentNo = updateUserInfoDto.apartmentNo;
+            if (updateUserInfoDto.description !== undefined)
+                userInfo.description = updateUserInfoDto.description;
         }
         await this.userInfoRepository.save(userInfo);
         return user;

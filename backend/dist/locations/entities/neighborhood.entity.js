@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Neighborhood = void 0;
 const typeorm_1 = require("typeorm");
 const district_entity_1 = require("./district.entity");
-const user_info_entity_1 = require("../../users/entities/user-info.entity");
 let Neighborhood = class Neighborhood {
 };
 exports.Neighborhood = Neighborhood;
@@ -45,10 +44,6 @@ __decorate([
     (0, typeorm_1.JoinColumn)({ name: 'district_id' }),
     __metadata("design:type", district_entity_1.District)
 ], Neighborhood.prototype, "district", void 0);
-__decorate([
-    (0, typeorm_1.OneToMany)(() => user_info_entity_1.UserInfo, userInfo => userInfo.neighborhood),
-    __metadata("design:type", Array)
-], Neighborhood.prototype, "userInfos", void 0);
 exports.Neighborhood = Neighborhood = __decorate([
     (0, typeorm_1.Entity)('neighborhoods')
 ], Neighborhood);

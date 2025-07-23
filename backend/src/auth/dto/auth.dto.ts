@@ -75,22 +75,14 @@ export class AuthResponseDto {
     userInfos?: {
       id: string;
       name: string;
-      country?: {
-        id: string;
-        name: string;
-      };
-      city?: {
-        id: string;
-        name: string;
-      };
-      district?: {
-        id: string;
-        name: string;
-      };
-      neighborhood?: {
-        id: string;
-        name: string;
-      };
+      latitude?: number;
+      longitude?: number;
+      address?: string;
+      neighborhood?: string;
+      buildingNo?: string;
+      floor?: string;
+      apartmentNo?: string;
+      description?: string;
     }[];
 
     category?: {

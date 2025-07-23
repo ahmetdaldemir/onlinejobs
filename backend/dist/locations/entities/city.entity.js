@@ -13,7 +13,6 @@ exports.City = void 0;
 const typeorm_1 = require("typeorm");
 const country_entity_1 = require("./country.entity");
 const district_entity_1 = require("./district.entity");
-const user_info_entity_1 = require("../../users/entities/user-info.entity");
 let City = class City {
 };
 exports.City = City;
@@ -50,10 +49,6 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => district_entity_1.District, district => district.city),
     __metadata("design:type", Array)
 ], City.prototype, "districts", void 0);
-__decorate([
-    (0, typeorm_1.OneToMany)(() => user_info_entity_1.UserInfo, userInfo => userInfo.city),
-    __metadata("design:type", Array)
-], City.prototype, "userInfos", void 0);
 exports.City = City = __decorate([
     (0, typeorm_1.Entity)('cities')
 ], City);

@@ -191,7 +191,7 @@ export class UsersService {
   async getUserInfo(userId: string): Promise<UserInfo | null> {
     return this.userInfoRepository.findOne({
       where: { user: { id: userId } },
-      relations: ['user', 'country', 'city', 'district', 'neighborhood']
+      relations: ['user']
     });
   }
 
@@ -227,10 +227,11 @@ export class UsersService {
       if (updateUserInfoDto.latitude !== undefined) userInfo.latitude = updateUserInfoDto.latitude;
       if (updateUserInfoDto.longitude !== undefined) userInfo.longitude = updateUserInfoDto.longitude;
       if (updateUserInfoDto.address !== undefined) userInfo.address = updateUserInfoDto.address;
-      if (updateUserInfoDto.countryId !== undefined) userInfo.country = { id: updateUserInfoDto.countryId } as any;
-      if (updateUserInfoDto.cityId !== undefined) userInfo.city = { id: updateUserInfoDto.cityId } as any;
-      if (updateUserInfoDto.districtId !== undefined) userInfo.district = { id: updateUserInfoDto.districtId } as any;
-      if (updateUserInfoDto.neighborhoodId !== undefined) userInfo.neighborhood = { id: updateUserInfoDto.neighborhoodId } as any;
+      if (updateUserInfoDto.neighborhood !== undefined) userInfo.neighborhood = updateUserInfoDto.neighborhood;
+      if (updateUserInfoDto.buildingNo !== undefined) userInfo.buildingNo = updateUserInfoDto.buildingNo;
+      if (updateUserInfoDto.floor !== undefined) userInfo.floor = updateUserInfoDto.floor;
+      if (updateUserInfoDto.apartmentNo !== undefined) userInfo.apartmentNo = updateUserInfoDto.apartmentNo;
+      if (updateUserInfoDto.description !== undefined) userInfo.description = updateUserInfoDto.description;
     }
 
     await this.userInfoRepository.save(userInfo);

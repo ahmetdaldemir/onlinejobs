@@ -16,51 +16,57 @@ class UpdateUserInfoDto {
 }
 exports.UpdateUserInfoDto = UpdateUserInfoDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, swagger_1.ApiProperty)({ required: false, description: 'Adres adı' }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateUserInfoDto.prototype, "name", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, swagger_1.ApiProperty)({ required: false, description: 'Enlem (latitude)' }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], UpdateUserInfoDto.prototype, "latitude", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, swagger_1.ApiProperty)({ required: false, description: 'Boylam (longitude)' }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], UpdateUserInfoDto.prototype, "longitude", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, swagger_1.ApiProperty)({ required: false, description: 'Genel adres' }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateUserInfoDto.prototype, "address", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, swagger_1.ApiProperty)({ required: false, description: 'Mahalle/Cadde/Sokak' }),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], UpdateUserInfoDto.prototype, "countryId", void 0);
+], UpdateUserInfoDto.prototype, "neighborhood", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, swagger_1.ApiProperty)({ required: false, description: 'Bina numarası' }),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], UpdateUserInfoDto.prototype, "cityId", void 0);
+], UpdateUserInfoDto.prototype, "buildingNo", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, swagger_1.ApiProperty)({ required: false, description: 'Kat bilgisi' }),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], UpdateUserInfoDto.prototype, "districtId", void 0);
+], UpdateUserInfoDto.prototype, "floor", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, swagger_1.ApiProperty)({ required: false, description: 'Daire numarası' }),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], UpdateUserInfoDto.prototype, "neighborhoodId", void 0);
+], UpdateUserInfoDto.prototype, "apartmentNo", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false, description: 'Adres açıklaması' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateUserInfoDto.prototype, "description", void 0);
 //# sourceMappingURL=update-user-info.dto.js.map

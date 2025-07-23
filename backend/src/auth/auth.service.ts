@@ -117,22 +117,14 @@ export class AuthService {
         userInfos: user.userInfos ? user.userInfos.map(userInfo => ({
           id: userInfo.id,
           name: userInfo.name,
-          country: userInfo.country ? {
-            id: userInfo.country.id,
-            name: userInfo.country.name,
-          } : undefined,
-          city: userInfo.city ? {
-            id: userInfo.city.id,
-            name: userInfo.city.name,
-          } : undefined,
-          district: userInfo.district ? {
-            id: userInfo.district.id,
-            name: userInfo.district.name,
-          } : undefined,
-          neighborhood: userInfo.neighborhood ? {
-            id: userInfo.neighborhood.id,
-            name: userInfo.neighborhood.name,
-          } : undefined,
+          latitude: userInfo.latitude,
+          longitude: userInfo.longitude,
+          address: userInfo.address,
+          neighborhood: userInfo.neighborhood,
+          buildingNo: userInfo.buildingNo,
+          floor: userInfo.floor,
+          apartmentNo: userInfo.apartmentNo,
+          description: userInfo.description,
         })) : [],
       },
       message: 'Giriş başarılı',
