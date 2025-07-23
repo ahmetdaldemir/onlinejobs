@@ -5,6 +5,7 @@ import { Category } from '../categories/entities/category.entity';
 import { categoriesSeed } from './categories.seed';
 import { LocationsSeedService } from './locations.seed';
 import { UsersSeedService } from './users.seed';
+import { UserInfoSeedService } from './user-info.seed';
 
 @Injectable()
 export class SeedService {
@@ -13,6 +14,7 @@ export class SeedService {
     private categoryRepository: Repository<Category>,
     private locationsSeedService: LocationsSeedService,
     private usersSeedService: UsersSeedService,
+    private userInfoSeedService: UserInfoSeedService,
   ) {}
 
   async seedCategories(): Promise<void> {
@@ -38,9 +40,16 @@ export class SeedService {
     console.log('Test kullanıcıları başarıyla eklendi!');
   }
 
+  async seedUserInfos(): Promise<void> {
+    console.log('UserInfo verileri ekleniyor...');
+    await this.userInfoSeedService.seed();
+    console.log('UserInfo verileri başarıyla eklendi!');
+  }
+
   async runSeeds(): Promise<void> {
     await this.seedCategories();
     await this.seedLocations();
     await this.seedUsers();
+    await this.seedUserInfos();
   }
 } 

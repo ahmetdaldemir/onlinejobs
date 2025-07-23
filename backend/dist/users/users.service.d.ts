@@ -12,7 +12,9 @@ export declare class UsersService {
     findOnlineUsers(): Promise<User[]>;
     findAll(): Promise<User[]>;
     findById(id: string): Promise<User>;
-    findOnlineJobSeekers(latitude?: number, longitude?: number, radius?: number, categoryId?: string): Promise<User[]>;
+    findOnlineWorkers(latitude?: number, longitude?: number, radius?: number, categoryId?: string): Promise<any[]>;
+    private calculateDistance;
+    private toRadians;
     findOnlineEmployers(latitude?: number, longitude?: number, radius?: number, categoryId?: string): Promise<User[]>;
     findUsersByType(userType: string): Promise<User[]>;
     updateUserTypes(userId: string, userType: string): Promise<User>;

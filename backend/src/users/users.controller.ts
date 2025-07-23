@@ -51,22 +51,22 @@ export class UsersController {
     return this.usersService.findOnlineUsers();
   }
 
-  @Get('online-job-seekers')
+  @Get('online-workers')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Online iş arayanları listele' })
-  @ApiQuery({ name: 'latitude', required: false, type: Number })
-  @ApiQuery({ name: 'longitude', required: false, type: Number })
-  @ApiQuery({ name: 'radius', required: false, type: Number })
-  @ApiQuery({ name: 'categoryId', required: false, type: String })
-  @ApiResponse({ status: 200, description: 'Online iş arayanlar listelendi' })
-  async findOnlineJobSeekers(
+  @ApiOperation({ summary: 'Yakındaki online worker\'ları listele' })
+  @ApiQuery({ name: 'latitude', required: false, type: Number, description: 'Enlem (latitude)' })
+  @ApiQuery({ name: 'longitude', required: false, type: Number, description: 'Boylam (longitude)' })
+  @ApiQuery({ name: 'radius', required: false, type: Number, description: 'Arama yarıçapı (km)' })
+  @ApiQuery({ name: 'categoryId', required: false, type: String, description: 'Kategori ID' })
+  @ApiResponse({ status: 200, description: 'Yakındaki online worker\'lar listelendi' })
+  async findOnlineWorkers(
     @Query('latitude') latitude?: number,
     @Query('longitude') longitude?: number,
     @Query('radius') radius?: number,
     @Query('categoryId') categoryId?: string,
   ) {
-    return this.usersService.findOnlineJobSeekers(latitude, longitude, radius, categoryId);
+    return this.usersService.findOnlineWorkers(latitude, longitude, radius, categoryId);
   }
 
   @Get('online-employers')

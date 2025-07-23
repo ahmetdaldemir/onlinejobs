@@ -79,6 +79,21 @@ let AppController = class AppController {
             };
         }
     }
+    async seedUserInfos() {
+        try {
+            await this.seedService.seedUserInfos();
+            return {
+                message: 'UserInfo verileri başarıyla eklendi!',
+                status: 'success'
+            };
+        }
+        catch (error) {
+            return {
+                message: 'Seed hatası: ' + error.message,
+                status: 'error'
+            };
+        }
+    }
 };
 exports.AppController = AppController;
 __decorate([
@@ -111,6 +126,12 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], AppController.prototype, "seedLocations", null);
+__decorate([
+    (0, common_1.Post)('seed/user-infos'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "seedUserInfos", null);
 exports.AppController = AppController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [seed_service_1.SeedService])

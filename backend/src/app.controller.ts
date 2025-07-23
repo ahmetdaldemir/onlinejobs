@@ -73,4 +73,20 @@ export class AppController {
       };
     }
   }
+
+  @Post('seed/user-infos')
+  async seedUserInfos() {
+    try {
+      await this.seedService.seedUserInfos();
+      return { 
+        message: 'UserInfo verileri başarıyla eklendi!',
+        status: 'success'
+      };
+    } catch (error) {
+      return { 
+        message: 'Seed hatası: ' + error.message,
+        status: 'error'
+      };
+    }
+  }
 } 

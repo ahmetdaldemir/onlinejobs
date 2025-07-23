@@ -9,7 +9,7 @@ export declare class UsersController {
     findAll(): Promise<import("./entities/user.entity").User[]>;
     findActiveUsers(): Promise<import("./entities/user.entity").User[]>;
     findOnlineUsers(): Promise<import("./entities/user.entity").User[]>;
-    findOnlineJobSeekers(latitude?: number, longitude?: number, radius?: number, categoryId?: string): Promise<import("./entities/user.entity").User[]>;
+    findOnlineWorkers(latitude?: number, longitude?: number, radius?: number, categoryId?: string): Promise<any[]>;
     findOnlineEmployers(latitude?: number, longitude?: number, radius?: number, categoryId?: string): Promise<import("./entities/user.entity").User[]>;
     findUsersByType(userType: string): Promise<import("./entities/user.entity").User[]>;
     updateUserTypes(req: any, userType: string): Promise<import("./entities/user.entity").User>;

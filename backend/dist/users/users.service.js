@@ -66,32 +66,69 @@ let UsersService = class UsersService {
         }
         return user;
     }
-    async findOnlineJobSeekers(latitude, longitude, radius, categoryId) {
+    async findOnlineWorkers(latitude, longitude, radius, categoryId) {
         let query = this.userRepository
             .createQueryBuilder('user')
             .leftJoinAndSelect('user.userInfos', 'userInfo')
-            .where("'worker' = ANY(user.userType)")
+            .where('user.userType = :userType', { userType: 'worker' })
             .andWhere('user.isOnline = :isOnline', { isOnline: true })
             .andWhere('user.status = :status', { status: user_entity_1.UserStatus.ACTIVE });
         if (categoryId) {
             query = query.andWhere('user.categoryId = :categoryId', { categoryId });
         }
         if (latitude && longitude && radius) {
-            query = query.andWhere(`(
-          6371 * acos(
-            cos(radians(:latitude)) * cos(radians(userInfo.latitude)) *
-            cos(radians(userInfo.longitude) - radians(:longitude)) +
-            sin(radians(:latitude)) * sin(radians(userInfo.latitude))
-          )
-        ) <= :radius`, { latitude, longitude, radius });
+            query = query.andWhere('userInfo.latitude IS NOT NULL')
+                .andWhere('userInfo.longitude IS NOT NULL')
+                .andWhere(`(
+            6371 * acos(
+              cos(radians(:latitude)) * cos(radians(userInfo.latitude)) *
+              cos(radians(userInfo.longitude) - radians(:longitude)) +
+              sin(radians(:latitude)) * sin(radians(userInfo.latitude))
+            )
+          ) <= :radius`, { latitude, longitude, radius })
+                .addSelect(`(
+            6371 * acos(
+              cos(radians(:latitude)) * cos(radians(userInfo.latitude)) *
+              cos(radians(userInfo.longitude) - radians(:longitude)) +
+              sin(radians(:latitude)) * sin(radians(userInfo.latitude))
+            )
+          )`, 'distance')
+                .orderBy('distance', 'ASC');
         }
-        return query.getMany();
+        const results = await query.getMany();
+        if (latitude && longitude) {
+            return results.map(user => {
+                const userInfo = user.userInfos?.[0];
+                if (userInfo && userInfo.latitude && userInfo.longitude) {
+                    const distance = this.calculateDistance(latitude, longitude, userInfo.latitude, userInfo.longitude);
+                    return {
+                        ...user,
+                        distance: Math.round(distance * 100) / 100
+                    };
+                }
+                return user;
+            });
+        }
+        return results;
+    }
+    calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = this.toRadians(lat2 - lat1);
+        const dLon = this.toRadians(lon2 - lon1);
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(this.toRadians(lat1)) * Math.cos(this.toRadians(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+    toRadians(degrees) {
+        return degrees * (Math.PI / 180);
     }
     async findOnlineEmployers(latitude, longitude, radius, categoryId) {
         let query = this.userRepository
             .createQueryBuilder('user')
             .leftJoinAndSelect('user.userInfos', 'userInfo')
-            .where("'employer' = ANY(user.userType)")
+            .where('user.userType = :userType', { userType: 'employer' })
             .andWhere('user.isOnline = :isOnline', { isOnline: true })
             .andWhere('user.status = :status', { status: user_entity_1.UserStatus.ACTIVE });
         if (categoryId) {
@@ -111,9 +148,8 @@ let UsersService = class UsersService {
     async findUsersByType(userType) {
         return this.userRepository
             .createQueryBuilder('user')
-            .where(":userType = ANY(user.userType)")
+            .where('user.userType = :userType', { userType })
             .andWhere('user.status = :status', { status: user_entity_1.UserStatus.ACTIVE })
-            .setParameter('userType', userType)
             .getMany();
     }
     async updateUserTypes(userId, userType) {

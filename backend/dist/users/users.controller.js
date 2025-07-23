@@ -38,8 +38,8 @@ let UsersController = class UsersController {
     async findOnlineUsers() {
         return this.usersService.findOnlineUsers();
     }
-    async findOnlineJobSeekers(latitude, longitude, radius, categoryId) {
-        return this.usersService.findOnlineJobSeekers(latitude, longitude, radius, categoryId);
+    async findOnlineWorkers(latitude, longitude, radius, categoryId) {
+        return this.usersService.findOnlineWorkers(latitude, longitude, radius, categoryId);
     }
     async findOnlineEmployers(latitude, longitude, radius, categoryId) {
         return this.usersService.findOnlineEmployers(latitude, longitude, radius, categoryId);
@@ -120,15 +120,15 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "findOnlineUsers", null);
 __decorate([
-    (0, common_1.Get)('online-job-seekers'),
+    (0, common_1.Get)('online-workers'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Online iş arayanları listele' }),
-    (0, swagger_1.ApiQuery)({ name: 'latitude', required: false, type: Number }),
-    (0, swagger_1.ApiQuery)({ name: 'longitude', required: false, type: Number }),
-    (0, swagger_1.ApiQuery)({ name: 'radius', required: false, type: Number }),
-    (0, swagger_1.ApiQuery)({ name: 'categoryId', required: false, type: String }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Online iş arayanlar listelendi' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Yakındaki online worker\'ları listele' }),
+    (0, swagger_1.ApiQuery)({ name: 'latitude', required: false, type: Number, description: 'Enlem (latitude)' }),
+    (0, swagger_1.ApiQuery)({ name: 'longitude', required: false, type: Number, description: 'Boylam (longitude)' }),
+    (0, swagger_1.ApiQuery)({ name: 'radius', required: false, type: Number, description: 'Arama yarıçapı (km)' }),
+    (0, swagger_1.ApiQuery)({ name: 'categoryId', required: false, type: String, description: 'Kategori ID' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Yakındaki online worker\'lar listelendi' }),
     __param(0, (0, common_1.Query)('latitude')),
     __param(1, (0, common_1.Query)('longitude')),
     __param(2, (0, common_1.Query)('radius')),
@@ -136,7 +136,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, Number, Number, String]),
     __metadata("design:returntype", Promise)
-], UsersController.prototype, "findOnlineJobSeekers", null);
+], UsersController.prototype, "findOnlineWorkers", null);
 __decorate([
     (0, common_1.Get)('online-employers'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

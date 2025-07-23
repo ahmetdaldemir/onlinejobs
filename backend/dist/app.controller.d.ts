@@ -19,4 +19,8 @@ export declare class AppController {
         message: string;
         status: string;
     }>;
+    seedUserInfos(): Promise<{
+        message: string;
+        status: string;
+    }>;
 }

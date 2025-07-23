@@ -63,16 +63,16 @@ export class UsersService {
     return user;
   }
 
-  async findOnlineJobSeekers(
+  async findOnlineWorkers(
     latitude?: number,
     longitude?: number,
     radius?: number,
     categoryId?: string,
-  ): Promise<User[]> {
+  ): Promise<any[]> {
     let query = this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.userInfos', 'userInfo')
-      .where("'worker' = ANY(user.userType)")
+      .where('user.userType = :userType', { userType: 'worker' })
       .andWhere('user.isOnline = :isOnline', { isOnline: true })
       .andWhere('user.status = :status', { status: UserStatus.ACTIVE });
 
@@ -81,20 +81,69 @@ export class UsersService {
     }
 
     if (latitude && longitude && radius) {
-      // Haversine formülü ile mesafe hesaplama
-      query = query.andWhere(
-        `(
-          6371 * acos(
-            cos(radians(:latitude)) * cos(radians(userInfo.latitude)) *
-            cos(radians(userInfo.longitude) - radians(:longitude)) +
-            sin(radians(:latitude)) * sin(radians(userInfo.latitude))
-          )
-        ) <= :radius`,
-        { latitude, longitude, radius }
-      );
+      // Sadece konum bilgisi olan kullanıcıları filtrele
+      query = query.andWhere('userInfo.latitude IS NOT NULL')
+        .andWhere('userInfo.longitude IS NOT NULL')
+        .andWhere(
+          `(
+            6371 * acos(
+              cos(radians(:latitude)) * cos(radians(userInfo.latitude)) *
+              cos(radians(userInfo.longitude) - radians(:longitude)) +
+              sin(radians(:latitude)) * sin(radians(userInfo.latitude))
+            )
+          ) <= :radius`,
+          { latitude, longitude, radius }
+        )
+        .addSelect(
+          `(
+            6371 * acos(
+              cos(radians(:latitude)) * cos(radians(userInfo.latitude)) *
+              cos(radians(userInfo.longitude) - radians(:longitude)) +
+              sin(radians(:latitude)) * sin(radians(userInfo.latitude))
+            )
+          )`,
+          'distance'
+        )
+        .orderBy('distance', 'ASC');
     }
 
-    return query.getMany();
+    const results = await query.getMany();
+    
+    // Mesafe bilgisini ekle
+    if (latitude && longitude) {
+      return results.map(user => {
+        const userInfo = user.userInfos?.[0];
+        if (userInfo && userInfo.latitude && userInfo.longitude) {
+          const distance = this.calculateDistance(
+            latitude, longitude,
+            userInfo.latitude, userInfo.longitude
+          );
+          return {
+            ...user,
+            distance: Math.round(distance * 100) / 100 // 2 ondalık basamak
+          };
+        }
+        return user;
+      });
+    }
+
+    return results;
+  }
+
+  private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371; // Dünya'nın yarıçapı (km)
+    const dLat = this.toRadians(lat2 - lat1);
+    const dLon = this.toRadians(lon2 - lon1);
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(this.toRadians(lat1)) * Math.cos(this.toRadians(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+
+  private toRadians(degrees: number): number {
+    return degrees * (Math.PI/180);
   }
 
   // Yeni fonksiyonlar ekleyelim
@@ -107,7 +156,7 @@ export class UsersService {
     let query = this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.userInfos', 'userInfo')
-      .where("'employer' = ANY(user.userType)")
+      .where('user.userType = :userType', { userType: 'employer' })
       .andWhere('user.isOnline = :isOnline', { isOnline: true })
       .andWhere('user.status = :status', { status: UserStatus.ACTIVE });
 
@@ -134,9 +183,8 @@ export class UsersService {
   async findUsersByType(userType: string): Promise<User[]> {
     return this.userRepository
       .createQueryBuilder('user')
-      .where(":userType = ANY(user.userType)")
+      .where('user.userType = :userType', { userType })
       .andWhere('user.status = :status', { status: UserStatus.ACTIVE })
-      .setParameter('userType', userType)
       .getMany();
   }
 

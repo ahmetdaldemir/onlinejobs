@@ -20,11 +20,13 @@ const category_entity_1 = require("../categories/entities/category.entity");
 const categories_seed_1 = require("./categories.seed");
 const locations_seed_1 = require("./locations.seed");
 const users_seed_1 = require("./users.seed");
+const user_info_seed_1 = require("./user-info.seed");
 let SeedService = class SeedService {
-    constructor(categoryRepository, locationsSeedService, usersSeedService) {
+    constructor(categoryRepository, locationsSeedService, usersSeedService, userInfoSeedService) {
         this.categoryRepository = categoryRepository;
         this.locationsSeedService = locationsSeedService;
         this.usersSeedService = usersSeedService;
+        this.userInfoSeedService = userInfoSeedService;
     }
     async seedCategories() {
         console.log('Kategoriler ekleniyor...');
@@ -47,10 +49,16 @@ let SeedService = class SeedService {
         await this.usersSeedService.seed();
         console.log('Test kullanıcıları başarıyla eklendi!');
     }
+    async seedUserInfos() {
+        console.log('UserInfo verileri ekleniyor...');
+        await this.userInfoSeedService.seed();
+        console.log('UserInfo verileri başarıyla eklendi!');
+    }
     async runSeeds() {
         await this.seedCategories();
         await this.seedLocations();
         await this.seedUsers();
+        await this.seedUserInfos();
     }
 };
 exports.SeedService = SeedService;
@@ -59,6 +67,7 @@ exports.SeedService = SeedService = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         locations_seed_1.LocationsSeedService,
-        users_seed_1.UsersSeedService])
+        users_seed_1.UsersSeedService,
+        user_info_seed_1.UserInfoSeedService])
 ], SeedService);
 //# sourceMappingURL=seed.service.js.map
