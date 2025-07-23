@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Country } from './country.entity';
 import { District } from './district.entity';
+import { UserInfo } from '../../users/entities/user-info.entity';
 
 @Entity('cities')
 export class City {
@@ -28,4 +29,7 @@ export class City {
 
   @OneToMany(() => District, district => district.city)
   districts: District[];
+
+  @OneToMany(() => UserInfo, userInfo => userInfo.city)
+  userInfos: UserInfo[];
 } 

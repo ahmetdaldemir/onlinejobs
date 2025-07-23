@@ -6,10 +6,11 @@ import { Country } from './entities/country.entity';
 import { City } from './entities/city.entity';
 import { District } from './entities/district.entity';
 import { Neighborhood } from './entities/neighborhood.entity';
+import { UserInfo } from '../users/entities/user-info.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Country, City, District, Neighborhood]),
+    TypeOrmModule.forFeature([Country, City, District, Neighborhood, UserInfo]),
   ],
   controllers: [LocationsController],
   providers: [LocationsService],

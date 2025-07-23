@@ -1,5 +1,6 @@
 import { UsersService } from './users.service';
 import { UserStatus } from './entities/user.entity';
+import { UpdateUserInfoDto } from './dto/update-user-info.dto';
 export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
@@ -15,6 +16,12 @@ export declare class UsersController {
     findById(id: string): Promise<import("./entities/user.entity").User>;
     updateStatus(req: any, status: UserStatus): Promise<import("./entities/user.entity").User>;
     updateIsOnline(req: any, isOnline: boolean): Promise<import("./entities/user.entity").User>;
-    updateLocation(req: any, latitude: number, longitude: number): Promise<import("./entities/user.entity").User>;
+    updateLocation(req: any, locationData: {
+        name?: string;
+        latitude: number;
+        longitude: number;
+    }): Promise<import("./entities/user.entity").User>;
+    getUserInfo(req: any): Promise<import("./entities/user-info.entity").UserInfo>;
+    updateUserInfo(req: any, updateUserInfoDto: UpdateUserInfoDto): Promise<import("./entities/user.entity").User>;
     updateProfile(req: any, updateData: any): Promise<import("./entities/user.entity").User>;
 }

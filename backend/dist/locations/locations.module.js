@@ -15,13 +15,14 @@ const country_entity_1 = require("./entities/country.entity");
 const city_entity_1 = require("./entities/city.entity");
 const district_entity_1 = require("./entities/district.entity");
 const neighborhood_entity_1 = require("./entities/neighborhood.entity");
+const user_info_entity_1 = require("../users/entities/user-info.entity");
 let LocationsModule = class LocationsModule {
 };
 exports.LocationsModule = LocationsModule;
 exports.LocationsModule = LocationsModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([country_entity_1.Country, city_entity_1.City, district_entity_1.District, neighborhood_entity_1.Neighborhood]),
+            typeorm_1.TypeOrmModule.forFeature([country_entity_1.Country, city_entity_1.City, district_entity_1.District, neighborhood_entity_1.Neighborhood, user_info_entity_1.UserInfo]),
         ],
         controllers: [locations_controller_1.LocationsController],
         providers: [locations_service_1.LocationsService],

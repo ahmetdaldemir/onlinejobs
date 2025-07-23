@@ -1,5 +1,6 @@
 import { City } from './city.entity';
 import { Neighborhood } from './neighborhood.entity';
+import { UserInfo } from '../../users/entities/user-info.entity';
 export declare class District {
     id: string;
     name: string;
@@ -9,4 +10,5 @@ export declare class District {
     updatedAt: Date;
     city: City;
     neighborhoods: Neighborhood[];
+    userInfos: UserInfo[];
 }

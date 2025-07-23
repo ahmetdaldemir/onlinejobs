@@ -14,6 +14,7 @@ const typeorm_1 = require("typeorm");
 const class_transformer_1 = require("class-transformer");
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
+const user_info_entity_1 = require("./user-info.entity");
 var UserStatus;
 (function (UserStatus) {
     UserStatus["ACTIVE"] = "active";
@@ -80,31 +81,6 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "profileImage", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 8, nullable: true }),
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", Number)
-], User.prototype, "latitude", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'decimal', precision: 11, scale: 8, nullable: true }),
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", Number)
-], User.prototype, "longitude", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ length: 255, nullable: true }),
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", String)
-], User.prototype, "address", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ length: 100, nullable: true }),
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", String)
-], User.prototype, "city", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ length: 100, nullable: true }),
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", String)
-], User.prototype, "district", void 0);
-__decorate([
     (0, typeorm_1.Column)({ default: false }),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", Boolean)
@@ -155,6 +131,10 @@ __decorate([
     (0, typeorm_1.ManyToOne)('Category', 'users', { nullable: true }),
     __metadata("design:type", Object)
 ], User.prototype, "category", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => user_info_entity_1.UserInfo, 'user'),
+    __metadata("design:type", Array)
+], User.prototype, "userInfos", void 0);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)('users'),
     (0, typeorm_1.Index)(['email'], { unique: true }),

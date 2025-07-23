@@ -72,6 +72,26 @@ export class AuthResponseDto {
     totalReviews: number;
     profileImage?: string;
     bio?: string;
+    userInfos?: {
+      id: string;
+      name: string;
+      country?: {
+        id: string;
+        name: string;
+      };
+      city?: {
+        id: string;
+        name: string;
+      };
+      district?: {
+        id: string;
+        name: string;
+      };
+      neighborhood?: {
+        id: string;
+        name: string;
+      };
+    }[];
 
     category?: {
       id: string;

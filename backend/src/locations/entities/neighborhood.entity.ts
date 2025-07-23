@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { District } from './district.entity';
+import { UserInfo } from '../../users/entities/user-info.entity';
 
 @Entity('neighborhoods')
 export class Neighborhood {
@@ -24,4 +25,7 @@ export class Neighborhood {
   @ManyToOne(() => District, district => district.neighborhoods)
   @JoinColumn({ name: 'district_id' })
   district: District;
+
+  @OneToMany(() => UserInfo, userInfo => userInfo.neighborhood)
+  userInfos: UserInfo[];
 } 

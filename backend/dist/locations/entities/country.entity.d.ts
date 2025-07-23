@@ -1,4 +1,5 @@
 import { City } from './city.entity';
+import { UserInfo } from '../../users/entities/user-info.entity';
 export declare class Country {
     id: string;
     name: string;
@@ -8,4 +9,5 @@ export declare class Country {
     createdAt: Date;
     updatedAt: Date;
     cities: City[];
+    userInfos: UserInfo[];
 }

@@ -1,3 +1,4 @@
+import { UserInfo } from './user-info.entity';
 export declare enum UserStatus {
     ACTIVE = "active",
     INACTIVE = "inactive"
@@ -13,11 +14,6 @@ export declare class User {
     status: UserStatus;
     bio: string;
     profileImage: string;
-    latitude: number;
-    longitude: number;
-    address: string;
-    city: string;
-    district: string;
     isVerified: boolean;
     isOnline: boolean;
     rating: number;
@@ -29,4 +25,5 @@ export declare class User {
     sentMessages: any[];
     receivedMessages: any[];
     category: any;
+    userInfos: UserInfo[];
 }

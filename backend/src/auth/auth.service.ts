@@ -77,7 +77,7 @@ export class AuthService {
     // Kullanıcıyı bul
     const user = await this.userRepository.findOne({
       where: { phone, userType },
-      relations: ['category'],
+      relations: ['category','userInfos'],
     });
  
     if (!user) {
@@ -114,6 +114,26 @@ export class AuthService {
           id: user.category.id,
           name: user.category.name,
         } : undefined,
+        userInfos: user.userInfos ? user.userInfos.map(userInfo => ({
+          id: userInfo.id,
+          name: userInfo.name,
+          country: userInfo.country ? {
+            id: userInfo.country.id,
+            name: userInfo.country.name,
+          } : undefined,
+          city: userInfo.city ? {
+            id: userInfo.city.id,
+            name: userInfo.city.name,
+          } : undefined,
+          district: userInfo.district ? {
+            id: userInfo.district.id,
+            name: userInfo.district.name,
+          } : undefined,
+          neighborhood: userInfo.neighborhood ? {
+            id: userInfo.neighborhood.id,
+            name: userInfo.neighborhood.name,
+          } : undefined,
+        })) : [],
       },
       message: 'Giriş başarılı',
       status: 'success',

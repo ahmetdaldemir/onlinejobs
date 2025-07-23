@@ -17,9 +17,11 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("./entities/user.entity");
+const user_info_entity_1 = require("./entities/user-info.entity");
 let UsersService = class UsersService {
-    constructor(userRepository) {
+    constructor(userRepository, userInfoRepository) {
         this.userRepository = userRepository;
+        this.userInfoRepository = userInfoRepository;
     }
     async findTestUsers() {
         return this.userRepository.find({
@@ -67,6 +69,7 @@ let UsersService = class UsersService {
     async findOnlineJobSeekers(latitude, longitude, radius, categoryId) {
         let query = this.userRepository
             .createQueryBuilder('user')
+            .leftJoinAndSelect('user.userInfos', 'userInfo')
             .where("'worker' = ANY(user.userType)")
             .andWhere('user.isOnline = :isOnline', { isOnline: true })
             .andWhere('user.status = :status', { status: user_entity_1.UserStatus.ACTIVE });
@@ -76,9 +79,9 @@ let UsersService = class UsersService {
         if (latitude && longitude && radius) {
             query = query.andWhere(`(
           6371 * acos(
-            cos(radians(:latitude)) * cos(radians(user.latitude)) *
-            cos(radians(user.longitude) - radians(:longitude)) +
-            sin(radians(:latitude)) * sin(radians(user.latitude))
+            cos(radians(:latitude)) * cos(radians(userInfo.latitude)) *
+            cos(radians(userInfo.longitude) - radians(:longitude)) +
+            sin(radians(:latitude)) * sin(radians(userInfo.latitude))
           )
         ) <= :radius`, { latitude, longitude, radius });
         }
@@ -87,6 +90,7 @@ let UsersService = class UsersService {
     async findOnlineEmployers(latitude, longitude, radius, categoryId) {
         let query = this.userRepository
             .createQueryBuilder('user')
+            .leftJoinAndSelect('user.userInfos', 'userInfo')
             .where("'employer' = ANY(user.userType)")
             .andWhere('user.isOnline = :isOnline', { isOnline: true })
             .andWhere('user.status = :status', { status: user_entity_1.UserStatus.ACTIVE });
@@ -96,9 +100,9 @@ let UsersService = class UsersService {
         if (latitude && longitude && radius) {
             query = query.andWhere(`(
           6371 * acos(
-            cos(radians(:latitude)) * cos(radians(user.latitude)) *
-            cos(radians(user.longitude) - radians(:longitude)) +
-            sin(radians(:latitude)) * sin(radians(user.latitude))
+            cos(radians(:latitude)) * cos(radians(userInfo.latitude)) *
+            cos(radians(userInfo.longitude) - radians(:longitude)) +
+            sin(radians(:latitude)) * sin(radians(userInfo.latitude))
           )
         ) <= :radius`, { latitude, longitude, radius });
         }
@@ -122,11 +126,84 @@ let UsersService = class UsersService {
         user.status = status;
         return this.userRepository.save(user);
     }
-    async updateLocation(userId, latitude, longitude) {
+    async updateLocation(userId, latitude, longitude, name) {
         const user = await this.findById(userId);
-        user.latitude = latitude;
-        user.longitude = longitude;
-        return this.userRepository.save(user);
+        if (latitude < -90 || latitude > 90) {
+            throw new Error('Latitude değeri -90 ile 90 arasında olmalıdır');
+        }
+        if (longitude < -180 || longitude > 180) {
+            throw new Error('Longitude değeri -180 ile 180 arasında olmalıdır');
+        }
+        let userInfo = await this.userInfoRepository.findOne({
+            where: { user: { id: userId } },
+            relations: ['user']
+        });
+        if (!userInfo) {
+            userInfo = this.userInfoRepository.create({
+                user: { id: userId },
+                latitude,
+                longitude,
+                name,
+            });
+        }
+        else {
+            userInfo.latitude = latitude;
+            userInfo.longitude = longitude;
+            if (name) {
+                userInfo.name = name;
+            }
+        }
+        await this.userInfoRepository.save(userInfo);
+        return user;
+    }
+    async getUserInfo(userId) {
+        return this.userInfoRepository.findOne({
+            where: { user: { id: userId } },
+            relations: ['user', 'country', 'city', 'district', 'neighborhood']
+        });
+    }
+    async updateUserInfo(userId, updateUserInfoDto) {
+        const user = await this.findById(userId);
+        if (updateUserInfoDto.latitude !== undefined) {
+            if (updateUserInfoDto.latitude < -90 || updateUserInfoDto.latitude > 90) {
+                throw new Error('Latitude değeri -90 ile 90 arasında olmalıdır');
+            }
+        }
+        if (updateUserInfoDto.longitude !== undefined) {
+            if (updateUserInfoDto.longitude < -180 || updateUserInfoDto.longitude > 180) {
+                throw new Error('Longitude değeri -180 ile 180 arasında olmalıdır');
+            }
+        }
+        let userInfo = await this.userInfoRepository.findOne({
+            where: { user: { id: userId } },
+            relations: ['user']
+        });
+        if (!userInfo) {
+            userInfo = this.userInfoRepository.create({
+                user: { id: userId },
+                ...updateUserInfoDto
+            });
+        }
+        else {
+            if (updateUserInfoDto.name !== undefined)
+                userInfo.name = updateUserInfoDto.name;
+            if (updateUserInfoDto.latitude !== undefined)
+                userInfo.latitude = updateUserInfoDto.latitude;
+            if (updateUserInfoDto.longitude !== undefined)
+                userInfo.longitude = updateUserInfoDto.longitude;
+            if (updateUserInfoDto.address !== undefined)
+                userInfo.address = updateUserInfoDto.address;
+            if (updateUserInfoDto.countryId !== undefined)
+                userInfo.country = { id: updateUserInfoDto.countryId };
+            if (updateUserInfoDto.cityId !== undefined)
+                userInfo.city = { id: updateUserInfoDto.cityId };
+            if (updateUserInfoDto.districtId !== undefined)
+                userInfo.district = { id: updateUserInfoDto.districtId };
+            if (updateUserInfoDto.neighborhoodId !== undefined)
+                userInfo.neighborhood = { id: updateUserInfoDto.neighborhoodId };
+        }
+        await this.userInfoRepository.save(userInfo);
+        return user;
     }
     async updateProfile(userId, updateData) {
         const user = await this.findById(userId);
@@ -162,6 +239,8 @@ exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(user_info_entity_1.UserInfo)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository])
 ], UsersService);
 //# sourceMappingURL=users.service.js.map

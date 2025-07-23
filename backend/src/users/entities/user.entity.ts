@@ -6,11 +6,13 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToOne,
+  JoinColumn,
   Index,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional } from 'class-validator';
+import { UserInfo } from './user-info.entity';
  
  
 export enum UserStatus {
@@ -68,27 +70,7 @@ export class User {
   @Column({ type: 'text', nullable: true })
   @ApiProperty()
   profileImage: string;
-
-  @Column({ type: 'decimal', precision: 10, scale: 8, nullable: true })
-  @ApiProperty()
-  latitude: number;
-
-  @Column({ type: 'decimal', precision: 11, scale: 8, nullable: true })
-  @ApiProperty()
-  longitude: number;
-
-  @Column({ length: 255, nullable: true })
-  @ApiProperty()
-  address: string;
-
-  @Column({ length: 100, nullable: true })
-  @ApiProperty()
-  city: string;
-
-  @Column({ length: 100, nullable: true })
-  @ApiProperty()
-  district: string;
-
+ 
   @Column({ default: false })
   @ApiProperty()
   isVerified: boolean;
@@ -129,4 +111,7 @@ export class User {
 
   @ManyToOne('Category', 'users', { nullable: true })
   category: any;
-} 
+
+  @OneToMany(() => UserInfo, 'user')
+  userInfos: UserInfo[];
+}

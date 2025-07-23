@@ -1,8 +1,11 @@
 import { Repository } from 'typeorm';
 import { User, UserStatus } from './entities/user.entity';
+import { UserInfo } from './entities/user-info.entity';
+import { UpdateUserInfoDto } from './dto/update-user-info.dto';
 export declare class UsersService {
     private userRepository;
-    constructor(userRepository: Repository<User>);
+    private userInfoRepository;
+    constructor(userRepository: Repository<User>, userInfoRepository: Repository<UserInfo>);
     findTestUsers(): Promise<User[]>;
     findRealUsers(): Promise<User[]>;
     findActiveUsers(): Promise<User[]>;
@@ -14,7 +17,9 @@ export declare class UsersService {
     findUsersByType(userType: string): Promise<User[]>;
     updateUserTypes(userId: string, userType: string): Promise<User>;
     updateStatus(userId: string, status: UserStatus): Promise<User>;
-    updateLocation(userId: string, latitude: number, longitude: number): Promise<User>;
+    updateLocation(userId: string, latitude: number, longitude: number, name?: string): Promise<User>;
+    getUserInfo(userId: string): Promise<UserInfo | null>;
+    updateUserInfo(userId: string, updateUserInfoDto: UpdateUserInfoDto): Promise<User>;
     updateProfile(userId: string, updateData: any): Promise<User>;
     setUserOnline(userId: string): Promise<User>;
     setUserOffline(userId: string): Promise<User>;

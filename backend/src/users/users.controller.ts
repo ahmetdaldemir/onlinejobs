@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiParam }
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserStatus } from './entities/user.entity';
+import { UpdateUserInfoDto } from './dto/update-user-info.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -150,10 +151,30 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Konum güncellendi' })
   async updateLocation(
     @Request() req,
-    @Body('latitude') latitude: number,
-    @Body('longitude') longitude: number,
+    @Body() locationData: { name?: string; latitude: number; longitude: number },
   ) {
-    return this.usersService.updateLocation(req.user.sub, latitude, longitude);
+    return this.usersService.updateLocation(req.user.sub, locationData.latitude, locationData.longitude, locationData.name);
+  }
+
+  @Get('user-info')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Kullanıcı bilgilerini getir' })
+  @ApiResponse({ status: 200, description: 'Kullanıcı bilgileri getirildi' })
+  async getUserInfo(@Request() req) {
+    return this.usersService.getUserInfo(req.user.sub);
+  }
+
+  @Put('user-info')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Kullanıcı bilgilerini güncelle' })
+  @ApiResponse({ status: 200, description: 'Kullanıcı bilgileri güncellendi' })
+  async updateUserInfo(
+    @Request() req,
+    @Body() updateUserInfoDto: UpdateUserInfoDto,
+  ) {
+    return this.usersService.updateUserInfo(req.user.sub, updateUserInfoDto);
   }
 
   @Put('profile')

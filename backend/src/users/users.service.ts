@@ -2,12 +2,16 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User, UserStatus } from './entities/user.entity';
+import { UserInfo } from './entities/user-info.entity';
+import { UpdateUserInfoDto } from './dto/update-user-info.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(UserInfo)
+    private userInfoRepository: Repository<UserInfo>,
   ) {}
 
   async findTestUsers(): Promise<User[]> {
@@ -67,6 +71,7 @@ export class UsersService {
   ): Promise<User[]> {
     let query = this.userRepository
       .createQueryBuilder('user')
+      .leftJoinAndSelect('user.userInfos', 'userInfo')
       .where("'worker' = ANY(user.userType)")
       .andWhere('user.isOnline = :isOnline', { isOnline: true })
       .andWhere('user.status = :status', { status: UserStatus.ACTIVE });
@@ -80,9 +85,9 @@ export class UsersService {
       query = query.andWhere(
         `(
           6371 * acos(
-            cos(radians(:latitude)) * cos(radians(user.latitude)) *
-            cos(radians(user.longitude) - radians(:longitude)) +
-            sin(radians(:latitude)) * sin(radians(user.latitude))
+            cos(radians(:latitude)) * cos(radians(userInfo.latitude)) *
+            cos(radians(userInfo.longitude) - radians(:longitude)) +
+            sin(radians(:latitude)) * sin(radians(userInfo.latitude))
           )
         ) <= :radius`,
         { latitude, longitude, radius }
@@ -101,7 +106,8 @@ export class UsersService {
   ): Promise<User[]> {
     let query = this.userRepository
       .createQueryBuilder('user')
-        .where("'employer' = ANY(user.userType)")
+      .leftJoinAndSelect('user.userInfos', 'userInfo')
+      .where("'employer' = ANY(user.userType)")
       .andWhere('user.isOnline = :isOnline', { isOnline: true })
       .andWhere('user.status = :status', { status: UserStatus.ACTIVE });
 
@@ -113,9 +119,9 @@ export class UsersService {
       query = query.andWhere(
         `(
           6371 * acos(
-            cos(radians(:latitude)) * cos(radians(user.latitude)) *
-            cos(radians(user.longitude) - radians(:longitude)) +
-            sin(radians(:latitude)) * sin(radians(user.latitude))
+            cos(radians(:latitude)) * cos(radians(userInfo.latitude)) *
+            cos(radians(userInfo.longitude) - radians(:longitude)) +
+            sin(radians(:latitude)) * sin(radians(userInfo.latitude))
           )
         ) <= :radius`,
         { latitude, longitude, radius }
@@ -146,11 +152,89 @@ export class UsersService {
     return this.userRepository.save(user);
   }
 
-  async updateLocation(userId: string, latitude: number, longitude: number): Promise<User> {
+  async updateLocation(userId: string, latitude: number, longitude: number, name?: string): Promise<User> {
     const user = await this.findById(userId);
-    user.latitude = latitude;
-    user.longitude = longitude;
-    return this.userRepository.save(user);
+    
+    // Koordinat değerlerini kontrol et
+    if (latitude < -90 || latitude > 90) {
+      throw new Error('Latitude değeri -90 ile 90 arasında olmalıdır');
+    }
+    if (longitude < -180 || longitude > 180) {
+      throw new Error('Longitude değeri -180 ile 180 arasında olmalıdır');
+    }
+    
+    // UserInfo'yu bul veya oluştur
+    let userInfo = await this.userInfoRepository.findOne({
+      where: { user: { id: userId } },
+      relations: ['user']
+    });
+
+    if (!userInfo) {
+      userInfo = this.userInfoRepository.create({
+        user: { id: userId },
+        latitude,
+        longitude,
+        name,
+      });
+    } else {
+      userInfo.latitude = latitude;
+      userInfo.longitude = longitude;
+      if (name) {
+        userInfo.name = name;
+      }
+    }
+
+    await this.userInfoRepository.save(userInfo);
+    return user;
+  }
+
+  async getUserInfo(userId: string): Promise<UserInfo | null> {
+    return this.userInfoRepository.findOne({
+      where: { user: { id: userId } },
+      relations: ['user', 'country', 'city', 'district', 'neighborhood']
+    });
+  }
+
+  async updateUserInfo(userId: string, updateUserInfoDto: UpdateUserInfoDto): Promise<User> {
+    const user = await this.findById(userId);
+    
+    // Koordinat değerlerini kontrol et
+    if (updateUserInfoDto.latitude !== undefined) {
+      if (updateUserInfoDto.latitude < -90 || updateUserInfoDto.latitude > 90) {
+        throw new Error('Latitude değeri -90 ile 90 arasında olmalıdır');
+      }
+    }
+    if (updateUserInfoDto.longitude !== undefined) {
+      if (updateUserInfoDto.longitude < -180 || updateUserInfoDto.longitude > 180) {
+        throw new Error('Longitude değeri -180 ile 180 arasında olmalıdır');
+      }
+    }
+    
+    // UserInfo'yu bul veya oluştur
+    let userInfo = await this.userInfoRepository.findOne({
+      where: { user: { id: userId } },
+      relations: ['user']
+    });
+
+    if (!userInfo) {
+      userInfo = this.userInfoRepository.create({
+        user: { id: userId },
+        ...updateUserInfoDto
+      });
+    } else {
+      // Sadece gönderilen alanları güncelle
+      if (updateUserInfoDto.name !== undefined) userInfo.name = updateUserInfoDto.name;
+      if (updateUserInfoDto.latitude !== undefined) userInfo.latitude = updateUserInfoDto.latitude;
+      if (updateUserInfoDto.longitude !== undefined) userInfo.longitude = updateUserInfoDto.longitude;
+      if (updateUserInfoDto.address !== undefined) userInfo.address = updateUserInfoDto.address;
+      if (updateUserInfoDto.countryId !== undefined) userInfo.country = { id: updateUserInfoDto.countryId } as any;
+      if (updateUserInfoDto.cityId !== undefined) userInfo.city = { id: updateUserInfoDto.cityId } as any;
+      if (updateUserInfoDto.districtId !== undefined) userInfo.district = { id: updateUserInfoDto.districtId } as any;
+      if (updateUserInfoDto.neighborhoodId !== undefined) userInfo.neighborhood = { id: updateUserInfoDto.neighborhoodId } as any;
+    }
+
+    await this.userInfoRepository.save(userInfo);
+    return user;
   }
 
   async updateProfile(userId: string, updateData: any): Promise<User> {

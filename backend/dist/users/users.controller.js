@@ -18,6 +18,7 @@ const swagger_1 = require("@nestjs/swagger");
 const users_service_1 = require("./users.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const user_entity_1 = require("./entities/user.entity");
+const update_user_info_dto_1 = require("./dto/update-user-info.dto");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
@@ -58,8 +59,14 @@ let UsersController = class UsersController {
     async updateIsOnline(req, isOnline) {
         return this.usersService.updateIsOnline(req.user.sub, isOnline);
     }
-    async updateLocation(req, latitude, longitude) {
-        return this.usersService.updateLocation(req.user.sub, latitude, longitude);
+    async updateLocation(req, locationData) {
+        return this.usersService.updateLocation(req.user.sub, locationData.latitude, locationData.longitude, locationData.name);
+    }
+    async getUserInfo(req) {
+        return this.usersService.getUserInfo(req.user.sub);
+    }
+    async updateUserInfo(req, updateUserInfoDto) {
+        return this.usersService.updateUserInfo(req.user.sub, updateUserInfoDto);
     }
     async updateProfile(req, updateData) {
         return this.usersService.updateProfile(req.user.sub, updateData);
@@ -215,12 +222,34 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı konumunu güncelle' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Konum güncellendi' }),
     __param(0, (0, common_1.Request)()),
-    __param(1, (0, common_1.Body)('latitude')),
-    __param(2, (0, common_1.Body)('longitude')),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Number, Number]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateLocation", null);
+__decorate([
+    (0, common_1.Get)('user-info'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı bilgilerini getir' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı bilgileri getirildi' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getUserInfo", null);
+__decorate([
+    (0, common_1.Put)('user-info'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı bilgilerini güncelle' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı bilgileri güncellendi' }),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, update_user_info_dto_1.UpdateUserInfoDto]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateUserInfo", null);
 __decorate([
     (0, common_1.Put)('profile'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

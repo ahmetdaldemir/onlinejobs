@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Country = void 0;
 const typeorm_1 = require("typeorm");
 const city_entity_1 = require("./city.entity");
+const user_info_entity_1 = require("../../users/entities/user-info.entity");
 let Country = class Country {
 };
 exports.Country = Country;
@@ -47,6 +48,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => city_entity_1.City, city => city.country),
     __metadata("design:type", Array)
 ], Country.prototype, "cities", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => user_info_entity_1.UserInfo, userInfo => userInfo.country),
+    __metadata("design:type", Array)
+], Country.prototype, "userInfos", void 0);
 exports.Country = Country = __decorate([
     (0, typeorm_1.Entity)('countries')
 ], Country);
