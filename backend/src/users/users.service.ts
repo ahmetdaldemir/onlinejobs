@@ -198,6 +198,11 @@ export class UsersService {
   async updateUserInfo(userId: string, updateUserInfoDto: UpdateUserInfoDto): Promise<User> {
     const user = await this.findById(userId);
     
+    // Name alanı zorunlu olmalı
+    if (!updateUserInfoDto.name) {
+      throw new Error('Adres adı (name) zorunludur');
+    }
+    
     // Koordinat değerlerini kontrol et
     if (updateUserInfoDto.latitude !== undefined) {
       if (updateUserInfoDto.latitude < -90 || updateUserInfoDto.latitude > 90) {
@@ -210,20 +215,17 @@ export class UsersService {
       }
     }
     
-    // UserInfo'yu bul veya oluştur
+    // userId ve name ile eşleşen UserInfo'yu bul
     let userInfo = await this.userInfoRepository.findOne({
-      where: { user: { id: userId } },
+      where: { 
+        user: { id: userId },
+        name: updateUserInfoDto.name
+      },
       relations: ['user']
     });
 
-    if (!userInfo) {
-      userInfo = this.userInfoRepository.create({
-        user: { id: userId },
-        ...updateUserInfoDto
-      });
-    } else {
-      // Sadece gönderilen alanları güncelle
-      if (updateUserInfoDto.name !== undefined) userInfo.name = updateUserInfoDto.name;
+    if (userInfo) {
+      // Mevcut kaydı güncelle
       if (updateUserInfoDto.latitude !== undefined) userInfo.latitude = updateUserInfoDto.latitude;
       if (updateUserInfoDto.longitude !== undefined) userInfo.longitude = updateUserInfoDto.longitude;
       if (updateUserInfoDto.address !== undefined) userInfo.address = updateUserInfoDto.address;
@@ -232,11 +234,19 @@ export class UsersService {
       if (updateUserInfoDto.floor !== undefined) userInfo.floor = updateUserInfoDto.floor;
       if (updateUserInfoDto.apartmentNo !== undefined) userInfo.apartmentNo = updateUserInfoDto.apartmentNo;
       if (updateUserInfoDto.description !== undefined) userInfo.description = updateUserInfoDto.description;
+    } else {
+      // Yeni kayıt oluştur
+      userInfo = this.userInfoRepository.create({
+        user: { id: userId },
+        ...updateUserInfoDto
+      });
     }
 
     await this.userInfoRepository.save(userInfo);
     return user;
   }
+
+
 
   async updateProfile(userId: string, updateData: any): Promise<User> {
     const user = await this.findById(userId);

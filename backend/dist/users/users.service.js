@@ -164,6 +164,9 @@ let UsersService = class UsersService {
     }
     async updateUserInfo(userId, updateUserInfoDto) {
         const user = await this.findById(userId);
+        if (!updateUserInfoDto.name) {
+            throw new Error('Adres adı (name) zorunludur');
+        }
         if (updateUserInfoDto.latitude !== undefined) {
             if (updateUserInfoDto.latitude < -90 || updateUserInfoDto.latitude > 90) {
                 throw new Error('Latitude değeri -90 ile 90 arasında olmalıdır');
@@ -175,18 +178,13 @@ let UsersService = class UsersService {
             }
         }
         let userInfo = await this.userInfoRepository.findOne({
-            where: { user: { id: userId } },
+            where: {
+                user: { id: userId },
+                name: updateUserInfoDto.name
+            },
             relations: ['user']
         });
-        if (!userInfo) {
-            userInfo = this.userInfoRepository.create({
-                user: { id: userId },
-                ...updateUserInfoDto
-            });
-        }
-        else {
-            if (updateUserInfoDto.name !== undefined)
-                userInfo.name = updateUserInfoDto.name;
+        if (userInfo) {
             if (updateUserInfoDto.latitude !== undefined)
                 userInfo.latitude = updateUserInfoDto.latitude;
             if (updateUserInfoDto.longitude !== undefined)
@@ -203,6 +201,12 @@ let UsersService = class UsersService {
                 userInfo.apartmentNo = updateUserInfoDto.apartmentNo;
             if (updateUserInfoDto.description !== undefined)
                 userInfo.description = updateUserInfoDto.description;
+        }
+        else {
+            userInfo = this.userInfoRepository.create({
+                user: { id: userId },
+                ...updateUserInfoDto
+            });
         }
         await this.userInfoRepository.save(userInfo);
         return user;

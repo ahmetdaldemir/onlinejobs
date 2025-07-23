@@ -177,6 +177,8 @@ export class UsersController {
     return this.usersService.updateUserInfo(req.user.sub, updateUserInfoDto);
   }
 
+
+
   @Put('profile')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
