@@ -125,7 +125,7 @@ let AuthService = class AuthService {
     async validateUser(userId) {
         const user = await this.userRepository.findOne({
             where: { id: userId },
-            relations: ['category'],
+            relations: ['category', 'userInfos'],
         });
         if (!user) {
             throw new common_1.UnauthorizedException('Kullanıcı bulunamadı');

@@ -136,7 +136,7 @@ export class AuthService {
   async validateUser(userId: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['category'],
+      relations: ['category','userInfos'],
     });
 
     if (!user) {
