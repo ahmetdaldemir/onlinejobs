@@ -19,9 +19,10 @@ export class AuthService {
 
     // Email ve telefon kontrolü
     const existingUser = await this.userRepository.findOne({
-      where: [{userType}, { phone }],
+      where:  { phone, userType },
     });
 
+    console.log('existingUser',existingUser);
     if (existingUser) {
       throw new ConflictException('Email veya telefon numarası zaten kullanımda');
     }

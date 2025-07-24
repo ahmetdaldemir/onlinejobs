@@ -21,8 +21,6 @@ export enum UserStatus {
 }
 
 @Entity('users')
-@Index(['email'], { unique: true })
-@Index(['phone'], { unique: true })
 export class User {
   @PrimaryGeneratedColumn('uuid')
   @ApiProperty()
@@ -36,11 +34,11 @@ export class User {
   @ApiProperty()
   lastName: string;
 
-  @Column({ length: 255, unique: true })
+  @Column({ length: 255, nullable: true })
   @IsOptional()
   email: string;
 
-  @Column({ length: 20, unique: true })
+  @Column({ length: 20,  nullable: true })
   @ApiProperty()
   phone: string;
 

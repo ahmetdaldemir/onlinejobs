@@ -27,8 +27,9 @@ let AuthService = class AuthService {
     async register(registerDto) {
         const { email, phone, password, userType, ...rest } = registerDto;
         const existingUser = await this.userRepository.findOne({
-            where: [{ userType }, { phone }],
+            where: { phone, userType },
         });
+        console.log('existingUser', existingUser);
         if (existingUser) {
             throw new common_1.ConflictException('Email veya telefon numarası zaten kullanımda');
         }

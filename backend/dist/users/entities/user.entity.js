@@ -39,12 +39,12 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "lastName", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ length: 255, unique: true }),
+    (0, typeorm_1.Column)({ length: 255, nullable: true }),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ length: 20, unique: true }),
+    (0, typeorm_1.Column)({ length: 20, nullable: true }),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], User.prototype, "phone", void 0);
@@ -136,8 +136,6 @@ __decorate([
     __metadata("design:type", Array)
 ], User.prototype, "userInfos", void 0);
 exports.User = User = __decorate([
-    (0, typeorm_1.Entity)('users'),
-    (0, typeorm_1.Index)(['email'], { unique: true }),
-    (0, typeorm_1.Index)(['phone'], { unique: true })
+    (0, typeorm_1.Entity)('users')
 ], User);
 //# sourceMappingURL=user.entity.js.map
