@@ -7,13 +7,21 @@ import { Message } from './entities/message.entity';
 import { UsersModule } from '../users/users.module';
 import { AiModule } from '../ai/ai.module';
 import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Message]),
     UsersModule,
     AiModule,
-    JwtModule.register({})
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get('JWT_SECRET'),
+        signOptions: { expiresIn: '7d' },
+      }),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [MessagesController],
   providers: [MessagesService, MessagesGateway],

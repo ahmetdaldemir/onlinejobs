@@ -27,7 +27,6 @@ let MessagesGateway = class MessagesGateway {
         this.aiService = aiService;
         this.jwtService = jwtService;
         this.connectedUsers = new Map();
-        this.connectionCount = 0;
     }
     async handleConnection(client) {
         try {
@@ -88,7 +87,6 @@ let MessagesGateway = class MessagesGateway {
                 console.error('Error setting user offline:', error);
             });
             this.connectedUsers.delete(userId);
-            this.connectionCount--;
             console.log(`User ${userId} disconnected`);
         }
     }

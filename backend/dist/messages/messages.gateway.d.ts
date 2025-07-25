@@ -11,7 +11,6 @@ export declare class MessagesGateway implements OnGatewayConnection, OnGatewayDi
     private readonly jwtService;
     server: Server;
     private connectedUsers;
-    private connectionCount;
     constructor(messagesService: MessagesService, usersService: UsersService, aiService: AiService, jwtService: JwtService);
     handleConnection(client: Socket): Promise<void>;
     handleDisconnect(client: Socket): void;

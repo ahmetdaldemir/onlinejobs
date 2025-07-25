@@ -16,6 +16,7 @@ const message_entity_1 = require("./entities/message.entity");
 const users_module_1 = require("../users/users.module");
 const ai_module_1 = require("../ai/ai.module");
 const jwt_1 = require("@nestjs/jwt");
+const config_1 = require("@nestjs/config");
 let MessagesModule = class MessagesModule {
 };
 exports.MessagesModule = MessagesModule;
@@ -25,7 +26,14 @@ exports.MessagesModule = MessagesModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([message_entity_1.Message]),
             users_module_1.UsersModule,
             ai_module_1.AiModule,
-            jwt_1.JwtModule.register({})
+            jwt_1.JwtModule.registerAsync({
+                imports: [config_1.ConfigModule],
+                useFactory: async (configService) => ({
+                    secret: configService.get('JWT_SECRET'),
+                    signOptions: { expiresIn: '7d' },
+                }),
+                inject: [config_1.ConfigService],
+            }),
         ],
         controllers: [messages_controller_1.MessagesController],
         providers: [messages_service_1.MessagesService, messages_gateway_1.MessagesGateway],
