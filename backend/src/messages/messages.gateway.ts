@@ -12,6 +12,7 @@ import { MessagesService } from './messages.service';
 import { MessageType } from './entities/message.entity';
 import { UsersService } from '../users/users.service';
 import { AiService } from '../ai/ai.service';
+import { JwtService } from '@nestjs/jwt';
 
 @WebSocketGateway({
   cors: {
@@ -19,6 +20,7 @@ import { AiService } from '../ai/ai.service';
       'http://localhost:3000',
       'http://localhost:3001',
       'http://localhost:8080',
+      'http://localhost:5173',
       'https://onlinejobs.onrender.com',
       'https://*.onrender.com',
       /^https:\/\/.*\.onrender\.com$/,
@@ -34,49 +36,77 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
   server: Server;
 
   private connectedUsers = new Map<string, Socket>();
-  private connectionCount = 0;
 
   constructor(
     private readonly messagesService: MessagesService,
     private readonly usersService: UsersService,
     private readonly aiService: AiService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async handleConnection(client: Socket) {
     try {
-      const token = client.handshake.auth.token || client.handshake.headers.authorization;
+      console.log('🔍 === SOCKET CONNECTION DEBUG ===');
+      console.log('Client ID:', client.id);
+      console.log('Auth object:', client.handshake.auth);
+      console.log('Headers:', client.handshake.headers);
+      console.log('Query:', client.handshake.query);
+      
+      const token = client.handshake.auth.token || 
+                    client.handshake.headers.authorization ||
+                    client.handshake.query.token;
+      
+      console.log('Extracted token:', token ? 'Present' : 'Missing');
+      console.log('Token preview:', token ? token.substring(0, 20) + '...' : 'None');
       
       if (!token) {
+        console.log('❌ No token found, disconnecting client');
         client.disconnect();
         return;
       }
-
-      const testUsers = await this.usersService.findTestUsers();
-      console.log('Found test users:', testUsers.length);
-      console.log('Test users:', testUsers.map(u => ({ id: u.id, name: `${u.firstName} ${u.lastName}`, phone: u.phone })));
       
-      if (testUsers.length === 0) {
-        console.error('No test users found!');
+      // Token'ı temizle (Bearer prefix'i kaldır)
+      const cleanToken = token.replace('Bearer ', '');
+      console.log('Clean token preview:', cleanToken.substring(0, 20) + '...');
+      
+      try {
+        // JWT token'ı doğrula
+        const payload = this.jwtService.verify(cleanToken);
+        console.log('JWT payload:', payload);
+        
+        const userId = payload.sub || payload.userId;
+        if (!userId) {
+          console.log('❌ No user ID in JWT payload');
+          client.disconnect();
+          return;
+        }
+        
+        // Kullanıcının var olduğunu kontrol et
+        const user = await this.usersService.findById(userId);
+        if (!user) {
+          console.log('❌ User not found in database');
+          client.disconnect();
+          return;
+        }
+        
+        console.log('✅ User found:', user.firstName, user.lastName);
+        
+        // Kullanıcıyı online yap
+        await this.usersService.setUserOnline(userId);
+        this.connectedUsers.set(userId, client);
+        client.data.userId = userId;
+        
+        console.log('✅ Connection successful for user:', userId);
+        console.log('Connected users count:', this.connectedUsers.size);
+        
+      } catch (jwtError) {
+        console.log('❌ JWT verification failed:', jwtError.message);
         client.disconnect();
         return;
       }
-
-      this.connectionCount++;
-      const userIndex = (this.connectionCount - 1) % testUsers.length;
-      const userId = testUsers[userIndex].id;
       
-      await this.usersService.setUserOnline(userId);
-      
-      this.connectedUsers.set(userId, client);
-      client.data.userId = userId;
-      
-      console.log(`User ${userId} connected (connection #${this.connectionCount})`);
-      console.log('Client data after connection:', client.data);
-      console.log('Connected users map:', Array.from(this.connectedUsers.entries()));
-      console.log('Socket ID:', client.id);
-      console.log('Socket connected:', client.connected);
     } catch (error) {
-      console.error('Connection error:', error);
+      console.error('❌ Connection error:', error);
       client.disconnect();
     }
   }
@@ -87,9 +117,7 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
       this.usersService.setUserOffline(userId).catch(error => {
         console.error('Error setting user offline:', error);
       });
-      
       this.connectedUsers.delete(userId);
-      this.connectionCount--;
       console.log(`User ${userId} disconnected`);
     }
   }

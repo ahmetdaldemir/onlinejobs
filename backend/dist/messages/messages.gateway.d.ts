@@ -3,14 +3,16 @@ import { Server, Socket } from 'socket.io';
 import { MessagesService } from './messages.service';
 import { UsersService } from '../users/users.service';
 import { AiService } from '../ai/ai.service';
+import { JwtService } from '@nestjs/jwt';
 export declare class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly messagesService;
     private readonly usersService;
     private readonly aiService;
+    private readonly jwtService;
     server: Server;
     private connectedUsers;
     private connectionCount;
-    constructor(messagesService: MessagesService, usersService: UsersService, aiService: AiService);
+    constructor(messagesService: MessagesService, usersService: UsersService, aiService: AiService, jwtService: JwtService);
     handleConnection(client: Socket): Promise<void>;
     handleDisconnect(client: Socket): void;
     handleSendMessage(data: {

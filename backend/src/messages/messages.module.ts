@@ -6,12 +6,14 @@ import { MessagesGateway } from './messages.gateway';
 import { Message } from './entities/message.entity';
 import { UsersModule } from '../users/users.module';
 import { AiModule } from '../ai/ai.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Message]),
     UsersModule,
     AiModule,
+    JwtModule.register({})
   ],
   controllers: [MessagesController],
   providers: [MessagesService, MessagesGateway],

@@ -19,43 +19,65 @@ const messages_service_1 = require("./messages.service");
 const message_entity_1 = require("./entities/message.entity");
 const users_service_1 = require("../users/users.service");
 const ai_service_1 = require("../ai/ai.service");
+const jwt_1 = require("@nestjs/jwt");
 let MessagesGateway = class MessagesGateway {
-    constructor(messagesService, usersService, aiService) {
+    constructor(messagesService, usersService, aiService, jwtService) {
         this.messagesService = messagesService;
         this.usersService = usersService;
         this.aiService = aiService;
+        this.jwtService = jwtService;
         this.connectedUsers = new Map();
         this.connectionCount = 0;
     }
     async handleConnection(client) {
         try {
-            const token = client.handshake.auth.token || client.handshake.headers.authorization;
+            console.log('🔍 === SOCKET CONNECTION DEBUG ===');
+            console.log('Client ID:', client.id);
+            console.log('Auth object:', client.handshake.auth);
+            console.log('Headers:', client.handshake.headers);
+            console.log('Query:', client.handshake.query);
+            const token = client.handshake.auth.token ||
+                client.handshake.headers.authorization ||
+                client.handshake.query.token;
+            console.log('Extracted token:', token ? 'Present' : 'Missing');
+            console.log('Token preview:', token ? token.substring(0, 20) + '...' : 'None');
             if (!token) {
+                console.log('❌ No token found, disconnecting client');
                 client.disconnect();
                 return;
             }
-            const testUsers = await this.usersService.findTestUsers();
-            console.log('Found test users:', testUsers.length);
-            console.log('Test users:', testUsers.map(u => ({ id: u.id, name: `${u.firstName} ${u.lastName}`, phone: u.phone })));
-            if (testUsers.length === 0) {
-                console.error('No test users found!');
+            const cleanToken = token.replace('Bearer ', '');
+            console.log('Clean token preview:', cleanToken.substring(0, 20) + '...');
+            try {
+                const payload = this.jwtService.verify(cleanToken);
+                console.log('JWT payload:', payload);
+                const userId = payload.sub || payload.userId;
+                if (!userId) {
+                    console.log('❌ No user ID in JWT payload');
+                    client.disconnect();
+                    return;
+                }
+                const user = await this.usersService.findById(userId);
+                if (!user) {
+                    console.log('❌ User not found in database');
+                    client.disconnect();
+                    return;
+                }
+                console.log('✅ User found:', user.firstName, user.lastName);
+                await this.usersService.setUserOnline(userId);
+                this.connectedUsers.set(userId, client);
+                client.data.userId = userId;
+                console.log('✅ Connection successful for user:', userId);
+                console.log('Connected users count:', this.connectedUsers.size);
+            }
+            catch (jwtError) {
+                console.log('❌ JWT verification failed:', jwtError.message);
                 client.disconnect();
                 return;
             }
-            this.connectionCount++;
-            const userIndex = (this.connectionCount - 1) % testUsers.length;
-            const userId = testUsers[userIndex].id;
-            await this.usersService.setUserOnline(userId);
-            this.connectedUsers.set(userId, client);
-            client.data.userId = userId;
-            console.log(`User ${userId} connected (connection #${this.connectionCount})`);
-            console.log('Client data after connection:', client.data);
-            console.log('Connected users map:', Array.from(this.connectedUsers.entries()));
-            console.log('Socket ID:', client.id);
-            console.log('Socket connected:', client.connected);
         }
         catch (error) {
-            console.error('Connection error:', error);
+            console.error('❌ Connection error:', error);
             client.disconnect();
         }
     }
@@ -294,6 +316,7 @@ exports.MessagesGateway = MessagesGateway = __decorate([
                 'http://localhost:3000',
                 'http://localhost:3001',
                 'http://localhost:8080',
+                'http://localhost:5173',
                 'https://onlinejobs.onrender.com',
                 'https://*.onrender.com',
                 /^https:\/\/.*\.onrender\.com$/,
@@ -306,6 +329,7 @@ exports.MessagesGateway = MessagesGateway = __decorate([
     }),
     __metadata("design:paramtypes", [messages_service_1.MessagesService,
         users_service_1.UsersService,
-        ai_service_1.AiService])
+        ai_service_1.AiService,
+        jwt_1.JwtService])
 ], MessagesGateway);
 //# sourceMappingURL=messages.gateway.js.map
