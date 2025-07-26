@@ -14,7 +14,5 @@ export declare class UpdateUserDto {
         floor?: string;
         apartmentNo?: string;
         description?: string;
-        latitude?: number;
-        longitude?: number;
     };
 }

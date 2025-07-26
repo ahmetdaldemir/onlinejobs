@@ -1,20 +1,31 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Request, ForbiddenException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { JobsService } from './jobs.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApplicationStatus } from './entities/job-application.entity';
+import { CreateJobDto } from './dto/create-job.dto';
+import { UsersService } from '../users/users.service';
 
 @ApiTags('Jobs')
 @Controller('jobs')
 export class JobsController {
-  constructor(private readonly jobsService: JobsService) {}
+  constructor(
+    private readonly jobsService: JobsService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'İş ilanı oluştur' })
+  @ApiOperation({ summary: 'İş ilanı oluştur (Sadece employer\'lar)' })
   @ApiResponse({ status: 201, description: 'İş ilanı oluşturuldu' })
-  async create(@Body() createJobDto: any, @Request() req) {
+  async create(@Body() createJobDto: CreateJobDto, @Request() req) {
+    // Sadece employer'ların iş ilanı oluşturabilmesini kontrol et
+    const user = await this.usersService.findById(req.user.sub);
+    if (user.userType !== 'employer') {
+      throw new ForbiddenException('Sadece employer\'lar iş ilanı oluşturabilir');
+    }
+
     return this.jobsService.create(createJobDto, req.user.sub);
   }
 

@@ -18,11 +18,18 @@ const swagger_1 = require("@nestjs/swagger");
 const jobs_service_1 = require("./jobs.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const job_application_entity_1 = require("./entities/job-application.entity");
+const create_job_dto_1 = require("./dto/create-job.dto");
+const users_service_1 = require("../users/users.service");
 let JobsController = class JobsController {
-    constructor(jobsService) {
+    constructor(jobsService, usersService) {
         this.jobsService = jobsService;
+        this.usersService = usersService;
     }
     async create(createJobDto, req) {
+        const user = await this.usersService.findById(req.user.sub);
+        if (user.userType !== 'employer') {
+            throw new common_1.ForbiddenException('Sadece employer\'lar iş ilanı oluşturabilir');
+        }
         return this.jobsService.create(createJobDto, req.user.sub);
     }
     async findAll(filters) {
@@ -55,12 +62,12 @@ __decorate([
     (0, common_1.Post)(),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'İş ilanı oluştur' }),
+    (0, swagger_1.ApiOperation)({ summary: 'İş ilanı oluştur (Sadece employer\'lar)' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'İş ilanı oluşturuldu' }),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [create_job_dto_1.CreateJobDto, Object]),
     __metadata("design:returntype", Promise)
 ], JobsController.prototype, "create", null);
 __decorate([
@@ -165,6 +172,7 @@ __decorate([
 exports.JobsController = JobsController = __decorate([
     (0, swagger_1.ApiTags)('Jobs'),
     (0, common_1.Controller)('jobs'),
-    __metadata("design:paramtypes", [jobs_service_1.JobsService])
+    __metadata("design:paramtypes", [jobs_service_1.JobsService,
+        users_service_1.UsersService])
 ], JobsController);
 //# sourceMappingURL=jobs.controller.js.map

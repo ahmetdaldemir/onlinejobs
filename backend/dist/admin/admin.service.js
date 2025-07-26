@@ -22,13 +22,15 @@ const job_entity_1 = require("../jobs/entities/job.entity");
 const message_entity_1 = require("../messages/entities/message.entity");
 const category_entity_1 = require("../categories/entities/category.entity");
 const bcrypt = require("bcryptjs");
+const job_application_entity_1 = require("../jobs/entities/job-application.entity");
 let AdminService = class AdminService {
-    constructor(userRepository, userInfoRepository, jobRepository, messageRepository, categoryRepository) {
+    constructor(userRepository, userInfoRepository, jobRepository, messageRepository, categoryRepository, jobApplicationRepository) {
         this.userRepository = userRepository;
         this.userInfoRepository = userInfoRepository;
         this.jobRepository = jobRepository;
         this.messageRepository = messageRepository;
         this.categoryRepository = categoryRepository;
+        this.jobApplicationRepository = jobApplicationRepository;
     }
     async getDashboardStats() {
         const [totalUsers, onlineUsers, totalJobs, activeJobs, totalMessages, totalCategories, userTypes, jobStatuses,] = await Promise.all([
@@ -198,9 +200,45 @@ let AdminService = class AdminService {
         if (!user) {
             throw new common_1.NotFoundException('Kullanıcı bulunamadı');
         }
+        const hasJobs = await this.jobRepository.count({ where: { employerId: id } });
+        const hasApplications = await this.jobApplicationRepository.count({ where: { applicantId: id } });
+        const hasMessages = await this.messageRepository.count({
+            where: [{ senderId: id }, { receiverId: id }]
+        });
+        if (hasJobs > 0 || hasApplications > 0 || hasMessages > 0) {
+            throw new common_1.ConflictException('Bu kullanıcıya ait işler, başvurular veya mesajlar bulunduğu için silinemez');
+        }
         await this.userRepository.remove(user);
+        return { message: 'Kullanıcı başarıyla silindi' };
+    }
+    async toggleUserStatus(id, status) {
+        const user = await this.userRepository.findOne({ where: { id } });
+        if (!user) {
+            throw new common_1.NotFoundException('Kullanıcı bulunamadı');
+        }
+        user.status = status === 'active' ? user_entity_1.UserStatus.ACTIVE : user_entity_1.UserStatus.INACTIVE;
+        await this.userRepository.save(user);
         return {
-            message: 'Kullanıcı başarıyla silindi',
+            message: 'Kullanıcı durumu güncellendi',
+            user: {
+                id: user.id,
+                status: user.status
+            }
+        };
+    }
+    async toggleUserOnline(id, isOnline) {
+        const user = await this.userRepository.findOne({ where: { id } });
+        if (!user) {
+            throw new common_1.NotFoundException('Kullanıcı bulunamadı');
+        }
+        user.isOnline = isOnline;
+        await this.userRepository.save(user);
+        return {
+            message: 'Kullanıcı online durumu güncellendi',
+            user: {
+                id: user.id,
+                isOnline: user.isOnline
+            }
         };
     }
     async getAllCategories() {
@@ -319,7 +357,9 @@ exports.AdminService = AdminService = __decorate([
     __param(2, (0, typeorm_1.InjectRepository)(job_entity_1.Job)),
     __param(3, (0, typeorm_1.InjectRepository)(message_entity_1.Message)),
     __param(4, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
+    __param(5, (0, typeorm_1.InjectRepository)(job_application_entity_1.JobApplication)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

@@ -13,12 +13,19 @@ const jobs_controller_1 = require("./jobs.controller");
 const jobs_service_1 = require("./jobs.service");
 const job_entity_1 = require("./entities/job.entity");
 const job_application_entity_1 = require("./entities/job-application.entity");
+const user_entity_1 = require("../users/entities/user.entity");
+const notifications_module_1 = require("../notifications/notifications.module");
+const users_module_1 = require("../users/users.module");
 let JobsModule = class JobsModule {
 };
 exports.JobsModule = JobsModule;
 exports.JobsModule = JobsModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([job_entity_1.Job, job_application_entity_1.JobApplication])],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([job_entity_1.Job, job_application_entity_1.JobApplication, user_entity_1.User]),
+            notifications_module_1.NotificationsModule,
+            users_module_1.UsersModule,
+        ],
         controllers: [jobs_controller_1.JobsController],
         providers: [jobs_service_1.JobsService],
         exports: [jobs_service_1.JobsService],

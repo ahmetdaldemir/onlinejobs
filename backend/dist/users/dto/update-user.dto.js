@@ -16,55 +16,55 @@ class UpdateUserDto {
 }
 exports.UpdateUserDto = UpdateUserDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Kullanıcı adı', required: false }),
+    (0, swagger_1.ApiProperty)({ required: false }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "firstName", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Kullanıcı soyadı', required: false }),
+    (0, swagger_1.ApiProperty)({ required: false }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "lastName", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Email adresi', required: false }),
+    (0, swagger_1.ApiProperty)({ required: false }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "email", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Telefon numarası', required: false }),
+    (0, swagger_1.ApiProperty)({ required: false }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "phone", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Şifre', required: false }),
+    (0, swagger_1.ApiProperty)({ required: false }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "password", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Kullanıcı tipi', enum: ['worker', 'employer'], required: false }),
+    (0, swagger_1.ApiProperty)({ enum: ['worker', 'employer'], required: false }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsEnum)(['worker', 'employer']),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "userType", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Biyografi', required: false }),
+    (0, swagger_1.ApiProperty)({ required: false }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "bio", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Profil resmi', required: false }),
+    (0, swagger_1.ApiProperty)({ required: false }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], UpdateUserDto.prototype, "profileImage", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Kullanıcı bilgileri', required: false }),
+    (0, swagger_1.ApiProperty)({ required: false }),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Object)
 ], UpdateUserDto.prototype, "userInfo", void 0);

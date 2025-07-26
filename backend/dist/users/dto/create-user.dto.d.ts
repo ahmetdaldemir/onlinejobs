@@ -14,7 +14,5 @@ export declare class CreateUserDto {
         floor?: string;
         apartmentNo?: string;
         description?: string;
-        latitude?: number;
-        longitude?: number;
     };
 }

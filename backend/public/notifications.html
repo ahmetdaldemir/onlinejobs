@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bildirimler - Online Jobs</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .notification-item {
+            transition: all 0.3s ease;
+        }
+        .notification-item:hover {
+            background-color: #f8f9fa;
+        }
+        .notification-item.unread {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+        .notification-item.read {
+            opacity: 0.7;
+        }
+        .notification-time {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        .notification-badge {
+            position: relative;
+        }
+        .notification-badge .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <i class="fas fa-briefcase me-2"></i>Online Jobs
+                </a>
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="chat-test.html">
+                        <i class="fas fa-comments me-1"></i>Mesajlar
+                    </a>
+                    <a class="nav-link" href="create-job.html">
+                        <i class="fas fa-plus-circle me-1"></i>İş İlanı Oluştur
+                    </a>
+                    <a class="nav-link" href="#" onclick="logout()">
+                        <i class="fas fa-sign-out-alt me-1"></i>Çıkış
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-8 mx-auto">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-bell me-2"></i>Bildirimler
+                            </h5>
+                            <div>
+                                <button class="btn btn-sm btn-outline-light" onclick="markAllAsRead()">
+                                    <i class="fas fa-check-double me-1"></i>Tümünü Okundu İşaretle
+                                </button>
+                                <span class="badge bg-warning ms-2" id="unreadCount">0</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="notificationsList">
+                                <div class="text-center py-4">
+                                    <i class="fas fa-spinner fa-spin fa-2x text-muted"></i>
+                                    <p class="mt-2 text-muted">Bildirimler yükleniyor...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = 'http://localhost:3000';
+        let userToken = localStorage.getItem('userToken');
+
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!userToken) {
+                alert('Lütfen önce giriş yapın!');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            loadNotifications();
+        });
+
+        // Bildirimleri yükle
+        async function loadNotifications() {
+            try {
+                const response = await fetch(`${API_BASE}/notifications`, {
+                    headers: {
+                        'Authorization': `Bearer ${userToken}`,
+                    },
+                });
+
+                const notifications = await response.json();
+                displayNotifications(notifications);
+                updateUnreadCount();
+            } catch (error) {
+                console.error('Bildirimler yüklenirken hata:', error);
+                document.getElementById('notificationsList').innerHTML = 
+                    '<div class="alert alert-danger">Bildirimler yüklenirken hata oluştu</div>';
+            }
+        }
+
+        // Bildirimleri görüntüle
+        function displayNotifications(notifications) {
+            const container = document.getElementById('notificationsList');
+            
+            if (notifications.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-bell-slash fa-2x text-muted"></i>
+                        <p class="mt-2 text-muted">Henüz bildiriminiz yok</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const notificationsHtml = notifications.map(notification => {
+                const isUnread = notification.status === 'unread';
+                const timeAgo = getTimeAgo(notification.createdAt);
+                
+                return `
+                    <div class="notification-item p-3 border-bottom ${isUnread ? 'unread' : 'read'}" 
+                         onclick="markAsRead('${notification.id}')">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">${notification.title}</h6>
+                                <p class="mb-1">${notification.message}</p>
+                                ${notification.data ? `
+                                    <div class="mt-2">
+                                        <small class="text-info">
+                                            ${notification.data.jobTitle ? `📋 ${notification.data.jobTitle}` : ''}
+                                            ${notification.data.budget ? `💰 ${notification.data.budget} TL` : ''}
+                                            ${notification.data.location ? `📍 ${notification.data.location}` : ''}
+                                            ${notification.data.distance ? `📏 ${notification.data.distance.toFixed(1)} km uzaklıkta` : ''}
+                                        </small>
+                                    </div>
+                                ` : ''}
+                                <div class="notification-time mt-2">
+                                    <i class="fas fa-clock me-1"></i>${timeAgo}
+                                </div>
+                            </div>
+                            <div class="ms-3">
+                                ${isUnread ? '<span class="badge bg-primary">Yeni</span>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = notificationsHtml;
+        }
+
+        // Bildirimi okundu olarak işaretle
+        async function markAsRead(notificationId) {
+            try {
+                const response = await fetch(`${API_BASE}/notifications/${notificationId}/read`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${userToken}`,
+                    },
+                });
+
+                if (response.ok) {
+                    // Bildirimi yeniden yükle
+                    loadNotifications();
+                }
+            } catch (error) {
+                console.error('Bildirim işaretlenirken hata:', error);
+            }
+        }
+
+        // Tüm bildirimleri okundu olarak işaretle
+        async function markAllAsRead() {
+            try {
+                const response = await fetch(`${API_BASE}/notifications/mark-all-read`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${userToken}`,
+                    },
+                });
+
+                if (response.ok) {
+                    loadNotifications();
+                    alert('✅ Tüm bildirimler okundu olarak işaretlendi');
+                }
+            } catch (error) {
+                console.error('Bildirimler işaretlenirken hata:', error);
+                alert('❌ Bildirimler işaretlenirken hata oluştu');
+            }
+        }
+
+        // Okunmamış bildirim sayısını güncelle
+        async function updateUnreadCount() {
+            try {
+                const response = await fetch(`${API_BASE}/notifications/unread-count`, {
+                    headers: {
+                        'Authorization': `Bearer ${userToken}`,
+                    },
+                });
+
+                const count = await response.json();
+                document.getElementById('unreadCount').textContent = count;
+            } catch (error) {
+                console.error('Okunmamış sayısı alınırken hata:', error);
+            }
+        }
+
+        // Zaman hesaplama
+        function getTimeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+
+            if (diffInSeconds < 60) {
+                return 'Az önce';
+            } else if (diffInSeconds < 3600) {
+                const minutes = Math.floor(diffInSeconds / 60);
+                return `${minutes} dakika önce`;
+            } else if (diffInSeconds < 86400) {
+                const hours = Math.floor(diffInSeconds / 3600);
+                return `${hours} saat önce`;
+            } else {
+                const days = Math.floor(diffInSeconds / 86400);
+                return `${days} gün önce`;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('userToken');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html> 

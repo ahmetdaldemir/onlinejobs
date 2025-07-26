@@ -6,34 +6,29 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AdminModule = void 0;
+exports.NotificationsModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const admin_controller_1 = require("./admin.controller");
-const admin_service_1 = require("./admin.service");
+const notifications_controller_1 = require("./notifications.controller");
+const notifications_service_1 = require("./notifications.service");
+const notification_entity_1 = require("./entities/notification.entity");
 const user_entity_1 = require("../users/entities/user.entity");
 const user_info_entity_1 = require("../users/entities/user-info.entity");
-const job_entity_1 = require("../jobs/entities/job.entity");
-const message_entity_1 = require("../messages/entities/message.entity");
-const category_entity_1 = require("../categories/entities/category.entity");
-const job_application_entity_1 = require("../jobs/entities/job-application.entity");
-let AdminModule = class AdminModule {
+let NotificationsModule = class NotificationsModule {
 };
-exports.AdminModule = AdminModule;
-exports.AdminModule = AdminModule = __decorate([
+exports.NotificationsModule = NotificationsModule;
+exports.NotificationsModule = NotificationsModule = __decorate([
     (0, common_1.Module)({
         imports: [
             typeorm_1.TypeOrmModule.forFeature([
+                notification_entity_1.Notification,
                 user_entity_1.User,
                 user_info_entity_1.UserInfo,
-                job_entity_1.Job,
-                message_entity_1.Message,
-                category_entity_1.Category,
-                job_application_entity_1.JobApplication,
             ]),
         ],
-        controllers: [admin_controller_1.AdminController],
-        providers: [admin_service_1.AdminService],
+        controllers: [notifications_controller_1.NotificationsController],
+        providers: [notifications_service_1.NotificationsService],
+        exports: [notifications_service_1.NotificationsService],
     })
-], AdminModule);
-//# sourceMappingURL=admin.module.js.map
+], NotificationsModule);
+//# sourceMappingURL=notifications.module.js.map

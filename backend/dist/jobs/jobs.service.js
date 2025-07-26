@@ -18,17 +18,28 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const job_entity_1 = require("./entities/job.entity");
 const job_application_entity_1 = require("./entities/job-application.entity");
+const notifications_service_1 = require("../notifications/notifications.service");
+const user_entity_1 = require("../users/entities/user.entity");
 let JobsService = class JobsService {
-    constructor(jobRepository, applicationRepository) {
+    constructor(jobRepository, applicationRepository, userRepository, notificationsService) {
         this.jobRepository = jobRepository;
         this.applicationRepository = applicationRepository;
+        this.userRepository = userRepository;
+        this.notificationsService = notificationsService;
     }
     async create(createJobDto, employerId) {
         const job = this.jobRepository.create({
             ...createJobDto,
             employerId,
         });
-        return this.jobRepository.save(job);
+        const savedJob = await this.jobRepository.save(job);
+        const employer = await this.userRepository.findOne({
+            where: { id: employerId }
+        });
+        if (employer) {
+            await this.notificationsService.createJobNotification(savedJob, employer);
+        }
+        return savedJob;
     }
     async findAll(filters) {
         const query = this.jobRepository
@@ -133,7 +144,10 @@ exports.JobsService = JobsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(job_entity_1.Job)),
     __param(1, (0, typeorm_1.InjectRepository)(job_application_entity_1.JobApplication)),
+    __param(2, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        typeorm_2.Repository])
+        typeorm_2.Repository,
+        typeorm_2.Repository,
+        notifications_service_1.NotificationsService])
 ], JobsService);
 //# sourceMappingURL=jobs.service.js.map

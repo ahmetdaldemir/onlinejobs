@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Job, JobStatus } from './entities/job.entity';
 import { JobApplication, ApplicationStatus } from './entities/job-application.entity';
+import { NotificationsService } from '../notifications/notifications.service';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class JobsService {
@@ -11,6 +13,9 @@ export class JobsService {
     private jobRepository: Repository<Job>,
     @InjectRepository(JobApplication)
     private applicationRepository: Repository<JobApplication>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    private notificationsService: NotificationsService,
   ) {}
 
   async create(createJobDto: any, employerId: string): Promise<Job> {
@@ -18,7 +23,20 @@ export class JobsService {
       ...createJobDto,
       employerId,
     });
-    return this.jobRepository.save(job as unknown as Job);
+    
+    const savedJob = await this.jobRepository.save(job as unknown as Job);
+    
+    // Employer bilgilerini al
+    const employer = await this.userRepository.findOne({
+      where: { id: employerId }
+    });
+
+    // Bildirim gönder
+    if (employer) {
+      await this.notificationsService.createJobNotification(savedJob, employer);
+    }
+
+    return savedJob;
   }
 
   async findAll(filters?: any): Promise<Job[]> {

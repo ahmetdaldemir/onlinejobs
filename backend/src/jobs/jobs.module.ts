@@ -4,9 +4,16 @@ import { JobsController } from './jobs.controller';
 import { JobsService } from './jobs.service';
 import { Job } from './entities/job.entity';
 import { JobApplication } from './entities/job-application.entity';
+import { User } from '../users/entities/user.entity';
+import { NotificationsModule } from '../notifications/notifications.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Job, JobApplication])],
+  imports: [
+    TypeOrmModule.forFeature([Job, JobApplication, User]),
+    NotificationsModule,
+    UsersModule,
+  ],
   controllers: [JobsController],
   providers: [JobsService],
   exports: [JobsService],

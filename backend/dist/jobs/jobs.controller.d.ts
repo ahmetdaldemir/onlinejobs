@@ -1,9 +1,12 @@
 import { JobsService } from './jobs.service';
 import { ApplicationStatus } from './entities/job-application.entity';
+import { CreateJobDto } from './dto/create-job.dto';
+import { UsersService } from '../users/users.service';
 export declare class JobsController {
     private readonly jobsService;
-    constructor(jobsService: JobsService);
-    create(createJobDto: any, req: any): Promise<import("./entities/job.entity").Job>;
+    private readonly usersService;
+    constructor(jobsService: JobsService, usersService: UsersService);
+    create(createJobDto: CreateJobDto, req: any): Promise<import("./entities/job.entity").Job>;
     findAll(filters: any): Promise<import("./entities/job.entity").Job[]>;
     findById(id: string): Promise<import("./entities/job.entity").Job>;
     update(id: string, updateJobDto: any, req: any): Promise<import("./entities/job.entity").Job>;

@@ -52,6 +52,12 @@ let AdminController = class AdminController {
     async updateUser(id, updateUserDto) {
         return this.adminService.updateUser(id, updateUserDto);
     }
+    async toggleUserStatus(id, body) {
+        return this.adminService.toggleUserStatus(id, body.status);
+    }
+    async toggleUserOnline(id, body) {
+        return this.adminService.toggleUserOnline(id, body.isOnline);
+    }
     async deleteUser(id) {
         return this.adminService.deleteUser(id);
     }
@@ -139,15 +145,32 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "createUser", null);
 __decorate([
-    (0, common_1.Put)('users/:id'),
-    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı güncelle' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı güncellendi' }),
+    (0, common_1.Put)('/users/:id'),
+    (0, common_1.UseGuards)(admin_jwt_guard_1.AdminJwtGuard),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, update_user_dto_1.UpdateUserDto]),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "updateUser", null);
+__decorate([
+    (0, common_1.Put)('/users/:id/status'),
+    (0, common_1.UseGuards)(admin_jwt_guard_1.AdminJwtGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "toggleUserStatus", null);
+__decorate([
+    (0, common_1.Put)('/users/:id/online'),
+    (0, common_1.UseGuards)(admin_jwt_guard_1.AdminJwtGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "toggleUserOnline", null);
 __decorate([
     (0, common_1.Delete)('users/:id'),
     (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı sil' }),

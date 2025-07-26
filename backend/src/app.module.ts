@@ -1,34 +1,33 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
-import { ScheduleModule } from '@nestjs/schedule';
-
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { JobsModule } from './jobs/jobs.module';
 import { MessagesModule } from './messages/messages.module';
 import { CategoriesModule } from './categories/categories.module';
 import { LocationsModule } from './locations/locations.module';
-import { DatabaseModule } from './database/database.module';
 import { SeedsModule } from './seeds/seeds.module';
-import { AiModule } from './ai/ai.module';
 import { AdminModule } from './admin/admin.module';
-import { AppController } from './app.controller';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
     }),
-    ScheduleModule.forRoot(),
-    DatabaseModule,
-    PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'your-super-secret-jwt-key',
-      signOptions: { expiresIn: '7d' },
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT) || 5432,
+      username: process.env.DB_USERNAME || 'postgres',
+      password: process.env.DB_PASSWORD || 'password',
+      database: process.env.DB_NAME || 'onlinejobs',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: process.env.NODE_ENV !== 'production',
+      logging: process.env.NODE_ENV !== 'production',
     }),
     AuthModule,
     UsersModule,
@@ -37,10 +36,10 @@ import { AppController } from './app.controller';
     CategoriesModule,
     LocationsModule,
     SeedsModule,
-    AiModule,
     AdminModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [AppService],
 })
 export class AppModule {} 

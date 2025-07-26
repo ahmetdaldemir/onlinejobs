@@ -79,6 +79,24 @@ export declare class AdminController {
     updateUser(id: string, updateUserDto: UpdateUserDto): Promise<{
         message: string;
     }>;
+    toggleUserStatus(id: string, body: {
+        status: string;
+    }): Promise<{
+        message: string;
+        user: {
+            id: string;
+            status: import("../users/entities/user.entity").UserStatus;
+        };
+    }>;
+    toggleUserOnline(id: string, body: {
+        isOnline: boolean;
+    }): Promise<{
+        message: string;
+        user: {
+            id: string;
+            isOnline: boolean;
+        };
+    }>;
     deleteUser(id: string): Promise<{
         message: string;
     }>;

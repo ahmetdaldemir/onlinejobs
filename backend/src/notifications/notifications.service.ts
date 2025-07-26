@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Notification, NotificationType, NotificationStatus } from './entities/notification.entity';
-import { User } from '../users/entities/user.entity';
+import { User, UserStatus } from '../users/entities/user.entity';
 import { Job } from '../jobs/entities/job.entity';
 import { UserInfo } from '../users/entities/user-info.entity';
 
@@ -22,7 +22,7 @@ export class NotificationsService {
     const workers = await this.userRepository.find({
       where: {
         userType: 'worker',
-        status: 'active',
+        status: UserStatus.ACTIVE,
         category: { id: job.categoryId }
       },
       relations: ['userInfos']
