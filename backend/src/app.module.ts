@@ -14,6 +14,7 @@ import { LocationsModule } from './locations/locations.module';
 import { DatabaseModule } from './database/database.module';
 import { SeedsModule } from './seeds/seeds.module';
 import { AiModule } from './ai/ai.module';
+import { AdminModule } from './admin/admin.module';
 import { AppController } from './app.controller';
 
 @Module({
@@ -37,6 +38,7 @@ import { AppController } from './app.controller';
     LocationsModule,
     SeedsModule,
     AiModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [],

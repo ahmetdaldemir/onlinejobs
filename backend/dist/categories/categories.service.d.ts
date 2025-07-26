@@ -8,5 +8,6 @@ export declare class CategoriesService {
     create(createCategoryDto: any): Promise<Category>;
     update(id: string, updateCategoryDto: any): Promise<Category>;
     delete(id: string): Promise<void>;
+    clearAll(): Promise<void>;
     findByParentId(parentId: string): Promise<Category[]>;
 }

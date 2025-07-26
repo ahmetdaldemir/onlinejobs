@@ -46,6 +46,10 @@ export class CategoriesService {
     await this.categoryRepository.save(category);
   }
 
+  async clearAll(): Promise<void> {
+    await this.categoryRepository.clear();
+  }
+
   async findByParentId(parentId: string): Promise<Category[]> {
     return this.categoryRepository.find({
       where: { parentId, isActive: true },

@@ -12,17 +12,21 @@ const typeorm_1 = require("@nestjs/typeorm");
 const jwt_1 = require("@nestjs/jwt");
 const passport_1 = require("@nestjs/passport");
 const config_1 = require("@nestjs/config");
-const auth_controller_1 = require("./auth.controller");
 const auth_service_1 = require("./auth.service");
-const jwt_strategy_1 = require("./strategies/jwt.strategy");
+const auth_controller_1 = require("./auth.controller");
+const admin_auth_service_1 = require("./admin-auth.service");
+const admin_auth_controller_1 = require("./admin-auth.controller");
 const user_entity_1 = require("../users/entities/user.entity");
+const admin_entity_1 = require("./entities/admin.entity");
+const jwt_strategy_1 = require("./strategies/jwt.strategy");
+const admin_jwt_strategy_1 = require("./strategies/admin-jwt.strategy");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
 exports.AuthModule = AuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([user_entity_1.User]),
+            typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, admin_entity_1.Admin]),
             passport_1.PassportModule,
             jwt_1.JwtModule.registerAsync({
                 imports: [config_1.ConfigModule],
@@ -33,9 +37,9 @@ exports.AuthModule = AuthModule = __decorate([
                 inject: [config_1.ConfigService],
             }),
         ],
-        controllers: [auth_controller_1.AuthController],
-        providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy],
-        exports: [auth_service_1.AuthService],
+        controllers: [auth_controller_1.AuthController, admin_auth_controller_1.AdminAuthController],
+        providers: [auth_service_1.AuthService, admin_auth_service_1.AdminAuthService, jwt_strategy_1.JwtStrategy, admin_jwt_strategy_1.AdminJwtStrategy],
+        exports: [auth_service_1.AuthService, admin_auth_service_1.AdminAuthService],
     })
 ], AuthModule);
 //# sourceMappingURL=auth.module.js.map

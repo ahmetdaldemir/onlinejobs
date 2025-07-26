@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Online Jobs</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            margin: 2px 0;
+            transition: all 0.3s ease;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .main-content {
+            background: white;
+            border-radius: 15px;
+            margin: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .btn {
+            border-radius: 10px;
+        }
+        .modal-content {
+            border-radius: 15px;
+            border: none;
+        }
+        .form-control {
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 p-0">
+                <div class="sidebar p-3">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-shield-alt fa-2x mb-2"></i>
+                        <h5>Admin Panel</h5>
+                    </div>
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="#" onclick="showSection('dashboard')">
+                            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                        </a>
+                        <a class="nav-link" href="#" onclick="showSection('users')">
+                            <i class="fas fa-users me-2"></i> Kullanıcılar
+                        </a>
+                        <a class="nav-link" href="#" onclick="showSection('jobs')">
+                            <i class="fas fa-briefcase me-2"></i> İş İlanları
+                        </a>
+                        <a class="nav-link" href="#" onclick="showSection('messages')">
+                            <i class="fas fa-comments me-2"></i> Mesajlar
+                        </a>
+                        <a class="nav-link" href="#" onclick="showSection('categories')">
+                            <i class="fas fa-tags me-2"></i> Kategoriler
+                        </a>
+                        <hr class="my-3">
+                        <a class="nav-link" href="#" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-2"></i> Çıkış
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10">
+                <div class="main-content p-4">
+                    <!-- Dashboard Section -->
+                    <div id="dashboardSection" class="section">
+                        <h2 class="mb-4">Dashboard</h2>
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <div class="card stat-card">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-users fa-2x mb-2"></i>
+                                        <h3 id="totalUsers">-</h3>
+                                        <p>Toplam Kullanıcı</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stat-card">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-briefcase fa-2x mb-2"></i>
+                                        <h3 id="totalJobs">-</h3>
+                                        <p>Toplam İş İlanı</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stat-card">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-comments fa-2x mb-2"></i>
+                                        <h3 id="totalMessages">-</h3>
+                                        <p>Toplam Mesaj</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card stat-card">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-tags fa-2x mb-2"></i>
+                                        <h3 id="totalCategories">-</h3>
+                                        <p>Toplam Kategori</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Kullanıcı İstatistikleri</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="userStats"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>İş İlanı İstatistikleri</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="jobStats"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users Section -->
+                    <div id="usersSection" class="section" style="display: none;">
+                        <h2 class="mb-4">Kullanıcı Yönetimi</h2>
+                        
+                        <!-- Add User Button -->
+                        <div class="mb-3">
+                            <button class="btn btn-primary" onclick="showAddUserModal()">
+                                <i class="fas fa-plus me-2"></i>Yeni Kullanıcı Ekle
+                            </button>
+                        </div>
+
+                        <!-- Users List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Kullanıcı Listesi</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="usersList"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Jobs Section -->
+                    <div id="jobsSection" class="section" style="display: none;">
+                        <h2 class="mb-4">İş İlanı Yönetimi</h2>
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>İş İlanları</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="jobsList"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Messages Section -->
+                    <div id="messagesSection" class="section" style="display: none;">
+                        <h2 class="mb-4">Mesaj Yönetimi</h2>
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Mesaj İstatistikleri</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="messageStats"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Categories Section -->
+                    <div id="categoriesSection" class="section" style="display: none;">
+                        <h2 class="mb-4">Kategori Yönetimi</h2>
+                        
+                        <!-- Add Category Button -->
+                        <div class="mb-3">
+                            <button class="btn btn-primary" onclick="showAddCategoryModal()">
+                                <i class="fas fa-plus me-2"></i>Yeni Kategori Ekle
+                            </button>
+                        </div>
+
+                        <!-- Categories List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5>Kategori Listesi</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="categoriesList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div class="modal fade" id="addUserModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Yeni Kullanıcı Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addUserForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Kullanıcı Bilgileri</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Ad *</label>
+                                    <input type="text" class="form-control" name="firstName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Soyad *</label>
+                                    <input type="text" class="form-control" name="lastName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Telefon *</label>
+                                    <input type="text" class="form-control" name="phone" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Şifre *</label>
+                                    <input type="password" class="form-control" name="password" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Kullanıcı Tipi *</label>
+                                    <select class="form-control" name="userType" required>
+                                        <option value="worker">İşçi</option>
+                                        <option value="employer">İşveren</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Biyografi</label>
+                                    <textarea class="form-control" name="bio" rows="3"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Adres Bilgileri</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Adres</label>
+                                    <textarea class="form-control" name="address" rows="2"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Mahalle/Cadde/Sokak</label>
+                                    <input type="text" class="form-control" name="neighborhood">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Bina No</label>
+                                            <input type="text" class="form-control" name="buildingNo">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Kat</label>
+                                            <input type="text" class="form-control" name="floor">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Daire No</label>
+                                            <input type="text" class="form-control" name="apartmentNo">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Açıklama</label>
+                                    <textarea class="form-control" name="description" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" onclick="addUser()">Kullanıcı Ekle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Kullanıcı Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editUserForm">
+                        <input type="hidden" id="editUserId" name="userId">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Kullanıcı Bilgileri</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Ad *</label>
+                                    <input type="text" class="form-control" id="editFirstName" name="firstName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Soyad *</label>
+                                    <input type="text" class="form-control" id="editLastName" name="lastName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="editEmail" name="email">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Telefon *</label>
+                                    <input type="text" class="form-control" id="editPhone" name="phone" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Yeni Şifre (Boş bırakılırsa değişmez)</label>
+                                    <input type="password" class="form-control" id="editPassword" name="password">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Kullanıcı Tipi</label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="editUserTypeSwitch">
+                                        <label class="form-check-label" for="editUserTypeSwitch">
+                                            <span id="editUserTypeLabel">İşçi</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Durum</label>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="editStatusSwitch" checked>
+                                        <label class="form-check-label" for="editStatusSwitch">
+                                            <span id="editStatusLabel">Aktif</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Biyografi</label>
+                                    <textarea class="form-control" id="editBio" name="bio" rows="3"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Adres Bilgileri</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Adres</label>
+                                    <textarea class="form-control" id="editAddress" name="address" rows="2"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Mahalle/Cadde/Sokak</label>
+                                    <input type="text" class="form-control" id="editNeighborhood" name="neighborhood">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Bina No</label>
+                                            <input type="text" class="form-control" id="editBuildingNo" name="buildingNo">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Kat</label>
+                                            <input type="text" class="form-control" id="editFloor" name="floor">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label">Daire No</label>
+                                            <input type="text" class="form-control" id="editApartmentNo" name="apartmentNo">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Açıklama</label>
+                                    <textarea class="form-control" id="editDescription" name="description" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" onclick="updateUser()">Güncelle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Yeni Kategori Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCategoryForm">
+                        <div class="mb-3">
+                            <label class="form-label">Kategori Adı *</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Açıklama</label>
+                            <textarea class="form-control" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">İkon (CSS class veya URL)</label>
+                            <input type="text" class="form-control" name="icon" placeholder="fas fa-tag">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Üst Kategori</label>
+                            <select class="form-control" name="parentId" id="parentCategorySelect">
+                                <option value="">Ana Kategori</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Sıralama</label>
+                            <input type="number" class="form-control" name="orderIndex" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="isActive" id="categoryActive" checked>
+                                <label class="form-check-label" for="categoryActive">
+                                    Aktif
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" onclick="addCategory()">Kategori Ekle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Category Modal -->
+    <div class="modal fade" id="editCategoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Kategori Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCategoryForm">
+                        <input type="hidden" id="editCategoryId" name="categoryId">
+                        <div class="mb-3">
+                            <label class="form-label">Kategori Adı *</label>
+                            <input type="text" class="form-control" id="editCategoryName" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Açıklama</label>
+                            <textarea class="form-control" id="editCategoryDescription" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">İkon (CSS class veya URL)</label>
+                            <input type="text" class="form-control" id="editCategoryIcon" name="icon" placeholder="fas fa-tag">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Üst Kategori</label>
+                            <select class="form-control" name="parentId" id="editParentCategorySelect">
+                                <option value="">Ana Kategori</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Sıralama</label>
+                            <input type="number" class="form-control" id="editCategoryOrderIndex" name="orderIndex" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="isActive" id="editCategoryActive">
+                                <label class="form-check-label" for="editCategoryActive">
+                                    Aktif
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" onclick="updateCategory()">Güncelle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let adminToken = null;
+        const API_BASE = 'http://localhost:3000';
+
+        // Check authentication on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedToken = localStorage.getItem('adminToken');
+            if (!savedToken) {
+                // Redirect to login if no token
+                window.location.href = 'admin-login.html';
+                return;
+            }
+            
+            adminToken = savedToken;
+            loadDashboard();
+        });
+
+        function logout() {
+            localStorage.removeItem('adminToken');
+            window.location.href = 'admin-login.html';
+        }
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+
+            // Show selected section
+            document.getElementById(sectionName + 'Section').style.display = 'block';
+
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Load section data
+            switch(sectionName) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'jobs':
+                    loadJobs();
+                    break;
+                case 'messages':
+                    loadMessages();
+                    break;
+                case 'categories':
+                    loadCategories();
+                    break;
+            }
+        }
+
+        async function loadDashboard() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/dashboard`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                    },
+                });
+
+                const data = await response.json();
+
+                // Update dashboard stats
+                document.getElementById('totalUsers').textContent = data.summary.totalUsers;
+                document.getElementById('totalJobs').textContent = data.summary.totalJobs;
+                document.getElementById('totalMessages').textContent = data.summary.totalMessages;
+                document.getElementById('totalCategories').textContent = data.summary.totalCategories;
+
+                // Update user stats
+                const userStats = data.users;
+                document.getElementById('userStats').innerHTML = `
+                    <p><strong>Toplam:</strong> ${userStats.total}</p>
+                    <p><strong>Online:</strong> ${userStats.online}</p>
+                    <p><strong>Offline:</strong> ${userStats.offline}</p>
+                    <p><strong>İşçi:</strong> ${userStats.types.workers}</p>
+                    <p><strong>İşveren:</strong> ${userStats.types.employers}</p>
+                `;
+
+                // Update job stats
+                const jobStats = data.jobs;
+                document.getElementById('jobStats').innerHTML = `
+                    <p><strong>Toplam:</strong> ${jobStats.total}</p>
+                    <p><strong>Açık:</strong> ${jobStats.active}</p>
+                    <p><strong>Tamamlanan:</strong> ${jobStats.completed}</p>
+                    <p><strong>Devam Eden:</strong> ${jobStats.statuses.inProgress}</p>
+                `;
+            } catch (error) {
+                console.error('Dashboard yüklenirken hata:', error);
+            }
+        }
+
+        async function loadUsers() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/users`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                    },
+                });
+
+                const users = await response.json();
+                
+                const usersHtml = users.map(user => `
+                    <div class="border-bottom p-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center mb-2">
+                                    <strong>${user.firstName} ${user.lastName}</strong>
+                                    <span class="badge ${user.userType === 'worker' ? 'bg-primary' : 'bg-success'} ms-2">${user.userType}</span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <small class="text-muted">
+                                            📧 ${user.email || 'Email yok'} | 📞 ${user.phone}
+                                        </small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small class="text-muted">
+                                            📅 ${new Date(user.createdAt).toLocaleDateString('tr-TR')}
+                                        </small>
+                                    </div>
+                                </div>
+                                ${user.bio ? `<div class="mt-1"><small>${user.bio}</small></div>` : ''}
+                                ${user.userInfos && user.userInfos.length > 0 ? `
+                                    <div class="mt-1">
+                                        <small class="text-info">
+                                            📍 ${user.userInfos[0].address || 'Adres bilgisi yok'}
+                                        </small>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <div class="d-flex flex-column align-items-end gap-2">
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="editUser('${user.id}')" title="Düzenle">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${user.id}', '${user.firstName} ${user.lastName}')" title="Sil">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                <div class="d-flex flex-column gap-1">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" 
+                                               id="statusSwitch_${user.id}" 
+                                               ${user.status === 'active' ? 'checked' : ''}
+                                               onchange="toggleUserStatus('${user.id}', this.checked)">
+                                        <label class="form-check-label" for="statusSwitch_${user.id}">
+                                            <small>${user.status === 'active' ? 'Aktif' : 'Pasif'}</small>
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" 
+                                               id="onlineSwitch_${user.id}" 
+                                               ${user.isOnline ? 'checked' : ''}
+                                               onchange="toggleUserOnline('${user.id}', this.checked)">
+                                        <label class="form-check-label" for="onlineSwitch_${user.id}">
+                                            <small>${user.isOnline ? 'Online' : 'Offline'}</small>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('usersList').innerHTML = usersHtml;
+            } catch (error) {
+                console.error('Kullanıcılar yüklenirken hata:', error);
+                document.getElementById('usersList').innerHTML = '<div class="alert alert-danger">Kullanıcılar yüklenirken hata oluştu</div>';
+            }
+        }
+
+        async function loadJobs() {
+            try {
+                const response = await fetch(`${API_BASE}/jobs`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                    },
+                });
+
+                const jobs = await response.json();
+                
+                const jobsHtml = jobs.map(job => `
+                    <div class="border-bottom p-2">
+                        <strong>${job.title}</strong><br>
+                        <small class="text-muted">
+                            ${job.status} | ${job.jobType} | ${job.budget ? `₺${job.budget}` : 'Fiyat belirtilmemiş'}
+                        </small>
+                    </div>
+                `).join('');
+
+                document.getElementById('jobsList').innerHTML = jobsHtml;
+            } catch (error) {
+                console.error('İş ilanları yüklenirken hata:', error);
+            }
+        }
+
+        async function loadMessages() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/messages/stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                    },
+                });
+
+                const data = await response.json();
+                
+                document.getElementById('messageStats').innerHTML = `
+                    <p><strong>Toplam Mesaj:</strong> ${data.total}</p>
+                    <p><strong>Okunmuş:</strong> ${data.read}</p>
+                    <p><strong>Okunmamış:</strong> ${data.unread}</p>
+                    <p><strong>Okunma Oranı:</strong> %${data.readPercentage}</p>
+                `;
+            } catch (error) {
+                console.error('Mesaj istatistikleri yüklenirken hata:', error);
+            }
+        }
+
+        async function loadCategories() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/categories`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                    },
+                });
+
+                const categories = await response.json();
+                
+                // Build hierarchical structure
+                const categoryMap = {};
+                const rootCategories = [];
+
+                // First pass: create map
+                categories.forEach(category => {
+                    categoryMap[category.id] = {
+                        ...category,
+                        children: []
+                    };
+                });
+
+                // Second pass: build hierarchy
+                categories.forEach(category => {
+                    if (category.parentId && categoryMap[category.parentId]) {
+                        categoryMap[category.parentId].children.push(categoryMap[category.id]);
+                    } else {
+                        rootCategories.push(categoryMap[category.id]);
+                    }
+                });
+
+                // Generate HTML recursively
+                function generateCategoryHTML(category, level = 0) {
+                    const indent = '&nbsp;'.repeat(level * 4);
+                    const prefix = level > 0 ? '└─ ' : '';
+                    
+                    return `
+                        <div class="border-bottom p-3" style="margin-left: ${level * 20}px;">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <strong>${prefix}${category.name}</strong>
+                                    ${category.isActive ? '<span class="badge bg-success ms-2">Aktif</span>' : '<span class="badge bg-secondary ms-2">Pasif</span>'}
+                                    ${category.parentId ? '<span class="badge bg-info ms-1">Alt Kategori</span>' : '<span class="badge bg-primary ms-1">Ana Kategori</span>'}
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="editCategory('${category.id}')" title="Düzenle">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory('${category.id}', '${category.name}')" title="Sil">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <small class="text-muted">
+                                    📝 ${category.description || 'Açıklama yok'} | 
+                                    📊 Sıra: ${category.orderIndex} | 
+                                    📅 ${new Date(category.createdAt).toLocaleDateString('tr-TR')}
+                                </small>
+                            </div>
+                            ${category.icon ? `<div class="mt-1"><small>🎨 İkon: ${category.icon}</small></div>` : ''}
+                            ${category.children.length > 0 ? `
+                                <div class="mt-2">
+                                    <small class="text-info">
+                                        👥 ${category.children.length} alt kategori
+                                    </small>
+                                </div>
+                            ` : ''}
+                        </div>
+                        ${category.children.map(child => generateCategoryHTML(child, level + 1)).join('')}
+                    `;
+                }
+
+                const categoriesHtml = rootCategories.map(category => generateCategoryHTML(category)).join('');
+                document.getElementById('categoriesList').innerHTML = categoriesHtml;
+            } catch (error) {
+                console.error('Kategoriler yüklenirken hata:', error);
+                document.getElementById('categoriesList').innerHTML = '<div class="alert alert-danger">Kategoriler yüklenirken hata oluştu</div>';
+            }
+        }
+
+        function showAddUserModal() {
+            document.getElementById('addUserForm').reset();
+            const modal = new bootstrap.Modal(document.getElementById('addUserModal'));
+            modal.show();
+        }
+
+        async function addUser() {
+            const form = document.getElementById('addUserForm');
+            const formData = new FormData(form);
+            
+            const userData = {
+                firstName: formData.get('firstName'),
+                lastName: formData.get('lastName'),
+                email: formData.get('email') || null,
+                phone: formData.get('phone'),
+                password: formData.get('password'),
+                userType: formData.get('userType'),
+                bio: formData.get('bio') || null,
+                userInfo: {
+                    address: formData.get('address') || null,
+                    neighborhood: formData.get('neighborhood') || null,
+                    buildingNo: formData.get('buildingNo') || null,
+                    floor: formData.get('floor') || null,
+                    apartmentNo: formData.get('apartmentNo') || null,
+                    description: formData.get('description') || null,
+                }
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/users`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+                    modal.hide();
+                    loadUsers();
+                    alert('✅ Kullanıcı başarıyla eklendi!');
+                } else {
+                    alert('❌ Kullanıcı eklenirken hata: ' + (data.message || 'Bilinmeyen hata'));
+                }
+            } catch (error) {
+                console.error('Kullanıcı eklenirken hata:', error);
+                alert('❌ Kullanıcı eklenirken bağlantı hatası');
+            }
+        }
+
+        async function deleteUser(userId, userName) {
+            if (!confirm(`"${userName}" kullanıcısını silmek istediğinizden emin misiniz?\n\nBu işlem geri alınamaz!`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                    },
+                });
+
+                if (response.ok) {
+                    loadUsers();
+                    alert('✅ Kullanıcı başarıyla silindi!');
+                } else {
+                    const data = await response.json();
+                    alert('❌ Kullanıcı silinirken hata: ' + (data.message || 'Bilinmeyen hata'));
+                }
+            } catch (error) {
+                console.error('Kullanıcı silinirken hata:', error);
+                alert('❌ Kullanıcı silinirken bağlantı hatası');
+            }
+        }
+
+        function showAddCategoryModal() {
+            document.getElementById('addCategoryForm').reset();
+            loadParentCategories();
+            const modal = new bootstrap.Modal(document.getElementById('addCategoryModal'));
+            modal.show();
+        }
+
+        async function loadParentCategories() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/categories`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                    },
+                });
+
+                const categories = await response.json();
+                
+                // Update both select elements
+                const addParentSelect = document.getElementById('parentCategorySelect');
+                const editParentSelect = document.getElementById('editParentCategorySelect');
+                
+                const selects = [addParentSelect, editParentSelect].filter(el => el);
+                
+                selects.forEach(select => {
+                    // Clear existing options except the first one
+                    select.innerHTML = '<option value="">Ana Kategori</option>';
+                    
+                    // Add only root categories (no parent)
+                    categories.filter(cat => !cat.parentId).forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = category.name;
+                        select.appendChild(option);
+                    });
+                });
+            } catch (error) {
+                console.error('Üst kategoriler yüklenirken hata:', error);
+            }
+        }
+
+        async function addCategory() {
+            const form = document.getElementById('addCategoryForm');
+            const formData = new FormData(form);
+            
+            const categoryData = {
+                name: formData.get('name'),
+                description: formData.get('description') || null,
+                icon: formData.get('icon') || null,
+                parentId: formData.get('parentId') || null,
+                orderIndex: parseInt(formData.get('orderIndex')) || 0,
+                isActive: formData.get('isActive') === 'on',
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/categories`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(categoryData),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
+                    modal.hide();
+                    loadCategories();
+                    alert('✅ Kategori başarıyla eklendi!');
+                } else {
+                    alert('❌ Kategori eklenirken hata: ' + (data.message || 'Bilinmeyen hata'));
+                }
+            } catch (error) {
+                console.error('Kategori eklenirken hata:', error);
+                alert('❌ Kategori eklenirken bağlantı hatası');
+            }
+        }
+
+        async function deleteCategory(categoryId, categoryName) {
+            if (!confirm(`"${categoryName}" kategorisini silmek istediğinizden emin misiniz?\n\nBu işlem geri alınamaz!`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/categories/${categoryId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                    },
+                });
+
+                if (response.ok) {
+                    loadCategories();
+                    alert('✅ Kategori başarıyla silindi!');
+                } else {
+                    const data = await response.json();
+                    alert('❌ Kategori silinirken hata: ' + (data.message || 'Bilinmeyen hata'));
+                }
+            } catch (error) {
+                console.error('Kategori silinirken hata:', error);
+                alert('❌ Kategori silinirken bağlantı hatası');
+            }
+        }
+
+        async function editUser(userId) {
+            try {
+                const response = await fetch(`${API_BASE}/admin/users/${userId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                    },
+                });
+
+                const user = await response.json();
+
+                // Fill form fields
+                document.getElementById('editUserId').value = user.id;
+                document.getElementById('editFirstName').value = user.firstName;
+                document.getElementById('editLastName').value = user.lastName;
+                document.getElementById('editEmail').value = user.email || '';
+                document.getElementById('editPhone').value = user.phone;
+                document.getElementById('editPassword').value = ''; // Clear password field
+                document.getElementById('editBio').value = user.bio || '';
+
+                // Set switch states
+                const userTypeSwitch = document.getElementById('editUserTypeSwitch');
+                const statusSwitch = document.getElementById('editStatusSwitch');
+                
+                userTypeSwitch.checked = user.userType === 'employer';
+                statusSwitch.checked = user.status === 'active';
+                
+                updateSwitchLabels();
+
+                // Fill address fields
+                const userInfo = user.userInfos && user.userInfos.length > 0 ? user.userInfos[0] : {};
+                document.getElementById('editAddress').value = userInfo.address || '';
+                document.getElementById('editNeighborhood').value = userInfo.neighborhood || '';
+                document.getElementById('editBuildingNo').value = userInfo.buildingNo || '';
+                document.getElementById('editFloor').value = userInfo.floor || '';
+                document.getElementById('editApartmentNo').value = userInfo.apartmentNo || '';
+                document.getElementById('editDescription').value = userInfo.description || '';
+
+                const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+                modal.show();
+            } catch (error) {
+                console.error('Kullanıcı düzenleme bilgileri yüklenirken hata:', error);
+                alert('❌ Kullanıcı düzenleme bilgileri yüklenirken hata oluştu.');
+            }
+        }
+
+        // Switch event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // User Type Switch
+            const userTypeSwitch = document.getElementById('editUserTypeSwitch');
+            userTypeSwitch.addEventListener('change', function() {
+                updateSwitchLabels();
+            });
+
+            // Status Switch
+            const statusSwitch = document.getElementById('editStatusSwitch');
+            statusSwitch.addEventListener('change', function() {
+                updateSwitchLabels();
+            });
+        });
+
+        function updateSwitchLabels() {
+            const userTypeSwitch = document.getElementById('editUserTypeSwitch');
+            const statusSwitch = document.getElementById('editStatusSwitch');
+            const userTypeLabel = document.getElementById('editUserTypeLabel');
+            const statusLabel = document.getElementById('editStatusLabel');
+
+            userTypeLabel.textContent = userTypeSwitch.checked ? 'İşveren' : 'İşçi';
+            statusLabel.textContent = statusSwitch.checked ? 'Aktif' : 'Pasif';
+        }
+
+        async function updateUser() {
+            const userId = document.getElementById('editUserId').value;
+            const userTypeSwitch = document.getElementById('editUserTypeSwitch');
+            const statusSwitch = document.getElementById('editStatusSwitch');
+
+            const userData = {
+                firstName: document.getElementById('editFirstName').value,
+                lastName: document.getElementById('editLastName').value,
+                email: document.getElementById('editEmail').value || null,
+                phone: document.getElementById('editPhone').value,
+                password: document.getElementById('editPassword').value || null,
+                userType: userTypeSwitch.checked ? 'employer' : 'worker',
+                status: statusSwitch.checked ? 'active' : 'inactive',
+                bio: document.getElementById('editBio').value || null,
+                userInfo: {
+                    address: document.getElementById('editAddress').value || null,
+                    neighborhood: document.getElementById('editNeighborhood').value || null,
+                    buildingNo: document.getElementById('editBuildingNo').value || null,
+                    floor: document.getElementById('editFloor').value || null,
+                    apartmentNo: document.getElementById('editApartmentNo').value || null,
+                    description: document.getElementById('editDescription').value || null,
+                }
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/users/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                    modal.hide();
+                    loadUsers();
+                    alert('✅ Kullanıcı başarıyla güncellendi!');
+                } else {
+                    alert('❌ Kullanıcı güncellenirken hata: ' + (data.message || 'Bilinmeyen hata'));
+                }
+            } catch (error) {
+                console.error('Kullanıcı güncellenirken hata:', error);
+                alert('❌ Kullanıcı güncellenirken bağlantı hatası');
+            }
+        }
+
+        async function toggleUserStatus(userId, isActive) {
+            try {
+                const response = await fetch(`${API_BASE}/admin/users/${userId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status: isActive ? 'active' : 'inactive' }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    loadUsers();
+                    alert('✅ Kullanıcı durumu başarıyla güncellendi!');
+                } else {
+                    alert('❌ Kullanıcı durumu güncellenirken hata: ' + (data.message || 'Bilinmeyen hata'));
+                }
+            } catch (error) {
+                console.error('Kullanıcı durumu güncellenirken hata:', error);
+                alert('❌ Kullanıcı durumu güncellenirken bağlantı hatası');
+            }
+        }
+
+        async function toggleUserOnline(userId, isOnline) {
+            try {
+                const response = await fetch(`${API_BASE}/admin/users/${userId}/online`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ isOnline: isOnline }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    loadUsers();
+                    alert('✅ Kullanıcı online durumu başarıyla güncellendi!');
+                } else {
+                    alert('❌ Kullanıcı online durumu güncellenirken hata: ' + (data.message || 'Bilinmeyen hata'));
+                }
+            } catch (error) {
+                console.error('Kullanıcı online durumu güncellenirken hata:', error);
+                alert('❌ Kullanıcı online durumu güncellenirken bağlantı hatası');
+            }
+        }
+
+        async function editCategory(categoryId) {
+            try {
+                const response = await fetch(`${API_BASE}/admin/categories/${categoryId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                    },
+                });
+
+                const category = await response.json();
+
+                // Fill form fields
+                document.getElementById('editCategoryId').value = category.id;
+                document.getElementById('editCategoryName').value = category.name;
+                document.getElementById('editCategoryDescription').value = category.description || '';
+                document.getElementById('editCategoryIcon').value = category.icon || '';
+                document.getElementById('editCategoryOrderIndex').value = category.orderIndex || 0;
+                document.getElementById('editCategoryActive').checked = category.isActive;
+
+                // Load parent categories for the select
+                loadParentCategories();
+                document.getElementById('editParentCategorySelect').value = category.parentId || '';
+
+                const modal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
+                modal.show();
+            } catch (error) {
+                console.error('Kategori düzenleme bilgileri yüklenirken hata:', error);
+                alert('❌ Kategori düzenleme bilgileri yüklenirken hata oluştu.');
+            }
+        }
+
+        async function updateCategory() {
+            const categoryId = document.getElementById('editCategoryId').value;
+            const form = document.getElementById('editCategoryForm');
+            const formData = new FormData(form);
+            
+            const categoryData = {
+                name: formData.get('name'),
+                description: formData.get('description') || null,
+                icon: formData.get('icon') || null,
+                parentId: formData.get('parentId') || null,
+                orderIndex: parseInt(formData.get('orderIndex')) || 0,
+                isActive: formData.get('isActive') === 'on',
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/categories/${categoryId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(categoryData),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editCategoryModal'));
+                    modal.hide();
+                    loadCategories();
+                    alert('✅ Kategori başarıyla güncellendi!');
+                } else {
+                    alert('❌ Kategori güncellenirken hata: ' + (data.message || 'Bilinmeyen hata'));
+                }
+            } catch (error) {
+                console.error('Kategori güncellenirken hata:', error);
+                alert('❌ Kategori güncellenirken bağlantı hatası');
+            }
+        }
+    </script>
+</body>
+</html> 

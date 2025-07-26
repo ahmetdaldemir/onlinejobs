@@ -17,27 +17,17 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const category_entity_1 = require("../categories/entities/category.entity");
-const categories_seed_1 = require("./categories.seed");
 const locations_seed_1 = require("./locations.seed");
 const users_seed_1 = require("./users.seed");
 const user_info_seed_1 = require("./user-info.seed");
+const admin_seed_1 = require("./admin.seed");
 let SeedService = class SeedService {
-    constructor(categoryRepository, locationsSeedService, usersSeedService, userInfoSeedService) {
+    constructor(categoryRepository, locationsSeedService, usersSeedService, userInfoSeedService, adminSeedService) {
         this.categoryRepository = categoryRepository;
         this.locationsSeedService = locationsSeedService;
         this.usersSeedService = usersSeedService;
         this.userInfoSeedService = userInfoSeedService;
-    }
-    async seedCategories() {
-        console.log('Kategoriler ekleniyor...');
-        const existingCategories = await this.categoryRepository.count();
-        if (existingCategories === 0) {
-            await this.categoryRepository.save(categories_seed_1.categoriesSeed);
-            console.log('Kategoriler başarıyla eklendi!');
-        }
-        else {
-            console.log('Kategoriler zaten mevcut, atlanıyor...');
-        }
+        this.adminSeedService = adminSeedService;
     }
     async seedLocations() {
         console.log('Lokasyonlar ekleniyor...');
@@ -54,11 +44,16 @@ let SeedService = class SeedService {
         await this.userInfoSeedService.seed();
         console.log('UserInfo verileri başarıyla eklendi!');
     }
+    async seedAdmin() {
+        console.log('Admin kullanıcısı ekleniyor...');
+        await this.adminSeedService.seed();
+        console.log('Admin kullanıcısı başarıyla eklendi!');
+    }
     async runSeeds() {
-        await this.seedCategories();
         await this.seedLocations();
         await this.seedUsers();
         await this.seedUserInfos();
+        await this.seedAdmin();
     }
 };
 exports.SeedService = SeedService;
@@ -68,6 +63,7 @@ exports.SeedService = SeedService = __decorate([
     __metadata("design:paramtypes", [typeorm_2.Repository,
         locations_seed_1.LocationsSeedService,
         users_seed_1.UsersSeedService,
-        user_info_seed_1.UserInfoSeedService])
+        user_info_seed_1.UserInfoSeedService,
+        admin_seed_1.AdminSeedService])
 ], SeedService);
 //# sourceMappingURL=seed.service.js.map

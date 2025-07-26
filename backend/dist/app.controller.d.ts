@@ -10,23 +10,7 @@ export declare class AppController {
         environment: string;
         version: string;
     };
-    seedUsers(): Promise<{
-        message: string;
-        status: string;
-    }>;
-    seedAll(): Promise<{
-        message: string;
-        status: string;
-    }>;
-    seedCategories(): Promise<{
-        message: string;
-        status: string;
-    }>;
-    seedLocations(): Promise<{
-        message: string;
-        status: string;
-    }>;
-    seedUserInfos(): Promise<{
+    seedAdmin(): Promise<{
         message: string;
         status: string;
     }>;

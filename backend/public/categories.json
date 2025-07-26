@@ -1,0 +1,1540 @@
+[
+    {
+      "id": "652a204f-73c5-4f22-92eb-0b74320ddffc",
+      "name": "Bahçe ve Peyzaj",
+      "description": "",
+      "metaTitle": "Bahçe Bakımı, Bahçe İşleri ve Peyzaj Ustasından Teklif Alın",
+      "metaDescription": "Bahçe Bakımı, Bahçe İşleri Ve Bahçe Peyzajı İçin UstaBilir Ustalarından Ücretsiz Fiyat Teklifi Alın! Bahçivanları ve diğer bahçe ustlarını karşılaştır!",
+      "isInsurable": true,
+      "iconUrl": "8713041d-e38c-4826-ab33-807d7cd3dac3.webp",
+      "displayOrder": 1,
+      "slugTitle": "bahce-peyzaj-tasarimi-ustasi",
+      "subCategories": [
+        {
+          "id": "7197528d-67d2-4a67-997f-20e5201175dc",
+          "mainCategoryId": "652a204f-73c5-4f22-92eb-0b74320ddffc",
+          "title": "En Yakın Açık Hava Mobilya Kurulumu Ustalarından Teklif Alın - Ustabilir",
+          "description": "Açık Hava Mobilya Kurulumu Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Açık Hava Mobilya Kurulumu",
+          "h1": "Açık Hava Mobilya Kurulumu Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "acik-hava-mobilya-kurulumu-ustasi",
+          "displayOrder": 1
+        },
+        {
+          "id": "2a31e59b-ce5e-4382-bfb9-5535551d528f",
+          "mainCategoryId": "652a204f-73c5-4f22-92eb-0b74320ddffc",
+          "title": "En Yakın Çit Boyama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Çit Boyama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Çit Boyama",
+          "h1": "Çit Boyama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "cit-boyama-ustasi"
+        },
+        {
+          "id": "f2d8af42-e001-4e7d-9efa-57e2e783f7e5",
+          "mainCategoryId": "652a204f-73c5-4f22-92eb-0b74320ddffc",
+          "title": "En Yakın Bahçe Duvarı ve Bahçe Çiti Ustalarından Teklif Alın - Ustabilir",
+          "description": "Bahçe Duvarı ve Bahçe Çiti Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Bahçe Duvarı ve Bahçe Çiti",
+          "h1": "Bahçe Duvarı ve Bahçe Çiti Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "bahce-duvari-ve-bahce-citi-ustasi",
+          "displayOrder": 2
+        },
+        {
+          "id": "b916468f-4019-4635-a981-659dbb08b8fe",
+          "mainCategoryId": "652a204f-73c5-4f22-92eb-0b74320ddffc",
+          "title": "En Yakın Bahçıvan İşleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Bahçıvan İşleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Bahçıvan İşleri",
+          "h1": "Bahçıvan İşleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "bahcivan-isleri-ustasi",
+          "displayOrder": 3
+        },
+        {
+          "id": "eeba1248-9f06-46a3-911f-7067c41a5710",
+          "mainCategoryId": "652a204f-73c5-4f22-92eb-0b74320ddffc",
+          "title": "En Yakın Bahçe Aydınlatma ve Işıklandırma Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Bahçe Aydınlatma ve Işıklandırma Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Bahçe Aydınlatma ve Işıklandırma Sistemleri",
+          "h1": "Bahçe Aydınlatma ve Işıklandırma Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "bahce-aydinlatma-ve-isiklandirma-sistemleri-ustasi",
+          "displayOrder": 4
+        },
+        {
+          "id": "02cd8fff-be09-4eab-8a60-82683b3ac402",
+          "mainCategoryId": "652a204f-73c5-4f22-92eb-0b74320ddffc",
+          "title": "En Yakın Tente ve Branda Ustalarından Teklif Alın - Ustabilir",
+          "description": "Tente ve Branda Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Tente ve Branda",
+          "h1": "Tente ve Branda Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "tente-ve-branda-ustasi",
+          "displayOrder": 5
+        },
+        {
+          "id": "35f4a548-2ec2-484e-afa1-902ce09d4dd2",
+          "mainCategoryId": "652a204f-73c5-4f22-92eb-0b74320ddffc",
+          "title": "En Yakın Ahşap Deck Kaplama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Ahşap Deck Kaplama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Ahşap Deck Kaplama",
+          "h1": "Ahşap Deck Kaplama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "ahsap-deck-kaplama-ustasi",
+          "displayOrder": 6
+        },
+        {
+          "id": "2eeedeaf-99c4-4f51-a7de-daefd023c648",
+          "mainCategoryId": "652a204f-73c5-4f22-92eb-0b74320ddffc",
+          "title": "En Yakın Kış Bahçesi ve Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Kış Bahçesi ve Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Kış Bahçesi ve Sistemleri",
+          "h1": "Kış Bahçesi ve Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "kis-bahcesi-ve-sistemleri-ustasi",
+          "displayOrder": 7
+        }
+      ]
+    },
+    {
+      "id": "f21afcda-a038-40e3-886d-23966afad956",
+      "name": "Isıtma, Soğutma ve Havalandırma",
+      "description": "",
+      "metaTitle": "Havalandırma, Soğutma, Isıtma Sorunları için Teklif Al",
+      "metaDescription": "Havalandırma, Soğutma, Isıtma Sistemleriniz İçin Ücretsiz Fiyat Teklifi Alın! Petek temizleme, klima tamiri ve montaj işler için en iyi ustayı bulun!",
+      "isInsurable": true,
+      "iconUrl": "27ff38e5-cba9-4685-a888-512ea394736e.webp",
+      "displayOrder": 9,
+      "slugTitle": "isitma-sogutma-havalandirma-tamiri-ustasi",
+      "subCategories": [
+        {
+          "id": "8118a509-e521-44f6-8504-199d7f1fa79c",
+          "mainCategoryId": "f21afcda-a038-40e3-886d-23966afad956",
+          "title": "En Yakın Merkezi Isıtma ve Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Merkezi Isıtma ve Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Merkezi Isıtma ve Sistemleri",
+          "h1": "Merkezi Isıtma ve Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "merkezi-isitma-ve-sistemleri-ustasi"
+        },
+        {
+          "id": "d5003e0a-1a33-4669-b673-2decaea00e9e",
+          "mainCategoryId": "f21afcda-a038-40e3-886d-23966afad956",
+          "title": "En Yakın Kombi Tamiratı ve Montajı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Kombi Tamiratı ve Montajı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Kombi Tamiratı ve Montajı",
+          "h1": "Kombi Tamiratı ve Montajı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "kombi-tamirati-ve-montaji-ustasi"
+        },
+        {
+          "id": "a1bc8138-be26-43ce-932a-34803c9a120c",
+          "mainCategoryId": "f21afcda-a038-40e3-886d-23966afad956",
+          "title": "En Yakın Kalorifer Tesisatı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Kalorifer Tesisatı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Kalorifer Tesisatı",
+          "h1": "Kalorifer Tesisatı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "kalorifer-tesisati-ustasi",
+          "displayOrder": 2
+        },
+        {
+          "id": "976e1d8d-9b63-493e-aea1-99e420ebbb93",
+          "mainCategoryId": "f21afcda-a038-40e3-886d-23966afad956",
+          "title": "En Yakın Klima Tamiratı ve Montajı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Klima Tamiratı ve Montajı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Klima Tamiratı ve Montajı",
+          "h1": "Klima Tamiratı ve Montajı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "klima-tamirati-ve-montaji-ustasi",
+          "displayOrder": 3
+        },
+        {
+          "id": "1d2d485b-4bd8-4aa5-982d-9dec18b66102",
+          "mainCategoryId": "f21afcda-a038-40e3-886d-23966afad956",
+          "title": "En Yakın Petek Temizleme Ustalarından Teklif Alın - Ustabilir",
+          "description": "Petek Temizleme Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Petek Temizleme",
+          "h1": "Petek Temizleme Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "petek-temizleme-ustasi",
+          "displayOrder": 4
+        },
+        {
+          "id": "a46436eb-8dc2-4240-8ba5-c71e1c2d8f85",
+          "mainCategoryId": "f21afcda-a038-40e3-886d-23966afad956",
+          "title": "En Yakın Doğal Gaz Tesisatı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Doğal Gaz Tesisatı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Doğal Gaz Tesisatı",
+          "h1": "Doğal Gaz Tesisatı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "dogal-gaz-tesisati-ustasi",
+          "displayOrder": 5
+        },
+        {
+          "id": "95824849-b6a2-40e2-a514-eb431da0c64e",
+          "mainCategoryId": "f21afcda-a038-40e3-886d-23966afad956",
+          "title": "En Yakın Klima ve Havalandırma Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Klima ve Havalandırma Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Klima ve Havalandırma Sistemleri",
+          "h1": "Klima ve Havalandırma Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "klima-ve-havalandirma-sistemleri-ustasi",
+          "displayOrder": 6
+        }
+      ]
+    },
+    {
+      "id": "5ab42ef6-c880-4744-8f32-26deef5ba2c5",
+      "name": "Boya ve Badana",
+      "description": "",
+      "metaTitle": "En Yakın Boyacılar | Boya, Badana Ustalarından Teklif Alın",
+      "metaDescription": "En Yakın Boyacıları Ustabilir ile Bulun. Evinizin ve ofisinizin Boya Badana işleri için ihtiyacınız olan ustaları Ustabilir'de bulun ve teklif alın!",
+      "isInsurable": true,
+      "iconUrl": "b24ea819-b580-43f5-b10a-485d5f56b81c.webp",
+      "slugTitle": "boyaci-boya-badana-ustasi",
+      "subCategories": [
+        {
+          "id": "106e16d0-d4df-47a3-b0d6-3123ffb13b43",
+          "mainCategoryId": "5ab42ef6-c880-4744-8f32-26deef5ba2c5",
+          "title": "En Yakın Çatı Boyama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Çatı Boyama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Çatı Boyama",
+          "h1": "Çatı Boyama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "cati-boyama-ustasi"
+        },
+        {
+          "id": "bf22a3a9-3b63-4125-a9e4-3aa8066957b6",
+          "mainCategoryId": "5ab42ef6-c880-4744-8f32-26deef5ba2c5",
+          "title": "En Yakın Boya Temizleme ve Kaldırma Ustalarından Teklif Alın - Ustabilir",
+          "description": "Boya Temizleme ve Kaldırma Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Boya Temizleme ve Kaldırma",
+          "h1": "Boya Temizleme ve Kaldırma Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "boya-temizleme-ve-kaldirma-ustasi"
+        },
+        {
+          "id": "b2e8f9ff-b039-4033-af3a-5fda74c460cc",
+          "mainCategoryId": "5ab42ef6-c880-4744-8f32-26deef5ba2c5",
+          "title": "En Yakın Efekt Boya Ustalarından Teklif Alın - Ustabilir",
+          "description": "Efekt Boya Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Efekt Boya",
+          "h1": "Efekt Boya Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "efekt-boya-ustasi",
+          "displayOrder": 2
+        },
+        {
+          "id": "ed9cc3ff-2abb-4ecf-b212-6003949cdd13",
+          "mainCategoryId": "5ab42ef6-c880-4744-8f32-26deef5ba2c5",
+          "title": "En Yakın Bianca Stella Boyama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Bianca Stella Boyama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Bianca Stella Boyama",
+          "h1": "Bianca Stella Boyama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "bianca-stella-boyama-ustasi"
+        },
+        {
+          "id": "4d6afaea-2f00-4367-bdec-664d3dc6dfec",
+          "mainCategoryId": "5ab42ef6-c880-4744-8f32-26deef5ba2c5",
+          "title": "En Yakın Dış Mekan Boyama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Dış Mekan Boyama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Dış Mekan Boyama",
+          "h1": "Dış Mekan Boyama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "dis-mekan-boyama-ustasi",
+          "displayOrder": 3
+        },
+        {
+          "id": "979de9b3-5fac-43e4-b9cd-6ba7a46a2651",
+          "mainCategoryId": "5ab42ef6-c880-4744-8f32-26deef5ba2c5",
+          "title": "En Yakın İç Mekan Alçı ve Sıva Ustalarından Teklif Alın - Ustabilir",
+          "description": "İç Mekan Alçı ve Sıva Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "İç Mekan Alçı ve Sıva",
+          "h1": "İç Mekan Alçı ve Sıva Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "ic-mekan-alci-ve-siva-ustasi",
+          "displayOrder": 4
+        },
+        {
+          "id": "d2ce44ac-a11a-4b3f-a7ba-9374978ecc27",
+          "mainCategoryId": "5ab42ef6-c880-4744-8f32-26deef5ba2c5",
+          "title": "En Yakın Sprey Boya Ustalarından Teklif Alın - Ustabilir",
+          "description": "Sprey Boya Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Sprey Boya",
+          "h1": "Sprey Boya Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "sprey-boya-ustasi",
+          "displayOrder": 5
+        },
+        {
+          "id": "26c108dd-fe69-4f1c-a3e9-93e8c550ea19",
+          "mainCategoryId": "5ab42ef6-c880-4744-8f32-26deef5ba2c5",
+          "title": "En Yakın Zemin Boyama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Zemin Boyama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Zemin Boyama",
+          "h1": "Zemin Boyama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "zemin-boyama-ustasi",
+          "displayOrder": 6
+        },
+        {
+          "id": "a0c58394-08f7-4b93-9031-9e0c0421bfc4",
+          "mainCategoryId": "5ab42ef6-c880-4744-8f32-26deef5ba2c5",
+          "title": "En Yakın Duvar Kağıdı Kaplama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Duvar Kağıdı Kaplama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Duvar Kağıdı Kaplama",
+          "h1": "Duvar Kağıdı Kaplama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "duvar-kagidi-kaplama-ustasi",
+          "displayOrder": 7
+        },
+        {
+          "id": "b1011a78-a9a0-4012-86d6-c761755be714",
+          "mainCategoryId": "5ab42ef6-c880-4744-8f32-26deef5ba2c5",
+          "title": "En Yakın Kapı ve Pencere Boyama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Kapı ve Pencere Boyama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Kapı ve Pencere Boyama",
+          "h1": "Kapı ve Pencere Boyama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "kapi-ve-pencere-boyama-ustasi",
+          "displayOrder": 8
+        },
+        {
+          "id": "058a0b7b-6105-411e-a403-d11303c76b0d",
+          "mainCategoryId": "5ab42ef6-c880-4744-8f32-26deef5ba2c5",
+          "title": "En Yakın Mobilya Boya Cila ve Lake Ustalarından Teklif Alın - Ustabilir",
+          "description": "Mobilya Boya Cila ve Lake Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Mobilya Boya Cila ve Lake",
+          "h1": "Mobilya Boya Cila ve Lake Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "mobilya-boya-cila-ve-lake-ustasi",
+          "displayOrder": 9
+        },
+        {
+          "id": "3f452556-30c5-45fc-b5b8-de2551ba03fb",
+          "mainCategoryId": "5ab42ef6-c880-4744-8f32-26deef5ba2c5",
+          "title": "En Yakın Balkon Demiri Boyama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Balkon Demiri Boyama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Balkon Demiri Boyama",
+          "h1": "Balkon Demiri Boyama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "balkon-demiri-boyama-ustasi"
+        },
+        {
+          "id": "15de3474-8210-4be6-8b8b-deef4802c872",
+          "mainCategoryId": "5ab42ef6-c880-4744-8f32-26deef5ba2c5",
+          "title": "En Yakın Airbrush/Hava Püskürtmeli Boya Ustalarından Teklif Alın - Ustabilir",
+          "description": "Airbrush/Hava Püskürtmeli Boya Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Airbrush/Hava Püskürtmeli Boya",
+          "h1": "Airbrush/Hava Püskürtmeli Boya Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "airbrush-hava-puskurtmeli-boya-ustasi"
+        },
+        {
+          "id": "44658157-79ff-4401-8020-ea9917c7cd08",
+          "mainCategoryId": "5ab42ef6-c880-4744-8f32-26deef5ba2c5",
+          "title": "En Yakın İç Mekan Boyama Ustalarından Teklif Alın - Ustabilir",
+          "description": "İç Mekan Boyama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "İç Mekan Boyama",
+          "h1": "İç Mekan Boyama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "ic-mekan-boyama-ustasi"
+        }
+      ]
+    },
+    {
+      "id": "c6a60d89-745d-4d29-b263-4f0d725c58f0",
+      "name": "Elektrik ve Elektronik",
+      "description": "",
+      "metaTitle": "En Yakın Elektrikçilerden, Elektrik Ustalarından Teklif Alın",
+      "metaDescription": "Size En Yakın Elektrikçilerinden Ustabilir İle Ücretsiz Fiyat Teklifi Alın! Acil ve 7/24 çalışan Elektrik Ustalarını karşılaştırıp en uygun teklifi alın!",
+      "isInsurable": true,
+      "iconUrl": "f9e94f32-22ff-4529-9934-909d02b01aa2.webp",
+      "displayOrder": 5,
+      "slugTitle": "elektrikci-elektronik-tamiri-ustasi",
+      "subCategories": [
+        {
+          "id": "b0342453-0584-48a9-bc82-07a0936b497a",
+          "mainCategoryId": "c6a60d89-745d-4d29-b263-4f0d725c58f0",
+          "title": "En Yakın Aydınlatma ve Işıklandırma Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Aydınlatma ve Işıklandırma Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Aydınlatma ve Işıklandırma Sistemleri",
+          "h1": "Aydınlatma ve Işıklandırma Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "aydinlatma-ve-isiklandirma-sistemleri-ustasi"
+        },
+        {
+          "id": "df0098f5-1faa-4b8b-a945-0d7d05795ff0",
+          "mainCategoryId": "c6a60d89-745d-4d29-b263-4f0d725c58f0",
+          "title": "En Yakın Otomatik Kapı ve Kepenk Ustalarından Teklif Alın - Ustabilir",
+          "description": "Otomatik Kapı ve Kepenk Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Otomatik Kapı ve Kepenk",
+          "h1": "Otomatik Kapı ve Kepenk Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "otomatik-kapi-ve-kepenk-ustasi"
+        },
+        {
+          "id": "c5411094-9819-4495-9fe7-15b64576b01f",
+          "mainCategoryId": "c6a60d89-745d-4d29-b263-4f0d725c58f0",
+          "title": "En Yakın Akıllı Ev ve Bina Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Akıllı Ev ve Bina Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Akıllı Ev ve Bina Sistemleri",
+          "h1": "Akıllı Ev ve Bina Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "akilli-ev-ve-bina-sistemleri-ustasi",
+          "displayOrder": 2
+        },
+        {
+          "id": "ef20e2d9-4b4a-4e3e-98e5-2791f9c2681a",
+          "mainCategoryId": "c6a60d89-745d-4d29-b263-4f0d725c58f0",
+          "title": "En Yakın Endüstriyel Elektrik Tesisatı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Endüstriyel Elektrik Tesisatı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Endüstriyel Elektrik Tesisatı",
+          "h1": "Endüstriyel Elektrik Tesisatı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "endustriyel-elektrik-tesisati-ustasi",
+          "displayOrder": 3
+        },
+        {
+          "id": "d92dbf30-86d3-4587-8727-2c5cf86ee4c7",
+          "mainCategoryId": "c6a60d89-745d-4d29-b263-4f0d725c58f0",
+          "title": "En Yakın İnternet ve Haberleşme Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "İnternet ve Haberleşme Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "İnternet ve Haberleşme Sistemleri",
+          "h1": "İnternet ve Haberleşme Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "internet-ve-haberlesme-sistemleri-ustasi",
+          "displayOrder": 4
+        },
+        {
+          "id": "9cf3bf3b-7afd-4a01-95ee-3cb9e28c07d4",
+          "mainCategoryId": "c6a60d89-745d-4d29-b263-4f0d725c58f0",
+          "title": "En Yakın Elektrikçi Ustalarından Teklif Alın - Ustabilir",
+          "description": "Elektrikçi Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Elektrikçi",
+          "h1": "Elektrikçi Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "elektrikci-ustasi",
+          "displayOrder": 5
+        },
+        {
+          "id": "d1e99767-0ebe-4d91-9fff-51d3e2799030",
+          "mainCategoryId": "c6a60d89-745d-4d29-b263-4f0d725c58f0",
+          "title": "En Yakın Elektrik Kablo Döşeme Ustalarından Teklif Alın - Ustabilir",
+          "description": "Elektrik Kablo Döşeme Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Elektrik Kablo Döşeme",
+          "h1": "Elektrik Kablo Döşeme Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "elektrik-kablo-doseme-ustasi",
+          "displayOrder": 6
+        },
+        {
+          "id": "67b56378-0f6d-43a3-8734-6b0fcadbe7c1",
+          "mainCategoryId": "c6a60d89-745d-4d29-b263-4f0d725c58f0",
+          "title": "En Yakın Alarm Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Alarm Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Alarm Sistemleri",
+          "h1": "Alarm Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "alarm-sistemleri-ustasi",
+          "displayOrder": 7
+        },
+        {
+          "id": "dd4d3e3e-578c-403b-b0e0-be644b2b6289",
+          "mainCategoryId": "c6a60d89-745d-4d29-b263-4f0d725c58f0",
+          "title": "En Yakın Diyafon Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Diyafon Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Diyafon Sistemleri",
+          "h1": "Diyafon Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "diyafon-sistemleri-ustasi",
+          "displayOrder": 8
+        },
+        {
+          "id": "de57dad4-01e8-49a2-9ea6-e06066395c44",
+          "mainCategoryId": "c6a60d89-745d-4d29-b263-4f0d725c58f0",
+          "title": "En Yakın Kartlı Geçiş ve Parmak Okuma Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Kartlı Geçiş ve Parmak Okuma Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Kartlı Geçiş ve Parmak Okuma Sistemleri",
+          "h1": "Kartlı Geçiş ve Parmak Okuma Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "kartli-gecis-ve-parmak-okuma-sistemleri-ustasi",
+          "displayOrder": 9
+        },
+        {
+          "id": "83a0c782-bb34-4fda-90ad-f31e20e7d493",
+          "mainCategoryId": "c6a60d89-745d-4d29-b263-4f0d725c58f0",
+          "title": "En Yakın Uydu ve Anten Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Uydu ve Anten Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Uydu ve Anten Sistemleri",
+          "h1": "Uydu ve Anten Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "uydu-ve-anten-sistemleri-ustasi"
+        }
+      ]
+    },
+    {
+      "id": "d19d4d45-4acd-4896-b30b-5c89c5242398",
+      "name": "Çatı ve Oluk",
+      "description": "",
+      "metaTitle": "Çatı İzolasyon ve Yalıtımı | Çatı Ustalarından Teklif Alın",
+      "metaDescription": "Çatı İzolasyon ve Yalıtımı için en yakındaki Çatı Ustalarından Teklif Alın! En iyi Ustaları karşılaştırın, yorumlarını okuyun ve fiyat teklifi alın!",
+      "isInsurable": true,
+      "iconUrl": "47f97b3c-d70a-4079-a363-432c603c8452.webp",
+      "slugTitle": "cati-ustasi-oluk-tamiri-ustasi",
+      "subCategories": [
+        {
+          "id": "11ef359f-b4b1-4531-91c5-31042c328f74",
+          "mainCategoryId": "d19d4d45-4acd-4896-b30b-5c89c5242398",
+          "title": "En Yakın Çatı Boyama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Çatı Boyama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Çatı Boyama",
+          "h1": "Çatı Boyama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "cati-boyama-ustasi"
+        },
+        {
+          "id": "a3e1250a-bae8-4caf-86be-774ce4965fb8",
+          "mainCategoryId": "d19d4d45-4acd-4896-b30b-5c89c5242398",
+          "title": "En Yakın Çatı Yalıtımı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Çatı Yalıtımı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Çatı Yalıtımı",
+          "h1": "Çatı Yalıtımı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "cati-yalitimi-ustasi"
+        },
+        {
+          "id": "5d4df2be-5808-4d7f-bbc0-8821795369de",
+          "mainCategoryId": "d19d4d45-4acd-4896-b30b-5c89c5242398",
+          "title": "En Yakın Baca İşleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Baca İşleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Baca İşleri",
+          "h1": "Baca İşleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "baca-isleri-ustasi",
+          "displayOrder": 2
+        },
+        {
+          "id": "adb234e3-dd7a-45ba-a37c-8ea86925b948",
+          "mainCategoryId": "d19d4d45-4acd-4896-b30b-5c89c5242398",
+          "title": "En Yakın Çatı ve Oluk Ustalarından Teklif Alın - Ustabilir",
+          "description": "Çatı ve Oluk Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Çatı ve Oluk",
+          "h1": "Çatı ve Oluk Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "cati-ve-oluk-ustasi",
+          "displayOrder": 3
+        },
+        {
+          "id": "26b2dfa9-4daf-4306-a37e-d8b0d3d4c701",
+          "mainCategoryId": "d19d4d45-4acd-4896-b30b-5c89c5242398",
+          "title": "En Yakın Ahşap Çatı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Ahşap Çatı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Ahşap Çatı",
+          "h1": "Ahşap Çatı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "ahsap-cati-ustasi",
+          "displayOrder": 4
+        },
+        {
+          "id": "eddd07cc-db59-428f-a6b8-eb0c4d56891a",
+          "mainCategoryId": "d19d4d45-4acd-4896-b30b-5c89c5242398",
+          "title": "En Yakın Betonarme Çatı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Betonarme Çatı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Betonarme Çatı",
+          "h1": "Betonarme Çatı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "betonarme-cati-ustasi",
+          "displayOrder": 5
+        },
+        {
+          "id": "c561b11f-ee3a-4bb2-916f-fc640925ea54",
+          "mainCategoryId": "d19d4d45-4acd-4896-b30b-5c89c5242398",
+          "title": "En Yakın Kiremit Çatı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Kiremit Çatı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Kiremit Çatı",
+          "h1": "Kiremit Çatı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "kiremit-cati-ustasi",
+          "displayOrder": 6
+        }
+      ]
+    },
+    {
+      "id": "8154fc0f-0d3f-4d64-bb10-98793190ead9",
+      "name": "Yalıtım ve Mantolama",
+      "description": "",
+      "metaTitle": "Yalıtım ve Dış Cephe Mantolama için Ücretsiz Teklif Alın",
+      "metaDescription": "Yalıtım Ve Dış Cephe Mantolama İçin en İyi Ustaları Ustabilir'de bulun! Isı ve Ses Yalıtımı için ustaları karşılaştırın ve en iyi ustalardan teklif alın!",
+      "isInsurable": true,
+      "iconUrl": "9cabedf4-b8aa-414a-a11b-b7d9b4b7a31f.webp",
+      "displayOrder": 8,
+      "slugTitle": "yalitim-mantolama-izolasyon-ustasi",
+      "subCategories": [
+        {
+          "id": "3320d804-94c5-4d02-b484-10f9512a140f",
+          "mainCategoryId": "8154fc0f-0d3f-4d64-bb10-98793190ead9",
+          "title": "En Yakın Söve Ustalarından Teklif Alın - Ustabilir",
+          "description": "Söve Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Söve",
+          "h1": "Söve Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "sove-ustasi"
+        },
+        {
+          "id": "63a0b255-49ad-40b8-a082-31d8227ebed2",
+          "mainCategoryId": "8154fc0f-0d3f-4d64-bb10-98793190ead9",
+          "title": "En Yakın İzolasyon Ustalarından Teklif Alın - Ustabilir",
+          "description": "İzolasyon Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "İzolasyon",
+          "h1": "İzolasyon Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "izolasyon-ustasi"
+        },
+        {
+          "id": "d199ad24-0984-4d50-a880-320d67edb56a",
+          "mainCategoryId": "8154fc0f-0d3f-4d64-bb10-98793190ead9",
+          "title": "En Yakın Su Yalıtımı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Su Yalıtımı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Su Yalıtımı",
+          "h1": "Su Yalıtımı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "su-yalitimi-ustasi",
+          "displayOrder": 2
+        },
+        {
+          "id": "1184e3b3-9e95-4c0b-836b-4b35b307a6ee",
+          "mainCategoryId": "8154fc0f-0d3f-4d64-bb10-98793190ead9",
+          "title": "En Yakın Tesisat Yalıtımı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Tesisat Yalıtımı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Tesisat Yalıtımı",
+          "h1": "Tesisat Yalıtımı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "tesisat-yalitimi-ustasi",
+          "displayOrder": 3
+        },
+        {
+          "id": "7cfd88ae-defc-4986-a178-544a5c239e62",
+          "mainCategoryId": "8154fc0f-0d3f-4d64-bb10-98793190ead9",
+          "title": "En Yakın Ses Yalıtımı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Ses Yalıtımı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Ses Yalıtımı",
+          "h1": "Ses Yalıtımı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "ses-yalitimi-ustasi",
+          "displayOrder": 4
+        },
+        {
+          "id": "4c773f9d-7f56-4e14-9713-7f203462e544",
+          "mainCategoryId": "8154fc0f-0d3f-4d64-bb10-98793190ead9",
+          "title": "En Yakın Çatı Yalıtımı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Çatı Yalıtımı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Çatı Yalıtımı",
+          "h1": "Çatı Yalıtımı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "cati-yalitimi-ustasi",
+          "displayOrder": 5
+        },
+        {
+          "id": "d1d7100d-ec34-4eff-9558-a97a7d6353ff",
+          "mainCategoryId": "8154fc0f-0d3f-4d64-bb10-98793190ead9",
+          "title": "En Yakın Mantolama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Mantolama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Mantolama",
+          "h1": "Mantolama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "mantolama-ustasi",
+          "displayOrder": 6
+        },
+        {
+          "id": "6b02610c-e6a5-4245-8932-ab3cc532c03c",
+          "mainCategoryId": "8154fc0f-0d3f-4d64-bb10-98793190ead9",
+          "title": "En Yakın Isı Yalıtımı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Isı Yalıtımı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Isı Yalıtımı",
+          "h1": "Isı Yalıtımı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "isi-yalitimi-ustasi",
+          "displayOrder": 7
+        },
+        {
+          "id": "93906a2f-e4a9-40f1-9b11-bc86f22897ea",
+          "mainCategoryId": "8154fc0f-0d3f-4d64-bb10-98793190ead9",
+          "title": "En Yakın Yangın Yalıtımı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Yangın Yalıtımı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Yangın Yalıtımı",
+          "h1": "Yangın Yalıtımı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "yangin-yalitimi-ustasi",
+          "displayOrder": 8
+        },
+        {
+          "id": "bb4fff6d-4ebc-45d1-9b27-d253a2b775cc",
+          "mainCategoryId": "8154fc0f-0d3f-4d64-bb10-98793190ead9",
+          "title": "En Yakın Isıcam Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Isıcam Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Isıcam Sistemleri",
+          "h1": "Isıcam Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "isicam-sistemleri-ustasi",
+          "displayOrder": 9
+        }
+      ]
+    },
+    {
+      "id": "615170f1-0b58-4f63-93f2-a3cd0a9dbc55",
+      "name": "Su Tesisatı",
+      "description": "",
+      "metaTitle": "En Yakın Su Tesisatçılarından Ücretsiz Fiyat Teklifi Alın",
+      "metaDescription": "En Yakın Tesisatçıları Ustabilir İle Bulun Ve Ücretsiz Fiyat Teklifi Alın! Acil ve 7/24 çalışan su tesisatçılarını karşılaştırın ve fiyat teklifi alın!",
+      "isInsurable": true,
+      "iconUrl": "2ed8b673-c483-4eea-a081-ba234d4a68f2.webp",
+      "displayOrder": 3,
+      "slugTitle": "su-tesisatcisi-ustasi",
+      "subCategories": [
+        {
+          "id": "ef76ac07-dbe1-42e8-873e-0702e6afc3ac",
+          "mainCategoryId": "615170f1-0b58-4f63-93f2-a3cd0a9dbc55",
+          "title": "En Yakın Batarya Musluk Tamir ve Montajı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Batarya Musluk Tamir ve Montajı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Batarya Musluk Tamir ve Montajı",
+          "h1": "Batarya Musluk Tamir ve Montajı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "batarya-musluk-tamir-ve-montaji-ustasi"
+        },
+        {
+          "id": "aab223f3-94ab-4ebb-9ff5-256809dec346",
+          "mainCategoryId": "615170f1-0b58-4f63-93f2-a3cd0a9dbc55",
+          "title": "En Yakın Petek Temizleme Ustalarından Teklif Alın - Ustabilir",
+          "description": "Petek Temizleme Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Petek Temizleme",
+          "h1": "Petek Temizleme Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "petek-temizleme-ustasi"
+        },
+        {
+          "id": "5d5cb04f-2c97-4a27-9273-4e74dde9afe7",
+          "mainCategoryId": "615170f1-0b58-4f63-93f2-a3cd0a9dbc55",
+          "title": "En Yakın Su Kaçağı Tespiti Ustalarından Teklif Alın - Ustabilir",
+          "description": "Su Kaçağı Tespiti Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Su Kaçağı Tespiti",
+          "h1": "Su Kaçağı Tespiti Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "su-kacagi-tespiti-ustasi",
+          "displayOrder": 2
+        },
+        {
+          "id": "7938e772-85e8-461c-95db-6cb642fe4745",
+          "mainCategoryId": "615170f1-0b58-4f63-93f2-a3cd0a9dbc55",
+          "title": "En Yakın Hidrofor Tesisatı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Hidrofor Tesisatı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Hidrofor Tesisatı",
+          "h1": "Hidrofor Tesisatı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "hidrofor-tesisati-ustasi",
+          "displayOrder": 3
+        },
+        {
+          "id": "3adba2c1-d6ed-491e-b5a7-7cf8c68d2856",
+          "mainCategoryId": "615170f1-0b58-4f63-93f2-a3cd0a9dbc55",
+          "title": "En Yakın Rezervuar Tamir ve Montajı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Rezervuar Tamir ve Montajı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Rezervuar Tamir ve Montajı",
+          "h1": "Rezervuar Tamir ve Montajı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "rezervuar-tamir-ve-montaji-ustasi"
+        },
+        {
+          "id": "02ef140d-6069-4a49-9b6f-b7d2fe6be781",
+          "mainCategoryId": "615170f1-0b58-4f63-93f2-a3cd0a9dbc55",
+          "title": "En Yakın Su Sayacı Montajı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Su Sayacı Montajı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Su Sayacı Montajı",
+          "h1": "Su Sayacı Montajı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "su-sayaci-montaji-ustasi",
+          "displayOrder": 5
+        },
+        {
+          "id": "25336926-e8a9-4185-b8a2-bff530264052",
+          "mainCategoryId": "615170f1-0b58-4f63-93f2-a3cd0a9dbc55",
+          "title": "En Yakın Sıhhi Su Tesisatı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Sıhhi Su Tesisatı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Sıhhi Su Tesisatı",
+          "h1": "Sıhhi Su Tesisatı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "sihhi-su-tesisati-ustasi",
+          "displayOrder": 6
+        }
+      ]
+    },
+    {
+      "id": "8e20be1e-2e58-49a1-b573-a8020170d656",
+      "name": "İnşaat",
+      "description": "",
+      "metaTitle": "Güvenilir Inşaat ve Kaynak Ustalarından Teklifi Alın",
+      "metaDescription": "Güvenilir İnşaat Ve Kaynak UstalarınıUstabilir İle Bulun Ve Ücretsiz Fiyat Teklifi Alın! Ustaları karşılaştırın, yorumlarını okuyun ve en yakın olan seçin!",
+      "isInsurable": true,
+      "iconUrl": "ce68701c-7758-4d53-9851-4b9849dcd06c.webp",
+      "slugTitle": "ev-tadilati-insaat-ustasi",
+      "subCategories": [
+        {
+          "id": "3c06f40a-c26a-4794-a88d-085a1b67010f",
+          "mainCategoryId": "8e20be1e-2e58-49a1-b573-a8020170d656",
+          "title": "En Yakın Asbest Sökümü ve Giderme Ustalarından Teklif Alın - Ustabilir",
+          "description": "Asbest Sökümü ve Giderme Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Asbest Sökümü ve Giderme",
+          "h1": "Asbest Sökümü ve Giderme Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "asbest-sokumu-ve-giderme-ustasi"
+        },
+        {
+          "id": "1c953650-2c2c-4d8f-a0fc-1184d13c9578",
+          "mainCategoryId": "8e20be1e-2e58-49a1-b573-a8020170d656",
+          "title": "En Yakın Beton ve Kalıp Ustalarından Teklif Alın - Ustabilir",
+          "description": "Beton ve Kalıp Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Beton ve Kalıp",
+          "h1": "Beton ve Kalıp Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "beton-ve-kalip-ustasi"
+        },
+        {
+          "id": "b5213244-ac9e-44d1-a1aa-2f61695f542f",
+          "mainCategoryId": "8e20be1e-2e58-49a1-b573-a8020170d656",
+          "title": "En Yakın İnşaat Demir Döşeme Ustalarından Teklif Alın - Ustabilir",
+          "description": "İnşaat Demir Döşeme Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "İnşaat Demir Döşeme",
+          "h1": "İnşaat Demir Döşeme Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "insaat-demir-doseme-ustasi",
+          "displayOrder": 2
+        },
+        {
+          "id": "bf342927-a77b-4653-a3ab-3266f7c82f07",
+          "mainCategoryId": "8e20be1e-2e58-49a1-b573-a8020170d656",
+          "title": "En Yakın Dış Mekan Sıva Ustalarından Teklif Alın - Ustabilir",
+          "description": "Dış Mekan Sıva Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Dış Mekan Sıva",
+          "h1": "Dış Mekan Sıva Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "dis-mekan-siva-ustasi",
+          "displayOrder": 3
+        },
+        {
+          "id": "36943cf5-c019-4fe2-a626-3c320d692c70",
+          "mainCategoryId": "8e20be1e-2e58-49a1-b573-a8020170d656",
+          "title": "En Yakın Beton Kaldırma ve Giderme Ustalarından Teklif Alın - Ustabilir",
+          "description": "Beton Kaldırma ve Giderme Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Beton Kaldırma ve Giderme",
+          "h1": "Beton Kaldırma ve Giderme Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "beton-kaldirma-ve-giderme-ustasi",
+          "displayOrder": 4
+        },
+        {
+          "id": "8624d8ad-ef22-4e3d-b6f4-5155cbfcedc6",
+          "mainCategoryId": "8e20be1e-2e58-49a1-b573-a8020170d656",
+          "title": "En Yakın Beton Kesme ve Delme Ustalarından Teklif Alın - Ustabilir",
+          "description": "Beton Kesme ve Delme Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Beton Kesme ve Delme",
+          "h1": "Beton Kesme ve Delme Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "beton-kesme-ve-delme-ustasi",
+          "displayOrder": 5
+        },
+        {
+          "id": "c60a589b-e45a-4bfb-83b0-7583b02438db",
+          "mainCategoryId": "8e20be1e-2e58-49a1-b573-a8020170d656",
+          "title": "En Yakın Kaynak İşleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Kaynak İşleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Kaynak İşleri",
+          "h1": "Kaynak İşleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "kaynak-isleri-ustasi",
+          "displayOrder": 6
+        },
+        {
+          "id": "82726c47-7a3f-4a8a-8853-fe660eb734c0",
+          "mainCategoryId": "8e20be1e-2e58-49a1-b573-a8020170d656",
+          "title": "En Yakın Tuğla ve Gazbeton Ustalarından Teklif Alın - Ustabilir",
+          "description": "Tuğla ve Gazbeton Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Tuğla ve Gazbeton",
+          "h1": "Tuğla ve Gazbeton Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "tugla-ve-gazbeton-ustasi",
+          "displayOrder": 7
+        }
+      ]
+    },
+    {
+      "id": "0139544f-dc58-48ce-954c-d4fccb6d3682",
+      "name": "Çilingir",
+      "description": "",
+      "metaTitle": "Çilingir Ustalarından Fiyat Teklifi Alın",
+      "metaDescription": "Çilingir Ustalarını Ustabilir İle Bulun! Ücretsiz Fiyat Teklifi Alın! Ustaları Karşılaştırıp Size En Çok Uyana Karar Verin! ",
+      "isInsurable": true,
+      "iconUrl": "335970a2-de6a-447c-8301-05eff3b32915.webp",
+      "slugTitle": "cilingir-ustasi",
+      "htmlDescription": "",
+      "faqContent": "{\"@context\":\"https://schema.org\",\"@type\":\"FAQPage\",\"mainEntity\":[]}",
+      "subCategories": [
+        {
+          "id": "0e984839-6513-48e3-8de7-44021ccd25be",
+          "mainCategoryId": "0139544f-dc58-48ce-954c-d4fccb6d3682",
+          "title": "En Yakın Çilingir Ustalarından Teklif Alın - Ustabilir",
+          "description": "Çilingir Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Çilingir",
+          "h1": "Çilingir Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "cilingir-ustasi"
+        }
+      ]
+    },
+    {
+      "id": "349a2538-e8e5-4b09-b4c1-d83b4af57766",
+      "name": "Kapı, Pencere ve Balkon",
+      "description": "",
+      "metaTitle": "Kapı, PVC Pencere - Balkon Montajı ve Tamiri için Teklif Alın",
+      "metaDescription": "Kapı, PVC Pencere - Balkon Montajı Ve Tamiri için Ustabilir Ustalarından Ücretsiz Fiyat Teklifi Alın! Yorumları okuyarak en yakın ustayı seçin!",
+      "isInsurable": true,
+      "iconUrl": "6785389e-efc1-4291-ad29-6800235e116d.webp",
+      "displayOrder": 7,
+      "slugTitle": "kapi-pencere-balkon-tamiri-ustasi",
+      "subCategories": [
+        {
+          "id": "17316858-bb68-4984-9505-0b1348746ff8",
+          "mainCategoryId": "349a2538-e8e5-4b09-b4c1-d83b4af57766",
+          "title": "En Yakın Menfez Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Menfez Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Menfez Sistemleri",
+          "h1": "Menfez Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "menfez-sistemleri-ustasi"
+        },
+        {
+          "id": "c885cd66-56a0-4dc0-924b-1661b3cddcd3",
+          "mainCategoryId": "349a2538-e8e5-4b09-b4c1-d83b4af57766",
+          "title": "En Yakın Cam Tavan ve Pencere Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Cam Tavan ve Pencere Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Cam Tavan ve Pencere Sistemleri",
+          "h1": "Cam Tavan ve Pencere Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "cam-tavan-ve-pencere-sistemleri-ustasi",
+          "displayOrder": 2
+        },
+        {
+          "id": "4ba4fc83-ec3a-4827-b3e6-7828aa29e17b",
+          "mainCategoryId": "349a2538-e8e5-4b09-b4c1-d83b4af57766",
+          "title": "En Yakın Korniş Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Korniş Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Korniş Sistemleri",
+          "h1": "Korniş Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "kornis-sistemleri-ustasi",
+          "displayOrder": 3
+        },
+        {
+          "id": "9580303f-4afc-4218-a342-7f3152a37dae",
+          "mainCategoryId": "349a2538-e8e5-4b09-b4c1-d83b4af57766",
+          "title": "En Yakın Cam Balkon Ustalarından Teklif Alın - Ustabilir",
+          "description": "Cam Balkon Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Cam Balkon",
+          "h1": "Cam Balkon Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "cam-balkon-ustasi",
+          "displayOrder": 4
+        },
+        {
+          "id": "9158f61e-cabf-4382-b403-841e7d342b1f",
+          "mainCategoryId": "349a2538-e8e5-4b09-b4c1-d83b4af57766",
+          "title": "En Yakın Isıcam Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Isıcam Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Isıcam Sistemleri",
+          "h1": "Isıcam Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "isicam-sistemleri-ustasi",
+          "displayOrder": 5
+        },
+        {
+          "id": "4a3937e0-c4e5-4c3f-b205-88991898ffa5",
+          "mainCategoryId": "349a2538-e8e5-4b09-b4c1-d83b4af57766",
+          "title": "En Yakın Sineklik Ustalarından Teklif Alın - Ustabilir",
+          "description": "Sineklik Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Sineklik",
+          "h1": "Sineklik Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "sineklik-ustasi",
+          "displayOrder": 6
+        },
+        {
+          "id": "cbd4065b-77cb-44c0-b968-bbae4b2dcda9",
+          "mainCategoryId": "349a2538-e8e5-4b09-b4c1-d83b4af57766",
+          "title": "En Yakın Otomatik Kapı ve Kepenk Ustalarından Teklif Alın - Ustabilir",
+          "description": "Otomatik Kapı ve Kepenk Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Otomatik Kapı ve Kepenk",
+          "h1": "Otomatik Kapı ve Kepenk Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "otomatik-kapi-ve-kepenk-ustasi",
+          "displayOrder": 7
+        },
+        {
+          "id": "8ccd3c38-e459-4398-a3b8-c9799c98170e",
+          "mainCategoryId": "349a2538-e8e5-4b09-b4c1-d83b4af57766",
+          "title": "En Yakın Demir Doğrama ve Ferforje Ustalarından Teklif Alın - Ustabilir",
+          "description": "Demir Doğrama ve Ferforje Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Demir Doğrama ve Ferforje",
+          "h1": "Demir Doğrama ve Ferforje Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "demir-dograma-ve-ferforje-ustasi",
+          "displayOrder": 8
+        },
+        {
+          "id": "d3a806a2-3536-4da2-88db-d6eafbb2a349",
+          "mainCategoryId": "349a2538-e8e5-4b09-b4c1-d83b4af57766",
+          "title": "En Yakın Kapı ve Pencere Ustalarından Teklif Alın - Ustabilir",
+          "description": "Kapı ve Pencere Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Kapı ve Pencere",
+          "h1": "Kapı ve Pencere Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "kapi-ve-pencere-ustasi",
+          "displayOrder": 9
+        },
+        {
+          "id": "8f055194-1415-4b12-83c1-d8faa0cf5fef",
+          "mainCategoryId": "349a2538-e8e5-4b09-b4c1-d83b4af57766",
+          "title": "En Yakın PVC Pencere ve Kapı Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "PVC Pencere ve Kapı Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "PVC Pencere ve Kapı Sistemleri",
+          "h1": "PVC Pencere ve Kapı Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "pvc-pencere-ve-kapi-sistemleri-ustasi"
+        },
+        {
+          "id": "c1f22f58-938d-4d41-91d8-ff3ff0f1f3ab",
+          "mainCategoryId": "349a2538-e8e5-4b09-b4c1-d83b4af57766",
+          "title": "En Yakın Alüminyum Doğrama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Alüminyum Doğrama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Alüminyum Doğrama",
+          "h1": "Alüminyum Doğrama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "aluminyum-dograma-ustasi"
+        }
+      ]
+    },
+    {
+      "id": "053f2b4d-c7db-4aac-a4f6-d99e903b257b",
+      "name": "Mobilya ve Marangoz",
+      "description": "",
+      "metaTitle": "Marangoz ve Mobilya Montaj Ustalarından Fiyat Teklifi Alın",
+      "metaDescription": "Size En Yakın Marangoz Ve Mobilya Montaj Ustalarını Ustabilir İle Bulun ve Ücretsiz Fiyat Teklifi Alın! Ustalara yorum ve puanlarına göre karar verin!",
+      "isInsurable": true,
+      "iconUrl": "94eafec0-8f8e-4314-85d3-6c852d1157d9.webp",
+      "displayOrder": 6,
+      "slugTitle": "marangoz-mobilya-ustasi",
+      "subCategories": [
+        {
+          "id": "4dd225f0-d45b-4d7a-884e-160d14b0c550",
+          "mainCategoryId": "053f2b4d-c7db-4aac-a4f6-d99e903b257b",
+          "title": "En Yakın Mobilya Boyama Cila ve Lake Ustalarından Teklif Alın - Ustabilir",
+          "description": "Mobilya Boyama Cila ve Lake Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Mobilya Boyama Cila ve Lake",
+          "h1": "Mobilya Boyama Cila ve Lake Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "mobilya-boyama-cila-ve-lake-ustasi"
+        },
+        {
+          "id": "af0cf4b3-7d23-4e1e-b8fb-3683aa1a5cf1",
+          "mainCategoryId": "053f2b4d-c7db-4aac-a4f6-d99e903b257b",
+          "title": "En Yakın Kapı ve Pencere Ustalarından Teklif Alın - Ustabilir",
+          "description": "Kapı ve Pencere Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Kapı ve Pencere",
+          "h1": "Kapı ve Pencere Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "kapi-ve-pencere-ustasi"
+        },
+        {
+          "id": "81bed3ee-19be-4347-8f9d-4747bf775009",
+          "mainCategoryId": "053f2b4d-c7db-4aac-a4f6-d99e903b257b",
+          "title": "En Yakın Açık Hava Mobilya Kurulumu Ustalarından Teklif Alın - Ustabilir",
+          "description": "Açık Hava Mobilya Kurulumu Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Açık Hava Mobilya Kurulumu",
+          "h1": "Açık Hava Mobilya Kurulumu Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "acik-hava-mobilya-kurulumu-ustasi",
+          "displayOrder": 2
+        },
+        {
+          "id": "32ed4452-b53b-4678-9540-7277e4a0433d",
+          "mainCategoryId": "053f2b4d-c7db-4aac-a4f6-d99e903b257b",
+          "title": "En Yakın İşyeri ve Ofis Mobilyası Ustalarından Teklif Alın - Ustabilir",
+          "description": "İşyeri ve Ofis Mobilyası Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "İşyeri ve Ofis Mobilyası",
+          "h1": "İşyeri ve Ofis Mobilyası Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "isyeri-ve-ofis-mobilyasi-ustasi",
+          "displayOrder": 3
+        },
+        {
+          "id": "f791b6be-b99a-4aa8-a72e-7a7eed366b8b",
+          "mainCategoryId": "053f2b4d-c7db-4aac-a4f6-d99e903b257b",
+          "title": "En Yakın Raf ve Dolap Sistemleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Raf ve Dolap Sistemleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Raf ve Dolap Sistemleri",
+          "h1": "Raf ve Dolap Sistemleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "raf-ve-dolap-sistemleri-ustasi",
+          "displayOrder": 4
+        },
+        {
+          "id": "f4941c36-acbf-43e3-9780-ac5da3cd6e1e",
+          "mainCategoryId": "053f2b4d-c7db-4aac-a4f6-d99e903b257b",
+          "title": "En Yakın Mutfak ve Banyo Mobilyası Ustalarından Teklif Alın - Ustabilir",
+          "description": "Mutfak ve Banyo Mobilyası Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Mutfak ve Banyo Mobilyası",
+          "h1": "Mutfak ve Banyo Mobilyası Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "mutfak-ve-banyo-mobilyasi-ustasi",
+          "displayOrder": 5
+        },
+        {
+          "id": "e4b8d336-8576-4343-81dc-ae0f475a6469",
+          "mainCategoryId": "053f2b4d-c7db-4aac-a4f6-d99e903b257b",
+          "title": "En Yakın Mobilya Tamir ve Montajı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Mobilya Tamir ve Montajı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Mobilya Tamir ve Montajı",
+          "h1": "Mobilya Tamir ve Montajı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "mobilya-tamir-ve-montaji-ustasi",
+          "displayOrder": 6
+        },
+        {
+          "id": "ae526561-bdf9-4ce0-bede-b9365a2f7446",
+          "mainCategoryId": "053f2b4d-c7db-4aac-a4f6-d99e903b257b",
+          "title": "En Yakın Marangoz Ustalarından Teklif Alın - Ustabilir",
+          "description": "Marangoz Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Marangoz",
+          "h1": "Marangoz Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "marangoz-ustasi",
+          "displayOrder": 7
+        },
+        {
+          "id": "3cf6a5f4-e2b1-478c-b5b0-d1f75b48e140",
+          "mainCategoryId": "053f2b4d-c7db-4aac-a4f6-d99e903b257b",
+          "title": "En Yakın Koltuk Döşeme ve Kaplama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Koltuk Döşeme ve Kaplama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Koltuk Döşeme ve Kaplama",
+          "h1": "Koltuk Döşeme ve Kaplama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "koltuk-doseme-ve-kaplama-ustasi",
+          "displayOrder": 8
+        }
+      ]
+    },
+    {
+      "id": "187c5ace-f98c-458c-bd42-e104bed54241",
+      "name": "Duvar, Tavan ve Alçı",
+      "description": "",
+      "metaTitle": "Duvar, Tavan ve Alçıpan Ustasından Ücretsiz Teklif Alın",
+      "metaDescription": "Duvar, Tavan ve Alçıpan Ustalarını Ustabilir platformunda bulun ve karşılaştırın. Evinizin ihtiyacı olan Duvar, Tavan ve Alçıpan işleri için teklif alın!",
+      "isInsurable": true,
+      "iconUrl": "54509c91-4843-4bc9-bc53-fe286844b4c8.webp",
+      "slugTitle": "duvar-tavan-alci-ustasi",
+      "subCategories": [
+        {
+          "id": "78993da2-34ea-4859-9763-05b62298a2f5",
+          "mainCategoryId": "187c5ace-f98c-458c-bd42-e104bed54241",
+          "title": "En Yakın Duvar Kağıdı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Duvar Kağıdı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Duvar Kağıdı",
+          "h1": "Duvar Kağıdı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "duvar-kagidi-ustasi"
+        },
+        {
+          "id": "776f0be7-c796-4c94-871f-161e224f5d13",
+          "mainCategoryId": "187c5ace-f98c-458c-bd42-e104bed54241",
+          "title": "En Yakın Dış Mekan Sıva Ustalarından Teklif Alın - Ustabilir",
+          "description": "Dış Mekan Sıva Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Dış Mekan Sıva",
+          "h1": "Dış Mekan Sıva Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "dis-mekan-siva-ustasi"
+        },
+        {
+          "id": "258f422a-f4e4-484b-a802-358705d76f11",
+          "mainCategoryId": "187c5ace-f98c-458c-bd42-e104bed54241",
+          "title": "En Yakın Duvar Kaplama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Duvar Kaplama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Duvar Kaplama",
+          "h1": "Duvar Kaplama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "duvar-kaplama-ustasi",
+          "displayOrder": 2
+        },
+        {
+          "id": "e19c8fcc-362f-4059-abfb-43dc12a157bc",
+          "mainCategoryId": "187c5ace-f98c-458c-bd42-e104bed54241",
+          "title": "En Yakın Kartonpiyer ve Alçı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Kartonpiyer ve Alçı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Kartonpiyer ve Alçı",
+          "h1": "Kartonpiyer ve Alçı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "kartonpiyer-ve-alci-ustasi",
+          "displayOrder": 3
+        },
+        {
+          "id": "70f15614-2c05-46c6-bf10-57d75ff1359a",
+          "mainCategoryId": "187c5ace-f98c-458c-bd42-e104bed54241",
+          "title": "En Yakın Asma Tavan Ustalarından Teklif Alın - Ustabilir",
+          "description": "Asma Tavan Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Asma Tavan",
+          "h1": "Asma Tavan Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "asma-tavan-ustasi",
+          "displayOrder": 4
+        },
+        {
+          "id": "50871bce-6aa1-49c6-82b6-6bceb0fdb433",
+          "mainCategoryId": "187c5ace-f98c-458c-bd42-e104bed54241",
+          "title": "En Yakın Taş Duvar Ustalarından Teklif Alın - Ustabilir",
+          "description": "Taş Duvar Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Taş Duvar",
+          "h1": "Taş Duvar Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "tas-duvar-ustasi",
+          "displayOrder": 5
+        },
+        {
+          "id": "eeec5e34-3567-4cb2-b795-9f9690be341b",
+          "mainCategoryId": "187c5ace-f98c-458c-bd42-e104bed54241",
+          "title": "En Yakın Dış Cephe Kaplama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Dış Cephe Kaplama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Dış Cephe Kaplama",
+          "h1": "Dış Cephe Kaplama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "dis-cephe-kaplama-ustasi",
+          "displayOrder": 6
+        },
+        {
+          "id": "53f26024-8792-438d-8638-aa2b844a6471",
+          "mainCategoryId": "187c5ace-f98c-458c-bd42-e104bed54241",
+          "title": "En Yakın Alçıpan İşleri Ustalarından Teklif Alın - Ustabilir",
+          "description": "Alçıpan İşleri Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Alçıpan İşleri",
+          "h1": "Alçıpan İşleri Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "alcipan-isleri-ustasi",
+          "displayOrder": 7
+        },
+        {
+          "id": "05da6cad-c4dd-479e-981e-b530a8c238cb",
+          "mainCategoryId": "187c5ace-f98c-458c-bd42-e104bed54241",
+          "title": "En Yakın Tuğla ve Gazbeton Ustalarından Teklif Alın - Ustabilir",
+          "description": "Tuğla ve Gazbeton Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Tuğla ve Gazbeton",
+          "h1": "Tuğla ve Gazbeton Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "tugla-ve-gazbeton-ustasi",
+          "displayOrder": 8
+        },
+        {
+          "id": "15aedf0d-b5e2-4c3f-a2b5-b9cc38dd5066",
+          "mainCategoryId": "187c5ace-f98c-458c-bd42-e104bed54241",
+          "title": "En Yakın Gergi Tavan Ustalarından Teklif Alın - Ustabilir",
+          "description": "Gergi Tavan Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Gergi Tavan",
+          "h1": "Gergi Tavan Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "gergi-tavan-ustasi",
+          "displayOrder": 9
+        },
+        {
+          "id": "cebebfa8-b10e-489f-80b5-cb722b81374f",
+          "mainCategoryId": "187c5ace-f98c-458c-bd42-e104bed54241",
+          "title": "En Yakın Tavan Kaplama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Tavan Kaplama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Tavan Kaplama",
+          "h1": "Tavan Kaplama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "tavan-kaplama-ustasi"
+        },
+        {
+          "id": "8dfbdd74-39e9-49f1-964b-e86924d16351",
+          "mainCategoryId": "187c5ace-f98c-458c-bd42-e104bed54241",
+          "title": "En Yakın Ahşap Siding Ustalarından Teklif Alın - Ustabilir",
+          "description": "Ahşap Siding Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Ahşap Siding",
+          "h1": "Ahşap Siding Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "ahsap-siding-ustasi"
+        },
+        {
+          "id": "68b1590e-5dd6-47bf-9854-f0e70f2cbd60",
+          "mainCategoryId": "187c5ace-f98c-458c-bd42-e104bed54241",
+          "title": "En Yakın İç Mekan Alçı ve Sıva Ustalarından Teklif Alın - Ustabilir",
+          "description": "İç Mekan Alçı ve Sıva Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "İç Mekan Alçı ve Sıva",
+          "h1": "İç Mekan Alçı ve Sıva Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "ic-mekan-alci-ve-siva-ustasi"
+        }
+      ]
+    },
+    {
+      "id": "9b60c664-1a09-43b7-882d-e136e6db4455",
+      "name": "Yer Döşeme ve Kaplama",
+      "description": "",
+      "metaTitle": "Yer Kaplama ve Döşeme Ustalarını Bulun ve Teklif Alın",
+      "metaDescription": "Yer Kaplama ve Döşeme Ustalarını Ustabilir İle Bulun Ve Ücretsiz Fiyat Teklifi Alın! Yorumları Okuyarak Ustaları Karşılaştırın ve teklif alın!",
+      "isInsurable": true,
+      "iconUrl": "38151dce-585e-413f-8401-65853c08c6ea.webp",
+      "displayOrder": 2,
+      "slugTitle": "yer-doseme-ve-kaplama-ustasi",
+      "subCategories": [
+        {
+          "id": "3cf40c7c-0d15-4c98-94c3-3264a079aca8",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın Granit Döşeme Ustalarından Teklif Alın - Ustabilir",
+          "description": "Granit Döşeme Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Granit Döşeme",
+          "h1": "Granit Döşeme Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "granit-doseme-ustasi"
+        },
+        {
+          "id": "7d8be032-07c0-4702-9ce2-3cd2a4e251b6",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın Kilit Parke Taş Döşeme Ustalarından Teklif Alın - Ustabilir",
+          "description": "Kilit Parke Taş Döşeme Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Kilit Parke Taş Döşeme",
+          "h1": "Kilit Parke Taş Döşeme Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "kilit-parke-tas-doseme-ustasi"
+        },
+        {
+          "id": "3c76ad9b-e437-45de-b480-422467a4225c",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın Süpürgelik Ustalarından Teklif Alın - Ustabilir",
+          "description": "Süpürgelik Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Süpürgelik",
+          "h1": "Süpürgelik Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "supurgelik-ustasi",
+          "displayOrder": 2
+        },
+        {
+          "id": "34204785-047e-42a5-8b2a-44aab7e5417d",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın Fayans Döşeme Ustalarından Teklif Alın - Ustabilir",
+          "description": "Fayans Döşeme Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Fayans Döşeme",
+          "h1": "Fayans Döşeme Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "fayans-doseme-ustasi",
+          "displayOrder": 3
+        },
+        {
+          "id": "96f34b81-b2de-46b7-9aa0-536e26092f64",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın Mineflo Kaplama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Mineflo Kaplama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Mineflo Kaplama",
+          "h1": "Mineflo Kaplama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "mineflo-kaplama-ustasi",
+          "displayOrder": 4
+        },
+        {
+          "id": "55501ee4-b768-478e-9778-576e4a741212",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın Doğal Taş Döşeme Ustalarından Teklif Alın - Ustabilir",
+          "description": "Doğal Taş Döşeme Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Doğal Taş Döşeme",
+          "h1": "Doğal Taş Döşeme Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "dogal-tas-doseme-ustasi",
+          "displayOrder": 5
+        },
+        {
+          "id": "db0f1bdb-4482-4d78-ad8c-6550a77b1c25",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın Seramik Döşeme Ustalarından Teklif Alın - Ustabilir",
+          "description": "Seramik Döşeme Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Seramik Döşeme",
+          "h1": "Seramik Döşeme Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "seramik-doseme-ustasi",
+          "displayOrder": 6
+        },
+        {
+          "id": "c08b7186-ef88-4193-8937-7a9894348964",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın Cam Mozaik ve Çini Döşeme Ustalarından Teklif Alın - Ustabilir",
+          "description": "Cam Mozaik ve Çini Döşeme Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Cam Mozaik ve Çini Döşeme",
+          "h1": "Cam Mozaik ve Çini Döşeme Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "cam-mozaik-ve-cini-doseme-ustasi",
+          "displayOrder": 7
+        },
+        {
+          "id": "32047212-fdb5-438d-bdf0-7da8a119b9a2",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın Mermer Döşeme Ustalarından Teklif Alın - Ustabilir",
+          "description": "Mermer Döşeme Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Mermer Döşeme",
+          "h1": "Mermer Döşeme Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "mermer-doseme-ustasi",
+          "displayOrder": 8
+        },
+        {
+          "id": "bbcabba4-f653-4824-84f6-8a1ea31f98a3",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın Zemin Boyama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Zemin Boyama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Zemin Boyama",
+          "h1": "Zemin Boyama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "zemin-boyama-ustasi",
+          "displayOrder": 9
+        },
+        {
+          "id": "c140270e-e3ee-4fc4-98fe-8c3bc40dfdeb",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın Parke ve Laminat Döşeme Ustalarından Teklif Alın - Ustabilir",
+          "description": "Parke ve Laminat Döşeme Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Parke ve Laminat Döşeme",
+          "h1": "Parke ve Laminat Döşeme Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "parke-ve-laminat-doseme-ustasi"
+        },
+        {
+          "id": "3c6aba15-448e-4e7d-879f-8d63992c9615",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın Epoksi Zemin Kaplama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Epoksi Zemin Kaplama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Epoksi Zemin Kaplama",
+          "h1": "Epoksi Zemin Kaplama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "epoksi-zemin-kaplama-ustasi"
+        },
+        {
+          "id": "c50da40e-58c1-4e08-8a98-924011488971",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın Ahşap Deck Kaplama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Ahşap Deck Kaplama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Ahşap Deck Kaplama",
+          "h1": "Ahşap Deck Kaplama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "ahsap-deck-kaplama-ustasi"
+        },
+        {
+          "id": "b3911901-62f0-4554-bf5a-b6145e7c4e19",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın PVC Zemin Kaplama Ustalarından Teklif Alın - Ustabilir",
+          "description": "PVC Zemin Kaplama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "PVC Zemin Kaplama",
+          "h1": "PVC Zemin Kaplama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "pvc-zemin-kaplama-ustasi"
+        },
+        {
+          "id": "461d4396-ddb9-4e70-a4ec-d7fd83de28c9",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın Halı ve Halıfleks Döşeme Ustalarından Teklif Alın - Ustabilir",
+          "description": "Halı ve Halıfleks Döşeme Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Halı ve Halıfleks Döşeme",
+          "h1": "Halı ve Halıfleks Döşeme Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "hali-ve-halifleks-doseme-ustasi"
+        },
+        {
+          "id": "5a2567e2-e489-4ea5-8fb4-def5fa469667",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın Kauçuk Zemin Kaplama Ustalarından Teklif Alın - Ustabilir",
+          "description": "Kauçuk Zemin Kaplama Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Kauçuk Zemin Kaplama",
+          "h1": "Kauçuk Zemin Kaplama Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "kaucuk-zemin-kaplama-ustasi"
+        },
+        {
+          "id": "4978f64c-5f9b-4b67-9777-e3df621a2b98",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın Zemin Düzleştirme ve Şap Ustalarından Teklif Alın - Ustabilir",
+          "description": "Zemin Düzleştirme ve Şap Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Zemin Düzleştirme ve Şap",
+          "h1": "Zemin Düzleştirme ve Şap Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "zemin-duzlestirme-ve-sap-ustasi"
+        },
+        {
+          "id": "0a60d1de-b893-4348-b978-e4509e190953",
+          "mainCategoryId": "9b60c664-1a09-43b7-882d-e136e6db4455",
+          "title": "En Yakın Beton Zemin Ustalarından Teklif Alın - Ustabilir",
+          "description": "Beton Zemin Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Beton Zemin",
+          "h1": "Beton Zemin Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "beton-zemin-ustasi"
+        }
+      ]
+    },
+    {
+      "id": "fca242f7-85b6-4170-a617-e4e1255d4163",
+      "name": "Mutfak ve Banyo Tadilat",
+      "description": "",
+      "metaTitle": "Mutfak ve Banyo için Tadilat Ustalarından Fiyat Teklifi Alın",
+      "metaDescription": "Mutfak Ve Banyo için Tadilat Ustalarını Ustabilir İle Bulun! Ücretsiz Fiyat Teklifi Alın! Ustaları Karşılaştırıp Size En Çok Uyana Karar Verin! ",
+      "isInsurable": true,
+      "iconUrl": "37f624e5-300b-4b8c-9a04-e54c35001490.webp",
+      "displayOrder": 4,
+      "slugTitle": "mutfak-ve-banyo-tadilat-ustasi",
+      "subCategories": [
+        {
+          "id": "a41afb53-fe91-4218-b758-0c18a346d3cc",
+          "mainCategoryId": "fca242f7-85b6-4170-a617-e4e1255d4163",
+          "title": "En Yakın Mutfak Tezgahı Montajı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Mutfak Tezgahı Montajı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Mutfak Tezgahı Montajı",
+          "h1": "Mutfak Tezgahı Montajı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "mutfak-tezgahi-montaji-ustasi"
+        },
+        {
+          "id": "82d0f25b-1882-4aa2-9148-1b46b7c47832",
+          "mainCategoryId": "fca242f7-85b6-4170-a617-e4e1255d4163",
+          "title": "En Yakın Batarya ve Musluk Ustalarından Teklif Alın - Ustabilir",
+          "description": "Batarya ve Musluk Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Batarya ve Musluk",
+          "h1": "Batarya ve Musluk Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "batarya-ve-musluk-ustasi"
+        },
+        {
+          "id": "0e2772de-525c-422e-bd21-3db0374e550e",
+          "mainCategoryId": "fca242f7-85b6-4170-a617-e4e1255d4163",
+          "title": "En Yakın Banyo Aksesuarları ve Montajı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Banyo Aksesuarları ve Montajı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Banyo Aksesuarları ve Montajı",
+          "h1": "Banyo Aksesuarları ve Montajı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "banyo-aksesuarlari-ve-montaji-ustasi",
+          "displayOrder": 2
+        },
+        {
+          "id": "05be2018-eac5-40b3-9e8c-483e0f10fd27",
+          "mainCategoryId": "fca242f7-85b6-4170-a617-e4e1255d4163",
+          "title": "En Yakın Lavabo ve Kurna Ustalarından Teklif Alın - Ustabilir",
+          "description": "Lavabo ve Kurna Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Lavabo ve Kurna",
+          "h1": "Lavabo ve Kurna Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "lavabo-ve-kurna-ustasi",
+          "displayOrder": 3
+        },
+        {
+          "id": "d61db2ab-1dc9-4ef2-8e71-5b17fbe605e0",
+          "mainCategoryId": "fca242f7-85b6-4170-a617-e4e1255d4163",
+          "title": "En Yakın Küvet ve Duş Teknesi Ustalarından Teklif Alın - Ustabilir",
+          "description": "Küvet ve Duş Teknesi Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Küvet ve Duş Teknesi",
+          "h1": "Küvet ve Duş Teknesi Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "kuvet-ve-dus-teknesi-ustasi",
+          "displayOrder": 4
+        },
+        {
+          "id": "e21c9058-97d9-4b47-8cd1-65ad262fb507",
+          "mainCategoryId": "fca242f7-85b6-4170-a617-e4e1255d4163",
+          "title": "En Yakın Evye ve Montajı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Evye ve Montajı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Evye ve Montajı",
+          "h1": "Evye ve Montajı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "evye-ve-montaji-ustasi",
+          "displayOrder": 5
+        },
+        {
+          "id": "113e6d5e-079b-45b3-8f8f-6863df0478ff",
+          "mainCategoryId": "fca242f7-85b6-4170-a617-e4e1255d4163",
+          "title": "En Yakın Banyo Mobilyası Ustalarından Teklif Alın - Ustabilir",
+          "description": "Banyo Mobilyası Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Banyo Mobilyası",
+          "h1": "Banyo Mobilyası Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "banyo-mobilyasi-ustasi",
+          "displayOrder": 6
+        },
+        {
+          "id": "472e7b53-2921-4bba-8eb6-7269b36ea2a8",
+          "mainCategoryId": "fca242f7-85b6-4170-a617-e4e1255d4163",
+          "title": "En Yakın Duş Sistemleri Tamir ve Montajı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Duş Sistemleri Tamir ve Montajı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Duş Sistemleri Tamir ve Montajı",
+          "h1": "Duş Sistemleri Tamir ve Montajı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "dus-sistemleri-tamir-ve-montaji-ustasi",
+          "displayOrder": 7
+        },
+        {
+          "id": "f28de18b-e40d-4478-a7a8-91e719248837",
+          "mainCategoryId": "fca242f7-85b6-4170-a617-e4e1255d4163",
+          "title": "En Yakın Mutfak Tadilatı ve Dekorasyonu Ustalarından Teklif Alın - Ustabilir",
+          "description": "Mutfak Tadilatı ve Dekorasyonu Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Mutfak Tadilatı ve Dekorasyonu",
+          "h1": "Mutfak Tadilatı ve Dekorasyonu Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "mutfak-tadilati-ve-dekorasyonu-ustasi",
+          "displayOrder": 8
+        },
+        {
+          "id": "86a7d775-df56-41f3-bf3b-9c9be4a17cbf",
+          "mainCategoryId": "fca242f7-85b6-4170-a617-e4e1255d4163",
+          "title": "En Yakın Cam ve Ayna Ustalarından Teklif Alın - Ustabilir",
+          "description": "Cam ve Ayna Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Cam ve Ayna",
+          "h1": "Cam ve Ayna Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "cam-ve-ayna-ustasi",
+          "displayOrder": 9
+        },
+        {
+          "id": "d380fde6-df34-41ce-b7ed-af6c47c7cdbc",
+          "mainCategoryId": "fca242f7-85b6-4170-a617-e4e1255d4163",
+          "title": "En Yakın Mutfak Dolabı Tamiratı ve Montajı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Mutfak Dolabı Tamiratı ve Montajı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Mutfak Dolabı Tamiratı ve Montajı",
+          "h1": "Mutfak Dolabı Tamiratı ve Montajı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "mutfak-dolabi-tamirati-ve-montaji-ustasi"
+        },
+        {
+          "id": "0f3ef336-b647-4ae3-bdf6-c09d46d1b460",
+          "mainCategoryId": "fca242f7-85b6-4170-a617-e4e1255d4163",
+          "title": "En Yakın Banyo Dolabı Tamiratı ve Montajı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Banyo Dolabı Tamiratı ve Montajı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Banyo Dolabı Tamiratı ve Montajı",
+          "h1": "Banyo Dolabı Tamiratı ve Montajı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "banyo-dolabi-tamirati-ve-montaji-ustasi"
+        },
+        {
+          "id": "ccd09282-245b-429e-9094-d03850cc3c03",
+          "mainCategoryId": "fca242f7-85b6-4170-a617-e4e1255d4163",
+          "title": "En Yakın Duşakabin Ustalarından Teklif Alın - Ustabilir",
+          "description": "Duşakabin Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Duşakabin",
+          "h1": "Duşakabin Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "dusakabin-ustasi"
+        },
+        {
+          "id": "e61d3849-f678-4d3f-8922-dd01156053c9",
+          "mainCategoryId": "fca242f7-85b6-4170-a617-e4e1255d4163",
+          "title": "En Yakın Hazır Mutfak Ustalarından Teklif Alın - Ustabilir",
+          "description": "Hazır Mutfak Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Hazır Mutfak",
+          "h1": "Hazır Mutfak Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "hazir-mutfak-ustasi"
+        },
+        {
+          "id": "e6050923-d85c-444a-98bd-e418ce1454d2",
+          "mainCategoryId": "fca242f7-85b6-4170-a617-e4e1255d4163",
+          "title": "En Yakın Rezervuar Tamir ve Montajı Ustalarından Teklif Alın - Ustabilir",
+          "description": "Rezervuar Tamir ve Montajı Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Rezervuar Tamir ve Montajı",
+          "h1": "Rezervuar Tamir ve Montajı Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "rezervuar-tamir-ve-montaji-ustasi"
+        },
+        {
+          "id": "c7163a54-f810-4de2-90db-ed34bb760eae",
+          "mainCategoryId": "fca242f7-85b6-4170-a617-e4e1255d4163",
+          "title": "En Yakın Klozet ve Pisuvar Ustalarından Teklif Alın - Ustabilir",
+          "description": "Klozet ve Pisuvar Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Klozet ve Pisuvar",
+          "h1": "Klozet ve Pisuvar Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "klozet-ve-pisuvar-ustasi"
+        },
+        {
+          "id": "59ae78a7-a5b0-413a-9779-f2220c54671d",
+          "mainCategoryId": "fca242f7-85b6-4170-a617-e4e1255d4163",
+          "title": "En Yakın Banyo Tadilatı ve Dekorasyonu Ustalarından Teklif Alın - Ustabilir",
+          "description": "Banyo Tadilatı ve Dekorasyonu Ustası bulmak için Ustabilir'e göz atın! Alanında uzman kişilerden fiyat teklifi alın ve istediğiniz hizmete kolayca ulaşın.",
+          "name": "Banyo Tadilatı ve Dekorasyonu",
+          "h1": "Banyo Tadilatı ve Dekorasyonu Ustası Bulun ve Fiyat Teklifi Alın",
+          "slugTitle": "banyo-tadilati-ve-dekorasyonu-ustasi"
+        }
+      ]
+    }
+  ]

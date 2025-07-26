@@ -36,6 +36,13 @@ export class CategoriesController {
     return this.categoriesService.update(id, updateCategoryDto);
   }
 
+  @Delete('clear')
+  @ApiOperation({ summary: 'Tüm kategorileri sil' })
+  @ApiResponse({ status: 200, description: 'Tüm kategoriler silindi' })
+  async clearAll() {
+    return this.categoriesService.clearAll();
+  }
+
   @Delete(':id')
   @ApiOperation({ summary: 'Kategori sil' })
   @ApiResponse({ status: 200, description: 'Kategori silindi' })

@@ -28,71 +28,11 @@ let AppController = class AppController {
             version: '1.0.0'
         };
     }
-    async seedUsers() {
+    async seedAdmin() {
         try {
-            await this.seedService.seedUsers();
+            await this.seedService.seedAdmin();
             return {
-                message: 'Test kullanıcıları başarıyla eklendi!',
-                status: 'success'
-            };
-        }
-        catch (error) {
-            return {
-                message: 'Seed hatası: ' + error.message,
-                status: 'error'
-            };
-        }
-    }
-    async seedAll() {
-        try {
-            await this.seedService.runSeeds();
-            return {
-                message: 'Tüm seed verileri başarıyla eklendi!',
-                status: 'success'
-            };
-        }
-        catch (error) {
-            return {
-                message: 'Seed hatası: ' + error.message,
-                status: 'error'
-            };
-        }
-    }
-    async seedCategories() {
-        try {
-            await this.seedService.seedCategories();
-            return {
-                message: 'Kategoriler başarıyla eklendi!',
-                status: 'success'
-            };
-        }
-        catch (error) {
-            return {
-                message: 'Seed hatası: ' + error.message,
-                status: 'error'
-            };
-        }
-    }
-    async seedLocations() {
-        try {
-            await this.seedService.seedLocations();
-            return {
-                message: 'Lokasyonlar başarıyla eklendi!',
-                status: 'success'
-            };
-        }
-        catch (error) {
-            return {
-                message: 'Seed hatası: ' + error.message,
-                status: 'error'
-            };
-        }
-    }
-    async seedUserInfos() {
-        try {
-            await this.seedService.seedUserInfos();
-            return {
-                message: 'UserInfo verileri başarıyla eklendi!',
+                message: 'Admin kullanıcısı başarıyla eklendi!',
                 status: 'success'
             };
         }
@@ -118,35 +58,11 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "getHealth", null);
 __decorate([
-    (0, common_1.Post)('seed/users'),
+    (0, common_1.Post)('seed/admin'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], AppController.prototype, "seedUsers", null);
-__decorate([
-    (0, common_1.Post)('seed/all'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], AppController.prototype, "seedAll", null);
-__decorate([
-    (0, common_1.Post)('seed/categories'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], AppController.prototype, "seedCategories", null);
-__decorate([
-    (0, common_1.Post)('seed/locations'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], AppController.prototype, "seedLocations", null);
-__decorate([
-    (0, common_1.Post)('seed/user-infos'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], AppController.prototype, "seedUserInfos", null);
+], AppController.prototype, "seedAdmin", null);
 exports.AppController = AppController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [seed_service_1.SeedService])

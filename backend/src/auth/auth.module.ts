@@ -4,14 +4,18 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { JwtStrategy } from './strategies/jwt.strategy';
+import { AuthController } from './auth.controller';
+import { AdminAuthService } from './admin-auth.service';
+import { AdminAuthController } from './admin-auth.controller';
 import { User } from '../users/entities/user.entity';
+import { Admin } from './entities/admin.entity';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { AdminJwtStrategy } from './strategies/admin-jwt.strategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Admin]),
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -22,8 +26,8 @@ import { User } from '../users/entities/user.entity';
       inject: [ConfigService],
     }),
   ],
-  controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
-  exports: [AuthService],
+  controllers: [AuthController, AdminAuthController],
+  providers: [AuthService, AdminAuthService, JwtStrategy, AdminJwtStrategy],
+  exports: [AuthService, AdminAuthService],
 })
 export class AuthModule {} 

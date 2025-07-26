@@ -50,6 +50,9 @@ let CategoriesService = class CategoriesService {
         category.isActive = false;
         await this.categoryRepository.save(category);
     }
+    async clearAll() {
+        await this.categoryRepository.clear();
+    }
     async findByParentId(parentId) {
         return this.categoryRepository.find({
             where: { parentId, isActive: true },

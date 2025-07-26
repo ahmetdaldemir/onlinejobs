@@ -32,6 +32,9 @@ let CategoriesController = class CategoriesController {
     async update(id, updateCategoryDto) {
         return this.categoriesService.update(id, updateCategoryDto);
     }
+    async clearAll() {
+        return this.categoriesService.clearAll();
+    }
     async delete(id) {
         return this.categoriesService.delete(id);
     }
@@ -77,6 +80,14 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], CategoriesController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)('clear'),
+    (0, swagger_1.ApiOperation)({ summary: 'Tüm kategorileri sil' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Tüm kategoriler silindi' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], CategoriesController.prototype, "clearAll", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Kategori sil' }),

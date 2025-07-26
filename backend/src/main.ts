@@ -5,8 +5,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import * as express from 'express';
-import { UsersSeedService } from './seeds/users.seed';
-import { UsersService } from './users/users.service';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -44,28 +42,12 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  // Sadece users seed'ini çalıştır
-  try {
-    const usersSeedService = app.get(UsersSeedService);
-    await usersSeedService.seed();
-    
-    // Test kullanıcılarını otomatik online yap
-    try {
-      const usersService = app.get(UsersService);
-      await usersService.setTestUsersOnline();
-      console.log('✅ Test kullanıcıları online yapıldı');
-    } catch (usersError) {
-      console.log('Users service error:', usersError.message);
-    }
-  } catch (error) {
-    console.log('Seed service error:', error.message);
-  }
-
   const port = process.env.PORT || 3000;
   await app.listen(port, '0.0.0.0'); // Tüm IP'lerden erişime izin ver
   
   console.log(`🚀 Uygulama http://localhost:${port} adresinde çalışıyor`);
   console.log(`📚 API Dokümantasyonu: http://localhost:${port}/api`);
   console.log(`💬 Chat Test Sayfası: http://localhost:${port}/public/chat-test.html`);
+  console.log(`👨‍💼 Admin Panel: http://localhost:${port}/public/admin-panel.html`);
 }
 bootstrap(); 

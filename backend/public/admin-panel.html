@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Online Jobs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .btn {
+            background: white;
+            color: #667eea;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 Admin Panel Güncellendi</h1>
+        <p>Admin panel yeni bir yapıya taşındı. Lütfen yeni sayfaları kullanın:</p>
+        
+        <a href="admin-login.html" class="btn">
+            🔐 Admin Girişi
+        </a>
+        
+        <a href="admin-dashboard.html" class="btn">
+            📊 Admin Dashboard
+        </a>
+        
+        <p style="margin-top: 30px; font-size: 14px; opacity: 0.8;">
+            Bu sayfa artık kullanılmıyor. Otomatik olarak login sayfasına yönlendirileceksiniz.
+        </p>
+    </div>
+
+    <script>
+        // Otomatik yönlendirme
+        setTimeout(() => {
+            window.location.href = 'admin-login.html';
+        }, 3000);
+    </script>
+</body>
+</html> 

@@ -6,8 +6,6 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const path_1 = require("path");
 const express = require("express");
-const users_seed_1 = require("./seeds/users.seed");
-const users_service_1 = require("./users/users.service");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors({
@@ -34,26 +32,12 @@ async function bootstrap() {
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, config);
     swagger_1.SwaggerModule.setup('api', app, document);
-    try {
-        const usersSeedService = app.get(users_seed_1.UsersSeedService);
-        await usersSeedService.seed();
-        try {
-            const usersService = app.get(users_service_1.UsersService);
-            await usersService.setTestUsersOnline();
-            console.log('✅ Test kullanıcıları online yapıldı');
-        }
-        catch (usersError) {
-            console.log('Users service error:', usersError.message);
-        }
-    }
-    catch (error) {
-        console.log('Seed service error:', error.message);
-    }
     const port = process.env.PORT || 3000;
     await app.listen(port, '0.0.0.0');
     console.log(`🚀 Uygulama http://localhost:${port} adresinde çalışıyor`);
     console.log(`📚 API Dokümantasyonu: http://localhost:${port}/api`);
     console.log(`💬 Chat Test Sayfası: http://localhost:${port}/public/chat-test.html`);
+    console.log(`👨‍💼 Admin Panel: http://localhost:${port}/public/admin-panel.html`);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map

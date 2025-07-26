@@ -21,7 +21,7 @@ __decorate([
     __metadata("design:type", String)
 ], Category.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ length: 100, unique: true }),
+    (0, typeorm_1.Column)({ length: 100 }),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], Category.prototype, "name", void 0);
@@ -65,7 +65,6 @@ __decorate([
     __metadata("design:type", Array)
 ], Category.prototype, "users", void 0);
 exports.Category = Category = __decorate([
-    (0, typeorm_1.Entity)('categories'),
-    (0, typeorm_1.Index)(['name'], { unique: true })
+    (0, typeorm_1.Entity)('categories')
 ], Category);
 //# sourceMappingURL=category.entity.js.map

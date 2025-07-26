@@ -21,6 +21,7 @@ const locations_module_1 = require("./locations/locations.module");
 const database_module_1 = require("./database/database.module");
 const seeds_module_1 = require("./seeds/seeds.module");
 const ai_module_1 = require("./ai/ai.module");
+const admin_module_1 = require("./admin/admin.module");
 const app_controller_1 = require("./app.controller");
 let AppModule = class AppModule {
 };
@@ -47,6 +48,7 @@ exports.AppModule = AppModule = __decorate([
             locations_module_1.LocationsModule,
             seeds_module_1.SeedsModule,
             ai_module_1.AiModule,
+            admin_module_1.AdminModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [],

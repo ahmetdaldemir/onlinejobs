@@ -1,111 +1,49 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.categoriesSeed = void 0;
-exports.categoriesSeed = [
-    {
-        name: 'Elektrikçi',
-        description: 'Elektrik tesisatı, arıza giderme, bakım onarım',
-        icon: '⚡',
-        orderIndex: 1,
-        parentId: null,
-    },
-    {
-        name: 'Sıhhi Tesisatçı',
-        description: 'Su tesisatı, kanalizasyon, ısıtma sistemleri',
-        icon: '🚰',
-        orderIndex: 2,
-        parentId: null,
-    },
-    {
-        name: 'Taksici',
-        description: 'Şehir içi ve şehirler arası ulaşım',
-        icon: '🚕',
-        orderIndex: 3,
-        parentId: null,
-    },
-    {
-        name: 'Temizlikçi',
-        description: 'Ev ve ofis temizliği, genel temizlik hizmetleri',
-        icon: '🧹',
-        orderIndex: 4,
-        parentId: null,
-    },
-    {
-        name: 'Bakıcı',
-        description: 'Çocuk, yaşlı ve hasta bakımı',
-        icon: '👶',
-        orderIndex: 5,
-        parentId: null,
-    },
-    {
-        name: 'Bahçıvan',
-        description: 'Bahçe bakımı, çim biçme, ağaç budama',
-        icon: '🌱',
-        orderIndex: 6,
-        parentId: null,
-    },
-    {
-        name: 'Tesisatçı',
-        description: 'Doğalgaz, su, ısıtma tesisatı',
-        icon: '🔧',
-        orderIndex: 7,
-        parentId: null,
-    },
-    {
-        name: 'Boya Badana',
-        description: 'İç ve dış cephe boya, badana işleri',
-        icon: '🎨',
-        orderIndex: 8,
-        parentId: null,
-    },
-    {
-        name: 'Marangoz',
-        description: 'Ahşap işleri, mobilya yapımı ve tamiri',
-        icon: '🪚',
-        orderIndex: 9,
-        parentId: null,
-    },
-    {
-        name: 'Çilingir',
-        description: 'Kilit açma, anahtar yapımı',
-        icon: '🔑',
-        orderIndex: 10,
-        parentId: null,
-    },
-    {
-        name: 'Klima Teknisyeni',
-        description: 'Klima montaj, bakım, onarım',
-        icon: '❄️',
-        orderIndex: 11,
-        parentId: null,
-    },
-    {
-        name: 'Asansör Teknisyeni',
-        description: 'Asansör bakım, onarım, montaj',
-        icon: '🛗',
-        orderIndex: 12,
-        parentId: null,
-    },
-    {
-        name: 'Çatı Ustası',
-        description: 'Çatı yapımı, onarımı, izolasyon',
-        icon: '🏠',
-        orderIndex: 13,
-        parentId: null,
-    },
-    {
-        name: 'Seramikçi',
-        description: 'Seramik, fayans döşeme işleri',
-        icon: '🧱',
-        orderIndex: 14,
-        parentId: null,
-    },
-    {
-        name: 'Demirci',
-        description: 'Demir işleri, kaynak, metal işleme',
-        icon: '🔨',
-        orderIndex: 15,
-        parentId: null,
-    },
-];
+const fs = require("fs");
+const path = require("path");
+const categoriesJsonPath = path.join(__dirname, '../../public/categories.json');
+exports.categoriesSeed = [];
+try {
+    const fileContent = fs.readFileSync(categoriesJsonPath, 'utf8');
+    const cleanedContent = fileContent
+        .replace(/,\s*}/g, '}')
+        .replace(/,\s*]/g, ']')
+        .replace(/^\s*[\r\n]/gm, '');
+    const categoriesData = JSON.parse(cleanedContent);
+    categoriesData.forEach((category) => {
+        const categoryEntity = {
+            originalId: category.id,
+            name: category.name,
+            description: category.description || '',
+            icon: category.iconUrl || '',
+            orderIndex: category.displayOrder || 0,
+            parentId: null,
+            isActive: true,
+        };
+        exports.categoriesSeed.push(categoryEntity);
+    });
+    categoriesData.forEach((category) => {
+        if (category.subCategories && category.subCategories.length > 0) {
+            category.subCategories.forEach((subCategory) => {
+                const subCategoryEntity = {
+                    originalId: subCategory.id,
+                    parentOriginalId: category.id,
+                    name: subCategory.name,
+                    description: subCategory.description || '',
+                    icon: subCategory.iconUrl || '',
+                    orderIndex: subCategory.displayOrder || 0,
+                    parentId: null,
+                    isActive: true,
+                };
+                exports.categoriesSeed.push(subCategoryEntity);
+            });
+        }
+    });
+    console.log(`✅ ${exports.categoriesSeed.length} kategori yüklendi`);
+}
+catch (error) {
+    console.error('❌ JSON dosyası okuma hatası:', error.message);
+}
 //# sourceMappingURL=categories.seed.js.map

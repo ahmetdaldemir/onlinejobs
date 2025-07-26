@@ -10,13 +10,12 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 
 @Entity('categories')
-@Index(['name'], { unique: true })
 export class Category {
   @PrimaryGeneratedColumn('uuid')
   @ApiProperty()
   id: string;
 
-  @Column({ length: 100, unique: true })
+  @Column({ length: 100 })
   @ApiProperty()
   name: string;
 
