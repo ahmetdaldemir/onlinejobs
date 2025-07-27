@@ -18,10 +18,12 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("./entities/user.entity");
 const user_info_entity_1 = require("./entities/user-info.entity");
+const category_entity_1 = require("../categories/entities/category.entity");
 let UsersService = class UsersService {
-    constructor(userRepository, userInfoRepository) {
+    constructor(userRepository, userInfoRepository, categoryRepository) {
         this.userRepository = userRepository;
         this.userInfoRepository = userInfoRepository;
+        this.categoryRepository = categoryRepository;
     }
     async findTestUsers() {
         return this.userRepository.find({
@@ -99,20 +101,22 @@ let UsersService = class UsersService {
                 .orderBy('distance', 'ASC');
         }
         const results = await query.getMany();
-        if (latitude && longitude) {
-            return results.map(user => {
+        const processedResults = await Promise.all(results.map(async (user) => {
+            let processedUser = { ...user };
+            if (latitude && longitude) {
                 const userInfo = user.userInfos?.[0];
                 if (userInfo && userInfo.latitude && userInfo.longitude) {
                     const distance = this.calculateDistance(latitude, longitude, userInfo.latitude, userInfo.longitude);
-                    return {
-                        ...user,
-                        distance: Math.round(distance * 100) / 100
-                    };
+                    processedUser.distance = Math.round(distance * 100) / 100;
                 }
-                return user;
-            });
-        }
-        return results;
+            }
+            if (user.categoryIds && user.categoryIds.length > 0) {
+                const hierarchicalCategories = await this.buildHierarchicalCategories(user.categoryIds);
+                processedUser.categoryIds = hierarchicalCategories;
+            }
+            return processedUser;
+        }));
+        return processedResults;
     }
     calculateDistance(lat1, lon1, lat2, lon2) {
         const R = 6371;
@@ -127,6 +131,56 @@ let UsersService = class UsersService {
     toRadians(degrees) {
         return degrees * (Math.PI / 180);
     }
+    async buildHierarchicalCategories(categoryIds) {
+        if (!categoryIds || categoryIds.length === 0) {
+            return {};
+        }
+        const allCategories = await this.categoryRepository.find();
+        const categoryMap = new Map();
+        allCategories.forEach(category => {
+            categoryMap.set(category.id, category);
+        });
+        const hierarchicalStructure = {};
+        categoryIds.forEach(categoryId => {
+            const category = categoryMap.get(categoryId);
+            if (category) {
+                if (category.parentId) {
+                    const parentCategory = categoryMap.get(category.parentId);
+                    if (parentCategory) {
+                        if (!hierarchicalStructure[parentCategory.name]) {
+                            hierarchicalStructure[parentCategory.name] = [];
+                        }
+                        hierarchicalStructure[parentCategory.name].push({
+                            name: category.name,
+                            id: category.id
+                        });
+                    }
+                }
+                else {
+                    const childCategories = allCategories.filter(cat => cat.parentId === category.id);
+                    if (childCategories.length > 0) {
+                        if (!hierarchicalStructure[category.name]) {
+                            hierarchicalStructure[category.name] = [];
+                        }
+                        childCategories.forEach(child => {
+                            if (categoryIds.includes(child.id)) {
+                                hierarchicalStructure[category.name].push({
+                                    name: child.name,
+                                    id: child.id
+                                });
+                            }
+                        });
+                    }
+                    else {
+                        if (!hierarchicalStructure[category.name]) {
+                            hierarchicalStructure[category.name] = [];
+                        }
+                    }
+                }
+            }
+        });
+        return hierarchicalStructure;
+    }
     async findOnlineEmployers(latitude, longitude, radius, categoryId) {
         let query = this.userRepository
             .createQueryBuilder('user')
@@ -135,7 +189,7 @@ let UsersService = class UsersService {
             .andWhere('user.isOnline = :isOnline', { isOnline: true })
             .andWhere('user.status = :status', { status: user_entity_1.UserStatus.ACTIVE });
         if (categoryId) {
-            query = query.andWhere('user.categoryId = :categoryId', { categoryId });
+            query = query.andWhere('user.categoryIds @> ARRAY[:categoryId]', { categoryId });
         }
         if (latitude && longitude && radius) {
             query = query.andWhere(`(
@@ -146,7 +200,16 @@ let UsersService = class UsersService {
           )
         ) <= :radius`, { latitude, longitude, radius });
         }
-        return query.getMany();
+        const results = await query.getMany();
+        const processedResults = await Promise.all(results.map(async (user) => {
+            let processedUser = { ...user };
+            if (user.categoryIds && user.categoryIds.length > 0) {
+                const hierarchicalCategories = await this.buildHierarchicalCategories(user.categoryIds);
+                processedUser.categoryIds = hierarchicalCategories;
+            }
+            return processedUser;
+        }));
+        return processedResults;
     }
     async findUsersByType(userType) {
         return this.userRepository
@@ -292,7 +355,9 @@ exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
     __param(1, (0, typeorm_1.InjectRepository)(user_info_entity_1.UserInfo)),
+    __param(2, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository])
 ], UsersService);
 //# sourceMappingURL=users.service.js.map

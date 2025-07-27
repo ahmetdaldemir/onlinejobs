@@ -2,10 +2,12 @@ import { Repository } from 'typeorm';
 import { User, UserStatus } from './entities/user.entity';
 import { UserInfo } from './entities/user-info.entity';
 import { UpdateUserInfoDto } from './dto/update-user-info.dto';
+import { Category } from '../categories/entities/category.entity';
 export declare class UsersService {
     private userRepository;
     private userInfoRepository;
-    constructor(userRepository: Repository<User>, userInfoRepository: Repository<UserInfo>);
+    private categoryRepository;
+    constructor(userRepository: Repository<User>, userInfoRepository: Repository<UserInfo>, categoryRepository: Repository<Category>);
     findTestUsers(): Promise<User[]>;
     findRealUsers(): Promise<User[]>;
     findActiveUsers(): Promise<User[]>;
@@ -15,7 +17,8 @@ export declare class UsersService {
     findOnlineWorkers(latitude?: number, longitude?: number, radius?: number, categoryId?: string): Promise<any[]>;
     private calculateDistance;
     private toRadians;
-    findOnlineEmployers(latitude?: number, longitude?: number, radius?: number, categoryId?: string): Promise<User[]>;
+    private buildHierarchicalCategories;
+    findOnlineEmployers(latitude?: number, longitude?: number, radius?: number, categoryId?: string): Promise<any[]>;
     findUsersByType(userType: string): Promise<User[]>;
     updateUserTypes(userId: string, userType: string): Promise<User>;
     updateStatus(userId: string, status: UserStatus): Promise<User>;

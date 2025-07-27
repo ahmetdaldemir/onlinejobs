@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { User, UserStatus } from './entities/user.entity';
 import { UserInfo } from './entities/user-info.entity';
 import { UpdateUserInfoDto } from './dto/update-user-info.dto';
+import { Category } from '../categories/entities/category.entity';
 
 @Injectable()
 export class UsersService {
@@ -12,6 +13,8 @@ export class UsersService {
     private userRepository: Repository<User>,
     @InjectRepository(UserInfo)
     private userInfoRepository: Repository<UserInfo>,
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>,
   ) {}
 
   async findTestUsers(): Promise<User[]> {
@@ -112,25 +115,32 @@ export class UsersService {
 
     const results = await query.getMany();
     
-    // Mesafe bilgisini ekle
-    if (latitude && longitude) {
-      return results.map(user => {
+    // Kategorileri hiyerarşik formatta döndürmek için işle
+    const processedResults = await Promise.all(results.map(async (user) => {
+      let processedUser: any = { ...user };
+      
+      // Mesafe bilgisini ekle
+      if (latitude && longitude) {
         const userInfo = user.userInfos?.[0];
         if (userInfo && userInfo.latitude && userInfo.longitude) {
           const distance = this.calculateDistance(
             latitude, longitude,
             userInfo.latitude, userInfo.longitude
           );
-          return {
-            ...user,
-            distance: Math.round(distance * 100) / 100 // 2 ondalık basamak
-          };
+          processedUser.distance = Math.round(distance * 100) / 100; // 2 ondalık basamak
         }
-        return user;
-      });
-    }
+      }
 
-    return results;
+      // Kategorileri hiyerarşik formatta döndür
+      if (user.categoryIds && user.categoryIds.length > 0) {
+        const hierarchicalCategories = await this.buildHierarchicalCategories(user.categoryIds);
+        processedUser.categoryIds = hierarchicalCategories;
+      }
+
+      return processedUser;
+    }));
+
+    return processedResults;
   }
 
   private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -149,13 +159,73 @@ export class UsersService {
     return degrees * (Math.PI/180);
   }
 
+  private async buildHierarchicalCategories(categoryIds: string[]): Promise<any> {
+    if (!categoryIds || categoryIds.length === 0) {
+      return {};
+    }
+
+    // Tüm kategorileri getir
+    const allCategories = await this.categoryRepository.find();
+    
+    // Kategori ID'lerini map'e çevir
+    const categoryMap = new Map();
+    allCategories.forEach(category => {
+      categoryMap.set(category.id, category);
+    });
+
+    // Hiyerarşik yapıyı oluştur
+    const hierarchicalStructure: any = {};
+
+    categoryIds.forEach(categoryId => {
+      const category = categoryMap.get(categoryId);
+      if (category) {
+        if (category.parentId) {
+          // Alt kategori - üst kategoriyi bul
+          const parentCategory = categoryMap.get(category.parentId);
+          if (parentCategory) {
+            if (!hierarchicalStructure[parentCategory.name]) {
+              hierarchicalStructure[parentCategory.name] = [];
+            }
+            hierarchicalStructure[parentCategory.name].push({
+              name: category.name,
+              id: category.id
+            });
+          }
+        } else {
+          // Ana kategori - alt kategorileri bul
+          const childCategories = allCategories.filter(cat => cat.parentId === category.id);
+          if (childCategories.length > 0) {
+            if (!hierarchicalStructure[category.name]) {
+              hierarchicalStructure[category.name] = [];
+            }
+            childCategories.forEach(child => {
+              if (categoryIds.includes(child.id)) {
+                hierarchicalStructure[category.name].push({
+                  name: child.name,
+                  id: child.id
+                });
+              }
+            });
+          } else {
+            // Alt kategorisi olmayan ana kategori
+            if (!hierarchicalStructure[category.name]) {
+              hierarchicalStructure[category.name] = [];
+            }
+          }
+        }
+      }
+    });
+
+    return hierarchicalStructure;
+  }
+
   // Yeni fonksiyonlar ekleyelim
   async findOnlineEmployers(
     latitude?: number,
     longitude?: number,
     radius?: number,
     categoryId?: string,
-  ): Promise<User[]> {
+  ): Promise<any[]> {
     let query = this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.userInfos', 'userInfo')
@@ -180,7 +250,22 @@ export class UsersService {
       );
     }
 
-    return query.getMany();
+    const results = await query.getMany();
+    
+    // Kategorileri hiyerarşik formatta döndürmek için işle
+    const processedResults = await Promise.all(results.map(async (user) => {
+      let processedUser: any = { ...user };
+      
+      // Kategorileri hiyerarşik formatta döndür
+      if (user.categoryIds && user.categoryIds.length > 0) {
+        const hierarchicalCategories = await this.buildHierarchicalCategories(user.categoryIds);
+        processedUser.categoryIds = hierarchicalCategories;
+      }
+
+      return processedUser;
+    }));
+
+    return processedResults;
   }
 
   async findUsersByType(userType: string): Promise<User[]> {
