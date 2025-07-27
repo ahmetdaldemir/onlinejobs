@@ -23,14 +23,16 @@ const message_entity_1 = require("../messages/entities/message.entity");
 const category_entity_1 = require("../categories/entities/category.entity");
 const bcrypt = require("bcryptjs");
 const job_application_entity_1 = require("../jobs/entities/job-application.entity");
+const upload_service_1 = require("../upload/upload.service");
 let AdminService = class AdminService {
-    constructor(userRepository, userInfoRepository, jobRepository, messageRepository, categoryRepository, jobApplicationRepository) {
+    constructor(userRepository, userInfoRepository, jobRepository, messageRepository, categoryRepository, jobApplicationRepository, uploadService) {
         this.userRepository = userRepository;
         this.userInfoRepository = userInfoRepository;
         this.jobRepository = jobRepository;
         this.messageRepository = messageRepository;
         this.categoryRepository = categoryRepository;
         this.jobApplicationRepository = jobApplicationRepository;
+        this.uploadService = uploadService;
     }
     async getDashboardStats() {
         const [totalUsers, onlineUsers, totalJobs, activeJobs, totalMessages, totalCategories, userTypes, jobStatuses,] = await Promise.all([
@@ -143,7 +145,7 @@ let AdminService = class AdminService {
         }
         return user;
     }
-    async createUser(createUserDto) {
+    async createUser(createUserDto, file) {
         const existingUser = await this.userRepository.findOne({
             where: [
                 { email: createUserDto.email },
@@ -154,6 +156,10 @@ let AdminService = class AdminService {
             throw new common_1.ConflictException('Email veya telefon numarası zaten kullanımda');
         }
         const hashedPassword = await bcrypt.hash(createUserDto.password, 12);
+        let profileImage = null;
+        if (file) {
+            profileImage = this.uploadService.getFileUrl(file.filename);
+        }
         let categories = [];
         let categoryIds = [];
         if (createUserDto.userType === 'worker' && createUserDto.categoryIds) {
@@ -163,6 +169,7 @@ let AdminService = class AdminService {
         const user = this.userRepository.create({
             ...createUserDto,
             password: hashedPassword,
+            profileImage: profileImage,
             categories: categories,
             categoryIds: categoryIds,
         });
@@ -179,7 +186,7 @@ let AdminService = class AdminService {
             user: savedUser,
         };
     }
-    async updateUser(id, updateUserDto) {
+    async updateUser(id, updateUserDto, file) {
         const user = await this.userRepository.findOne({
             where: { id },
             relations: ['categories']
@@ -197,6 +204,10 @@ let AdminService = class AdminService {
             if (existingUser) {
                 throw new common_1.ConflictException('Email veya telefon numarası zaten kullanımda');
             }
+        }
+        if (file) {
+            const fileUrl = this.uploadService.getFileUrl(file.filename);
+            user.profileImage = fileUrl;
         }
         if (updateUserDto.password) {
             updateUserDto.password = await bcrypt.hash(updateUserDto.password, 12);
@@ -219,6 +230,7 @@ let AdminService = class AdminService {
         await this.userRepository.save(user);
         return {
             message: 'Kullanıcı başarıyla güncellendi',
+            profileImage: user.profileImage,
         };
     }
     async deleteUser(id) {
@@ -453,6 +465,18 @@ let AdminService = class AdminService {
             cancelled,
         };
     }
+    async updateUserProfileImage(userId, imageUrl) {
+        const user = await this.userRepository.findOne({ where: { id: userId } });
+        if (!user) {
+            throw new common_1.NotFoundException('Kullanıcı bulunamadı');
+        }
+        user.profileImage = imageUrl;
+        await this.userRepository.save(user);
+        return {
+            message: 'Profil fotoğrafı başarıyla güncellendi',
+            profileImage: imageUrl
+        };
+    }
 };
 exports.AdminService = AdminService;
 exports.AdminService = AdminService = __decorate([
@@ -468,6 +492,7 @@ exports.AdminService = AdminService = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository])
+        typeorm_2.Repository,
+        upload_service_1.UploadService])
 ], AdminService);
 //# sourceMappingURL=admin.service.js.map

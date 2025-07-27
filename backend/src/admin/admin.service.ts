@@ -12,6 +12,7 @@ import { CreateCategoryDto } from '../categories/dto/create-category.dto';
 import { UpdateCategoryDto } from '../categories/dto/update-category.dto';
 import * as bcrypt from 'bcryptjs';
 import { JobApplication } from '../jobs/entities/job-application.entity';
+import { UploadService } from '../upload/upload.service';
 
 @Injectable()
 export class AdminService {
@@ -28,6 +29,7 @@ export class AdminService {
     private categoryRepository: Repository<Category>,
     @InjectRepository(JobApplication)
     private jobApplicationRepository: Repository<JobApplication>,
+    private uploadService: UploadService,
   ) {}
 
   async getDashboardStats() {
@@ -165,7 +167,7 @@ export class AdminService {
     return user;
   }
 
-  async createUser(createUserDto: CreateUserDto) {
+  async createUser(createUserDto: CreateUserDto, file?: Express.Multer.File) {
     // Email ve telefon kontrolü
     const existingUser = await this.userRepository.findOne({
       where: [
@@ -181,6 +183,12 @@ export class AdminService {
     // Şifre hash'leme
     const hashedPassword = await bcrypt.hash(createUserDto.password, 12);
 
+    // Profil fotoğrafı URL'i (eğer dosya varsa)
+    let profileImage = null;
+    if (file) {
+      profileImage = this.uploadService.getFileUrl(file.filename);
+    }
+
     // Kategorileri hazırla (sadece worker için)
     let categories = [];
     let categoryIds = [];
@@ -193,6 +201,7 @@ export class AdminService {
     const user = this.userRepository.create({
       ...createUserDto,
       password: hashedPassword,
+      profileImage: profileImage,
       categories: categories,
       categoryIds: categoryIds,
     });
@@ -214,7 +223,7 @@ export class AdminService {
     };
   }
 
-  async updateUser(id: string, updateUserDto: UpdateUserDto) {
+  async updateUser(id: string, updateUserDto: UpdateUserDto, file?: Express.Multer.File) {
     const user = await this.userRepository.findOne({ 
       where: { id },
       relations: ['categories']
@@ -236,6 +245,12 @@ export class AdminService {
       if (existingUser) {
         throw new ConflictException('Email veya telefon numarası zaten kullanımda');
       }
+    }
+
+    // Profil fotoğrafı yükleme (eğer dosya varsa)
+    if (file) {
+      const fileUrl = this.uploadService.getFileUrl(file.filename);
+      user.profileImage = fileUrl;
     }
 
     // Şifre güncelleme (eğer varsa)
@@ -266,6 +281,7 @@ export class AdminService {
 
     return {
       message: 'Kullanıcı başarıyla güncellendi',
+      profileImage: user.profileImage,
     };
   }
 
@@ -564,6 +580,21 @@ export class AdminService {
       inProgress,
       completed,
       cancelled,
+    };
+  }
+
+  async updateUserProfileImage(userId: string, imageUrl: string) {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('Kullanıcı bulunamadı');
+    }
+
+    user.profileImage = imageUrl;
+    await this.userRepository.save(user);
+    
+    return { 
+      message: 'Profil fotoğrafı başarıyla güncellendi',
+      profileImage: imageUrl
     };
   }
 } 

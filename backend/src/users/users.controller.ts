@@ -1,5 +1,6 @@
-import { Controller, Get, Put, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
+import { Controller, Get, Put, Body, Param, Query, UseGuards, Request, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiParam, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserStatus } from './entities/user.entity';
@@ -182,12 +183,48 @@ export class UsersController {
   @Put('profile')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcı profilini güncelle' })
-  @ApiResponse({ status: 200, description: 'Profil güncellendi' })
+  @ApiOperation({ summary: 'Kullanıcı profilini güncelle (profil fotoğrafı dahil)' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        firstName: { type: 'string' },
+        lastName: { type: 'string' },
+        email: { type: 'string' },
+        phone: { type: 'string' },
+        bio: { type: 'string' },
+        categoryIds: { 
+          type: 'array', 
+          items: { type: 'string' } 
+        },
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'Profil fotoğrafı (opsiyonel)',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
   async updateProfile(
     @Request() req,
     @Body() updateData: any,
+    @UploadedFile() file?: Express.Multer.File
   ) {
-    return this.usersService.updateProfile(req.user.sub, updateData);
+    return this.usersService.updateProfile(req.user.sub, updateData, file);
+  }
+
+  @Put('profile-image')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Profil fotoğrafını güncelle' })
+  @ApiResponse({ status: 200, description: 'Profil fotoğrafı güncellendi' })
+  async updateProfileImage(
+    @Request() req,
+    @Body() body: { imageUrl: string },
+  ) {
+    const userId = req.user.sub;
+    return this.usersService.updateProfileImage(userId, body.imageUrl);
   }
 } 

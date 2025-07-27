@@ -3,11 +3,13 @@ import { User, UserStatus } from './entities/user.entity';
 import { UserInfo } from './entities/user-info.entity';
 import { UpdateUserInfoDto } from './dto/update-user-info.dto';
 import { Category } from '../categories/entities/category.entity';
+import { UploadService } from '../upload/upload.service';
 export declare class UsersService {
     private userRepository;
     private userInfoRepository;
     private categoryRepository;
-    constructor(userRepository: Repository<User>, userInfoRepository: Repository<UserInfo>, categoryRepository: Repository<Category>);
+    private uploadService;
+    constructor(userRepository: Repository<User>, userInfoRepository: Repository<UserInfo>, categoryRepository: Repository<Category>, uploadService: UploadService);
     findTestUsers(): Promise<User[]>;
     findRealUsers(): Promise<User[]>;
     findActiveUsers(): Promise<User[]>;
@@ -25,7 +27,8 @@ export declare class UsersService {
     updateLocation(userId: string, latitude: number, longitude: number, name?: string): Promise<User>;
     getUserInfo(userId: string): Promise<UserInfo | null>;
     updateUserInfo(userId: string, updateUserInfoDto: UpdateUserInfoDto): Promise<User>;
-    updateProfile(userId: string, updateData: any): Promise<User>;
+    updateProfile(userId: string, updateData: any, file?: Express.Multer.File): Promise<User>;
+    updateProfileImage(userId: string, imageUrl: string): Promise<User>;
     setUserOnline(userId: string): Promise<User>;
     setUserOffline(userId: string): Promise<User>;
     setTestUsersOnline(): Promise<void>;

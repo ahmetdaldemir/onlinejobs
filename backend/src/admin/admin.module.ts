@@ -8,6 +8,7 @@ import { Job } from '../jobs/entities/job.entity';
 import { Message } from '../messages/entities/message.entity';
 import { Category } from '../categories/entities/category.entity';
 import { JobApplication } from '../jobs/entities/job-application.entity';
+import { UploadModule } from '../upload/upload.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { JobApplication } from '../jobs/entities/job-application.entity';
       Category,
       JobApplication,
     ]),
+    UploadModule,
   ],
   controllers: [AdminController],
   providers: [AdminService],

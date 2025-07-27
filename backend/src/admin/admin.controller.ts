@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Request } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Request, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { AdminJwtGuard } from '../auth/guards/admin-jwt.guard';
 import { AdminService } from './admin.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
@@ -65,16 +66,90 @@ export class AdminController {
   }
 
   @Post('users')
-  @ApiOperation({ summary: 'Yeni kullanıcı oluştur' })
-  @ApiResponse({ status: 201, description: 'Kullanıcı oluşturuldu' })
-  async createUser(@Body() createUserDto: CreateUserDto) {
-    return this.adminService.createUser(createUserDto);
+  @ApiOperation({ summary: 'Yeni kullanıcı oluştur (profil fotoğrafı dahil)' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        firstName: { type: 'string' },
+        lastName: { type: 'string' },
+        email: { type: 'string' },
+        phone: { type: 'string' },
+        password: { type: 'string' },
+        userType: { type: 'string' },
+        bio: { type: 'string' },
+        categoryIds: { 
+          type: 'array', 
+          items: { type: 'string' } 
+        },
+        userInfo: { type: 'object' },
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'Profil fotoğrafı (opsiyonel)',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  async createUser(
+    @Body() createUserDto: any,
+    @UploadedFile() file?: Express.Multer.File
+  ) {
+    // FormData'dan gelen JSON string'leri parse et
+    if (typeof createUserDto.categoryIds === 'string') {
+      createUserDto.categoryIds = JSON.parse(createUserDto.categoryIds);
+    }
+    if (typeof createUserDto.userInfo === 'string') {
+      createUserDto.userInfo = JSON.parse(createUserDto.userInfo);
+    }
+    
+    return this.adminService.createUser(createUserDto, file);
   }
 
   @Put('/users/:id')
   @UseGuards(AdminJwtGuard)
-  async updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.adminService.updateUser(id, updateUserDto);
+  @ApiOperation({ summary: 'Kullanıcı güncelle (profil fotoğrafı dahil)' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        firstName: { type: 'string' },
+        lastName: { type: 'string' },
+        email: { type: 'string' },
+        phone: { type: 'string' },
+        password: { type: 'string' },
+        userType: { type: 'string' },
+        bio: { type: 'string' },
+        categoryIds: { 
+          type: 'array', 
+          items: { type: 'string' } 
+        },
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'Profil fotoğrafı (opsiyonel)',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  async updateUser(
+    @Param('id') id: string, 
+    @Body() updateUserDto: any,
+    @UploadedFile() file?: Express.Multer.File
+  ) {
+    // FormData'dan gelen JSON string'leri parse et
+    if (typeof updateUserDto.categoryIds === 'string') {
+      updateUserDto.categoryIds = JSON.parse(updateUserDto.categoryIds);
+    }
+    if (typeof updateUserDto.userInfo === 'string') {
+      updateUserDto.userInfo = JSON.parse(updateUserDto.userInfo);
+    }
+    
+    return this.adminService.updateUser(id, updateUserDto, file);
   }
 
   @Put('/users/:id/status')
@@ -165,5 +240,16 @@ export class AdminController {
   @ApiResponse({ status: 200, description: 'Kategori silindi' })
   async deleteCategory(@Param('id') id: string) {
     return this.adminService.deleteCategory(id);
+  }
+
+  // Profil Fotoğrafı Güncelleme
+  @Put('users/:id/profile-image')
+  @ApiOperation({ summary: 'Kullanıcı profil fotoğrafını güncelle' })
+  @ApiResponse({ status: 200, description: 'Profil fotoğrafı güncellendi' })
+  async updateUserProfileImage(
+    @Param('id') id: string,
+    @Body() body: { imageUrl: string },
+  ) {
+    return this.adminService.updateUserProfileImage(id, body.imageUrl);
   }
 } 

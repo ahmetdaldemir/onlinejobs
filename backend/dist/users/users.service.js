@@ -19,11 +19,13 @@ const typeorm_2 = require("typeorm");
 const user_entity_1 = require("./entities/user.entity");
 const user_info_entity_1 = require("./entities/user-info.entity");
 const category_entity_1 = require("../categories/entities/category.entity");
+const upload_service_1 = require("../upload/upload.service");
 let UsersService = class UsersService {
-    constructor(userRepository, userInfoRepository, categoryRepository) {
+    constructor(userRepository, userInfoRepository, categoryRepository, uploadService) {
         this.userRepository = userRepository;
         this.userInfoRepository = userInfoRepository;
         this.categoryRepository = categoryRepository;
+        this.uploadService = uploadService;
     }
     async findTestUsers() {
         return this.userRepository.find({
@@ -313,8 +315,12 @@ let UsersService = class UsersService {
         await this.userInfoRepository.save(userInfo);
         return user;
     }
-    async updateProfile(userId, updateData) {
+    async updateProfile(userId, updateData, file) {
         const user = await this.findById(userId);
+        if (file) {
+            const fileUrl = this.uploadService.getFileUrl(file.filename);
+            user.profileImage = fileUrl;
+        }
         if (updateData.categoryIds) {
             const { Category } = await Promise.resolve().then(() => require('../categories/entities/category.entity'));
             const categoryRepository = this.userRepository.manager.getRepository(Category);
@@ -323,6 +329,11 @@ let UsersService = class UsersService {
             user.categoryIds = updateData.categoryIds;
         }
         Object.assign(user, updateData);
+        return this.userRepository.save(user);
+    }
+    async updateProfileImage(userId, imageUrl) {
+        const user = await this.findById(userId);
+        user.profileImage = imageUrl;
         return this.userRepository.save(user);
     }
     async setUserOnline(userId) {
@@ -358,6 +369,7 @@ exports.UsersService = UsersService = __decorate([
     __param(2, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository])
+        typeorm_2.Repository,
+        upload_service_1.UploadService])
 ], UsersService);
 //# sourceMappingURL=users.service.js.map

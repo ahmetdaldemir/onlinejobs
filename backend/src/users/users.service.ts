@@ -5,6 +5,7 @@ import { User, UserStatus } from './entities/user.entity';
 import { UserInfo } from './entities/user-info.entity';
 import { UpdateUserInfoDto } from './dto/update-user-info.dto';
 import { Category } from '../categories/entities/category.entity';
+import { UploadService } from '../upload/upload.service';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +16,7 @@ export class UsersService {
     private userInfoRepository: Repository<UserInfo>,
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
+    private uploadService: UploadService,
   ) {}
 
   async findTestUsers(): Promise<User[]> {
@@ -384,8 +386,14 @@ export class UsersService {
 
 
 
-  async updateProfile(userId: string, updateData: any): Promise<User> {
+  async updateProfile(userId: string, updateData: any, file?: Express.Multer.File): Promise<User> {
     const user = await this.findById(userId);
+    
+    // Profil fotoğrafı yükleme (eğer dosya varsa)
+    if (file) {
+      const fileUrl = this.uploadService.getFileUrl(file.filename);
+      user.profileImage = fileUrl;
+    }
     
     // Kategorileri güncelle (eğer categoryIds varsa)
     if (updateData.categoryIds) {
@@ -400,6 +408,12 @@ export class UsersService {
     // Diğer alanları güncelle
     Object.assign(user, updateData);
     
+    return this.userRepository.save(user);
+  }
+
+  async updateProfileImage(userId: string, imageUrl: string): Promise<User> {
+    const user = await this.findById(userId);
+    user.profileImage = imageUrl;
     return this.userRepository.save(user);
   }
 

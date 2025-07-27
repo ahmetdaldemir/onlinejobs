@@ -5,9 +5,10 @@ import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { UserInfo } from './entities/user-info.entity';
 import { Category } from '../categories/entities/category.entity';
+import { UploadModule } from '../upload/upload.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, UserInfo, Category])],
+  imports: [TypeOrmModule.forFeature([User, UserInfo, Category]), UploadModule],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],

@@ -21,6 +21,7 @@ const locations_module_1 = require("./locations/locations.module");
 const seeds_module_1 = require("./seeds/seeds.module");
 const admin_module_1 = require("./admin/admin.module");
 const notifications_module_1 = require("./notifications/notifications.module");
+const upload_module_1 = require("./upload/upload.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -56,6 +57,7 @@ exports.AppModule = AppModule = __decorate([
             seeds_module_1.SeedsModule,
             admin_module_1.AdminModule,
             notifications_module_1.NotificationsModule,
+            upload_module_1.UploadModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

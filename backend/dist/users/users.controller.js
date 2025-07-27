@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
+const platform_express_1 = require("@nestjs/platform-express");
 const users_service_1 = require("./users.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const user_entity_1 = require("./entities/user.entity");
@@ -68,8 +69,12 @@ let UsersController = class UsersController {
     async updateUserInfo(req, updateUserInfoDto) {
         return this.usersService.updateUserInfo(req.user.sub, updateUserInfoDto);
     }
-    async updateProfile(req, updateData) {
-        return this.usersService.updateProfile(req.user.sub, updateData);
+    async updateProfile(req, updateData, file) {
+        return this.usersService.updateProfile(req.user.sub, updateData, file);
+    }
+    async updateProfileImage(req, body) {
+        const userId = req.user.sub;
+        return this.usersService.updateProfileImage(userId, body.imageUrl);
     }
 };
 exports.UsersController = UsersController;
@@ -254,14 +259,49 @@ __decorate([
     (0, common_1.Put)('profile'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı profilini güncelle' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Profil güncellendi' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı profilini güncelle (profil fotoğrafı dahil)' }),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
+    (0, swagger_1.ApiBody)({
+        schema: {
+            type: 'object',
+            properties: {
+                firstName: { type: 'string' },
+                lastName: { type: 'string' },
+                email: { type: 'string' },
+                phone: { type: 'string' },
+                bio: { type: 'string' },
+                categoryIds: {
+                    type: 'array',
+                    items: { type: 'string' }
+                },
+                file: {
+                    type: 'string',
+                    format: 'binary',
+                    description: 'Profil fotoğrafı (opsiyonel)',
+                },
+            },
+        },
+    }),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object, Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateProfile", null);
+__decorate([
+    (0, common_1.Put)('profile-image'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Profil fotoğrafını güncelle' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Profil fotoğrafı güncellendi' }),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], UsersController.prototype, "updateProfile", null);
+], UsersController.prototype, "updateProfileImage", null);
 exports.UsersController = UsersController = __decorate([
     (0, swagger_1.ApiTags)('Users'),
     (0, common_1.Controller)('users'),

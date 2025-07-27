@@ -30,6 +30,7 @@ async function bootstrap() {
 
   // Static dosyaları serve et
   app.use('/public', express.static(join(__dirname, '..', 'public')));
+  app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
 
   // Swagger dokümantasyonu
   const config = new DocumentBuilder()

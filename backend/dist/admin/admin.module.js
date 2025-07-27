@@ -17,6 +17,7 @@ const job_entity_1 = require("../jobs/entities/job.entity");
 const message_entity_1 = require("../messages/entities/message.entity");
 const category_entity_1 = require("../categories/entities/category.entity");
 const job_application_entity_1 = require("../jobs/entities/job-application.entity");
+const upload_module_1 = require("../upload/upload.module");
 let AdminModule = class AdminModule {
 };
 exports.AdminModule = AdminModule;
@@ -31,6 +32,7 @@ exports.AdminModule = AdminModule = __decorate([
                 category_entity_1.Category,
                 job_application_entity_1.JobApplication,
             ]),
+            upload_module_1.UploadModule,
         ],
         controllers: [admin_controller_1.AdminController],
         providers: [admin_service_1.AdminService],

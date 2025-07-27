@@ -23,7 +23,7 @@ let CategoriesService = class CategoriesService {
     }
     async findAll() {
         return this.categoryRepository.find({
-            where: { isActive: true },
+            where: { isActive: true, parentId: (0, typeorm_2.IsNull)() },
             order: { orderIndex: 'ASC' },
         });
     }

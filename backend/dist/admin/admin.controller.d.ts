@@ -1,6 +1,4 @@
 import { AdminService } from './admin.service';
-import { CreateUserDto } from '../users/dto/create-user.dto';
-import { UpdateUserDto } from '../users/dto/update-user.dto';
 import { CreateCategoryDto } from '../categories/dto/create-category.dto';
 import { UpdateCategoryDto } from '../categories/dto/update-category.dto';
 export declare class AdminController {
@@ -72,12 +70,13 @@ export declare class AdminController {
     }>;
     getAllUsers(): Promise<import("../users/entities/user.entity").User[]>;
     getUserById(id: string): Promise<import("../users/entities/user.entity").User>;
-    createUser(createUserDto: CreateUserDto): Promise<{
+    createUser(createUserDto: any, file?: Express.Multer.File): Promise<{
         message: string;
         user: import("../users/entities/user.entity").User;
     }>;
-    updateUser(id: string, updateUserDto: UpdateUserDto): Promise<{
+    updateUser(id: string, updateUserDto: any, file?: Express.Multer.File): Promise<{
         message: string;
+        profileImage: string;
     }>;
     toggleUserStatus(id: string, body: {
         status: string;
@@ -152,5 +151,11 @@ export declare class AdminController {
     }>;
     deleteCategory(id: string): Promise<{
         message: string;
+    }>;
+    updateUserProfileImage(id: string, body: {
+        imageUrl: string;
+    }): Promise<{
+        message: string;
+        profileImage: string;
     }>;
 }

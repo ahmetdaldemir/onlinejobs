@@ -15,10 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminController = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
+const platform_express_1 = require("@nestjs/platform-express");
 const admin_jwt_guard_1 = require("../auth/guards/admin-jwt.guard");
 const admin_service_1 = require("./admin.service");
-const create_user_dto_1 = require("../users/dto/create-user.dto");
-const update_user_dto_1 = require("../users/dto/update-user.dto");
 const create_category_dto_1 = require("../categories/dto/create-category.dto");
 const update_category_dto_1 = require("../categories/dto/update-category.dto");
 let AdminController = class AdminController {
@@ -46,11 +45,23 @@ let AdminController = class AdminController {
     async getUserById(id) {
         return this.adminService.getUserById(id);
     }
-    async createUser(createUserDto) {
-        return this.adminService.createUser(createUserDto);
+    async createUser(createUserDto, file) {
+        if (typeof createUserDto.categoryIds === 'string') {
+            createUserDto.categoryIds = JSON.parse(createUserDto.categoryIds);
+        }
+        if (typeof createUserDto.userInfo === 'string') {
+            createUserDto.userInfo = JSON.parse(createUserDto.userInfo);
+        }
+        return this.adminService.createUser(createUserDto, file);
     }
-    async updateUser(id, updateUserDto) {
-        return this.adminService.updateUser(id, updateUserDto);
+    async updateUser(id, updateUserDto, file) {
+        if (typeof updateUserDto.categoryIds === 'string') {
+            updateUserDto.categoryIds = JSON.parse(updateUserDto.categoryIds);
+        }
+        if (typeof updateUserDto.userInfo === 'string') {
+            updateUserDto.userInfo = JSON.parse(updateUserDto.userInfo);
+        }
+        return this.adminService.updateUser(id, updateUserDto, file);
     }
     async toggleUserStatus(id, body) {
         return this.adminService.toggleUserStatus(id, body.status);
@@ -87,6 +98,9 @@ let AdminController = class AdminController {
     }
     async deleteCategory(id) {
         return this.adminService.deleteCategory(id);
+    }
+    async updateUserProfileImage(id, body) {
+        return this.adminService.updateUserProfileImage(id, body.imageUrl);
     }
 };
 exports.AdminController = AdminController;
@@ -149,20 +163,73 @@ __decorate([
 ], AdminController.prototype, "getUserById", null);
 __decorate([
     (0, common_1.Post)('users'),
-    (0, swagger_1.ApiOperation)({ summary: 'Yeni kullanıcı oluştur' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: 'Kullanıcı oluşturuldu' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Yeni kullanıcı oluştur (profil fotoğrafı dahil)' }),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
+    (0, swagger_1.ApiBody)({
+        schema: {
+            type: 'object',
+            properties: {
+                firstName: { type: 'string' },
+                lastName: { type: 'string' },
+                email: { type: 'string' },
+                phone: { type: 'string' },
+                password: { type: 'string' },
+                userType: { type: 'string' },
+                bio: { type: 'string' },
+                categoryIds: {
+                    type: 'array',
+                    items: { type: 'string' }
+                },
+                userInfo: { type: 'object' },
+                file: {
+                    type: 'string',
+                    format: 'binary',
+                    description: 'Profil fotoğrafı (opsiyonel)',
+                },
+            },
+        },
+    }),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "createUser", null);
 __decorate([
     (0, common_1.Put)('/users/:id'),
     (0, common_1.UseGuards)(admin_jwt_guard_1.AdminJwtGuard),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı güncelle (profil fotoğrafı dahil)' }),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
+    (0, swagger_1.ApiBody)({
+        schema: {
+            type: 'object',
+            properties: {
+                firstName: { type: 'string' },
+                lastName: { type: 'string' },
+                email: { type: 'string' },
+                phone: { type: 'string' },
+                password: { type: 'string' },
+                userType: { type: 'string' },
+                bio: { type: 'string' },
+                categoryIds: {
+                    type: 'array',
+                    items: { type: 'string' }
+                },
+                file: {
+                    type: 'string',
+                    format: 'binary',
+                    description: 'Profil fotoğrafı (opsiyonel)',
+                },
+            },
+        },
+    }),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_user_dto_1.UpdateUserDto]),
+    __metadata("design:paramtypes", [String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "updateUser", null);
 __decorate([
@@ -274,6 +341,16 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "deleteCategory", null);
+__decorate([
+    (0, common_1.Put)('users/:id/profile-image'),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı profil fotoğrafını güncelle' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Profil fotoğrafı güncellendi' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "updateUserProfileImage", null);
 exports.AdminController = AdminController = __decorate([
     (0, swagger_1.ApiTags)('Admin Dashboard'),
     (0, common_1.Controller)('admin'),

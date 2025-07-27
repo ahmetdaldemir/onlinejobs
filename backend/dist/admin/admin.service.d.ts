@@ -9,6 +9,7 @@ import { UpdateUserDto } from '../users/dto/update-user.dto';
 import { CreateCategoryDto } from '../categories/dto/create-category.dto';
 import { UpdateCategoryDto } from '../categories/dto/update-category.dto';
 import { JobApplication } from '../jobs/entities/job-application.entity';
+import { UploadService } from '../upload/upload.service';
 export declare class AdminService {
     private userRepository;
     private userInfoRepository;
@@ -16,7 +17,8 @@ export declare class AdminService {
     private messageRepository;
     private categoryRepository;
     private jobApplicationRepository;
-    constructor(userRepository: Repository<User>, userInfoRepository: Repository<UserInfo>, jobRepository: Repository<Job>, messageRepository: Repository<Message>, categoryRepository: Repository<Category>, jobApplicationRepository: Repository<JobApplication>);
+    private uploadService;
+    constructor(userRepository: Repository<User>, userInfoRepository: Repository<UserInfo>, jobRepository: Repository<Job>, messageRepository: Repository<Message>, categoryRepository: Repository<Category>, jobApplicationRepository: Repository<JobApplication>, uploadService: UploadService);
     getDashboardStats(): Promise<{
         users: {
             total: number;
@@ -83,12 +85,13 @@ export declare class AdminService {
     }>;
     getAllUsers(): Promise<User[]>;
     getUserById(id: string): Promise<User>;
-    createUser(createUserDto: CreateUserDto): Promise<{
+    createUser(createUserDto: CreateUserDto, file?: Express.Multer.File): Promise<{
         message: string;
         user: User;
     }>;
-    updateUser(id: string, updateUserDto: UpdateUserDto): Promise<{
+    updateUser(id: string, updateUserDto: UpdateUserDto, file?: Express.Multer.File): Promise<{
         message: string;
+        profileImage: string;
     }>;
     deleteUser(id: string): Promise<{
         message: string;
@@ -158,4 +161,8 @@ export declare class AdminService {
     }>;
     private getUserTypeStats;
     private getJobStatusStats;
+    updateUserProfileImage(userId: string, imageUrl: string): Promise<{
+        message: string;
+        profileImage: string;
+    }>;
 }
