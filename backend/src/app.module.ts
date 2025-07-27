@@ -10,6 +10,7 @@ import { MessagesModule } from './messages/messages.module';
 import { CategoriesModule } from './categories/categories.module';
 import { LocationsModule } from './locations/locations.module';
 import { SeedsModule } from './seeds/seeds.module';
+
 import { AdminModule } from './admin/admin.module';
 import { NotificationsModule } from './notifications/notifications.module';
 

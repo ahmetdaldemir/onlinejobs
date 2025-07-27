@@ -107,7 +107,44 @@ export declare class AdminService {
             isOnline: boolean;
         };
     }>;
+    assignCategoriesToUser(id: string, categoryIds: string[]): Promise<{
+        message: string;
+        user: {
+            id: string;
+            categoryIds: string[];
+            categories: {
+                id: string;
+                name: string;
+            }[];
+        };
+    }>;
+    removeCategoriesFromUser(id: string, categoryIds: string[]): Promise<{
+        message: string;
+        user: {
+            id: string;
+            categoryIds: string[];
+            categories: {
+                id: any;
+                name: any;
+            }[];
+        };
+    }>;
+    getUserCategories(id: string): Promise<{
+        user: {
+            id: string;
+            firstName: string;
+            lastName: string;
+            categoryIds: string[];
+            categories: {
+                id: any;
+                name: any;
+                description: any;
+                icon: any;
+            }[];
+        };
+    }>;
     getAllCategories(): Promise<Category[]>;
+    getActiveCategories(): Promise<Category[]>;
     getCategoryById(id: string): Promise<Category>;
     createCategory(createCategoryDto: CreateCategoryDto): Promise<{
         message: string;

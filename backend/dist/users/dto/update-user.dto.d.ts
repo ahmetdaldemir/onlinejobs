@@ -15,4 +15,5 @@ export declare class UpdateUserDto {
         apartmentNo?: string;
         description?: string;
     };
+    categoryIds?: string[];
 }

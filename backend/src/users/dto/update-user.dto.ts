@@ -52,4 +52,8 @@ export class UpdateUserDto {
     apartmentNo?: string;
     description?: string;
   };
+
+  @ApiProperty({ required: false, type: [String], description: 'Kategori ID\'leri (sadece worker için)' })
+  @IsOptional()
+  categoryIds?: string[];
 } 

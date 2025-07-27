@@ -43,10 +43,10 @@ export declare class AuthResponseDto {
             apartmentNo?: string;
             description?: string;
         }[];
-        category?: {
+        categories?: {
             id: string;
             name: string;
-        };
+        }[];
     };
     message: string;
     status: string;

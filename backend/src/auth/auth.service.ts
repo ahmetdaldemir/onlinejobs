@@ -61,10 +61,10 @@ export class AuthService {
         totalReviews: savedUser.totalReviews,
         profileImage: savedUser.profileImage,
         bio: savedUser.bio,
-        category: savedUser.category ? {
-          id: savedUser.category.id,
-          name: savedUser.category.name,
-        } : undefined,
+        categories: savedUser.categories ? savedUser.categories.map(category => ({
+          id: category.id,
+          name: category.name,
+        })) : [],
       },
       message: 'Kullanıcı başarıyla kayıt oldu',
       status: 'success',
@@ -78,7 +78,7 @@ export class AuthService {
     // Kullanıcıyı bul
     const user = await this.userRepository.findOne({
       where: { phone, userType },
-      relations: ['category','userInfos'],
+      relations: ['categories','userInfos'],
     });
  
     if (!user) {
@@ -111,10 +111,10 @@ export class AuthService {
         totalReviews: user.totalReviews,
         profileImage: user.profileImage,
         bio: user.bio,
-        category: user.category ? {
-          id: user.category.id,
-          name: user.category.name,
-        } : undefined,
+        categories: user.categories ? user.categories.map(category => ({
+          id: category.id,
+          name: category.name,
+        })) : [],
         userInfos: user.userInfos ? user.userInfos.map(userInfo => ({
           id: userInfo.id,
           name: userInfo.name,
@@ -137,7 +137,7 @@ export class AuthService {
   async validateUser(userId: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['category','userInfos'],
+      relations: ['categories','userInfos'],
     });
 
     if (!user) {

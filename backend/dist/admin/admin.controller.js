@@ -61,8 +61,20 @@ let AdminController = class AdminController {
     async deleteUser(id) {
         return this.adminService.deleteUser(id);
     }
+    async getUserCategories(id) {
+        return this.adminService.getUserCategories(id);
+    }
+    async assignCategoriesToUser(id, body) {
+        return this.adminService.assignCategoriesToUser(id, body.categoryIds);
+    }
+    async removeCategoriesFromUser(id, body) {
+        return this.adminService.removeCategoriesFromUser(id, body.categoryIds);
+    }
     async getAllCategories() {
         return this.adminService.getAllCategories();
+    }
+    async getActiveCategories() {
+        return this.adminService.getActiveCategories();
     }
     async getCategoryById(id) {
         return this.adminService.getCategoryById(id);
@@ -181,6 +193,35 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "deleteUser", null);
 __decorate([
+    (0, common_1.Get)('users/:id/categories'),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcının kategorilerini getir' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı kategorileri' }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "getUserCategories", null);
+__decorate([
+    (0, common_1.Post)('users/:id/categories'),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcıya kategori ata' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kategoriler atandı' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "assignCategoriesToUser", null);
+__decorate([
+    (0, common_1.Delete)('users/:id/categories'),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcıdan kategori kaldır' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kategoriler kaldırıldı' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "removeCategoriesFromUser", null);
+__decorate([
     (0, common_1.Get)('categories'),
     (0, swagger_1.ApiOperation)({ summary: 'Tüm kategorileri listele' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Kategori listesi' }),
@@ -188,6 +229,14 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "getAllCategories", null);
+__decorate([
+    (0, common_1.Get)('categories/active'),
+    (0, swagger_1.ApiOperation)({ summary: 'Aktif kategorileri listele' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Aktif kategoriler listesi' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "getActiveCategories", null);
 __decorate([
     (0, common_1.Get)('categories/:id'),
     (0, swagger_1.ApiOperation)({ summary: 'Kategori detayını getir' }),

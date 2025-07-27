@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SeedService } from './seed.service';
+import { DataSeedService } from './data-seed.service';
+import { SeedsController } from './seeds.controller';
 import { LocationsSeedService } from './locations.seed';
 import { UsersSeedService } from './users.seed';
 import { UserInfoSeedService } from './user-info.seed';
@@ -27,8 +29,10 @@ import { Admin } from '../auth/entities/admin.entity';
       Admin,
     ]),
   ],
+  controllers: [SeedsController],
   providers: [
     SeedService,
+    DataSeedService,
     LocationsSeedService,
     UsersSeedService,
     UserInfoSeedService,
@@ -36,6 +40,7 @@ import { Admin } from '../auth/entities/admin.entity';
   ],
   exports: [
     SeedService,
+    DataSeedService,
     LocationsSeedService,
     UsersSeedService,
     UserInfoSeedService,

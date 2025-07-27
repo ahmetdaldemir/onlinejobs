@@ -68,4 +68,9 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Object)
 ], UpdateUserDto.prototype, "userInfo", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false, type: [String], description: 'Kategori ID\'leri (sadece worker için)' }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], UpdateUserDto.prototype, "categoryIds", void 0);
 //# sourceMappingURL=update-user.dto.js.map

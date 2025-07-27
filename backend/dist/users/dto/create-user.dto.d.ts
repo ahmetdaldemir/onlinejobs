@@ -15,4 +15,5 @@ export declare class CreateUserDto {
         apartmentNo?: string;
         description?: string;
     };
+    categoryIds?: string[];
 }

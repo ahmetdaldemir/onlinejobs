@@ -128,9 +128,19 @@ __decorate([
     __metadata("design:type", Array)
 ], User.prototype, "receivedMessages", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)('Category', 'users', { nullable: true }),
-    __metadata("design:type", Object)
-], User.prototype, "category", void 0);
+    (0, typeorm_1.Column)('simple-array', { nullable: true }),
+    (0, swagger_1.ApiProperty)({ type: [String], description: 'Kullanıcının seçtiği kategori ID\'leri' }),
+    __metadata("design:type", Array)
+], User.prototype, "categoryIds", void 0);
+__decorate([
+    (0, typeorm_1.ManyToMany)('Category', 'users', { nullable: true }),
+    (0, typeorm_1.JoinTable)({
+        name: 'user_categories',
+        joinColumn: { name: 'userId', referencedColumnName: 'id' },
+        inverseJoinColumn: { name: 'categoryId', referencedColumnName: 'id' }
+    }),
+    __metadata("design:type", Array)
+], User.prototype, "categories", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => user_info_entity_1.UserInfo, 'user'),
     __metadata("design:type", Array)

@@ -85,10 +85,10 @@ export class AuthResponseDto {
       description?: string;
     }[];
 
-    category?: {
+    categories?: {
       id: string;
       name: string;
-    };
+    }[];
   };
 
   @ApiProperty()

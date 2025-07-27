@@ -24,6 +24,7 @@ export declare class User {
     jobs: any[];
     sentMessages: any[];
     receivedMessages: any[];
-    category: any;
+    categoryIds: string[];
+    categories: any[];
     userInfos: UserInfo[];
 }

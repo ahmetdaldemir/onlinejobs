@@ -269,7 +269,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Kullanıcı Tipi *</label>
-                                    <select class="form-control" name="userType" required>
+                                    <select class="form-control" name="userType" id="addUserTypeSelect" required>
                                         <option value="worker">İşçi</option>
                                         <option value="employer">İşveren</option>
                                     </select>
@@ -277,6 +277,12 @@
                                 <div class="mb-3">
                                     <label class="form-label">Biyografi</label>
                                     <textarea class="form-control" name="bio" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3" id="addCategoriesSection" style="display: none;">
+                                    <label class="form-label">Kategoriler (Sadece İşçi için)</label>
+                                    <div id="addCategoriesContainer" class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                        <!-- Kategoriler buraya yüklenecek -->
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -380,6 +386,12 @@
                                 <div class="mb-3">
                                     <label class="form-label">Biyografi</label>
                                     <textarea class="form-control" id="editBio" name="bio" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3" id="editCategoriesSection" style="display: none;">
+                                    <label class="form-label">Kategoriler (Sadece İşçi için)</label>
+                                    <div id="editCategoriesContainer" class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                        <!-- Kategoriler buraya yüklenecek -->
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -835,13 +847,106 @@
 
         function showAddUserModal() {
             document.getElementById('addUserForm').reset();
+            loadAddCategories();
             const modal = new bootstrap.Modal(document.getElementById('addUserModal'));
             modal.show();
+        }
+
+        async function loadAddCategories() {
+            try {
+                // Aktif kategorileri yükle
+                const categoriesResponse = await fetch(`${API_BASE}/admin/categories/active`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                    },
+                });
+                const categories = await categoriesResponse.json();
+
+                const categoriesContainer = document.getElementById('addCategoriesContainer');
+                
+                // Build hierarchical structure
+                const categoryMap = {};
+                const rootCategories = [];
+
+                // First pass: create map
+                categories.forEach(category => {
+                    categoryMap[category.id] = {
+                        ...category,
+                        children: []
+                    };
+                });
+
+                // Second pass: build hierarchy
+                categories.forEach(category => {
+                    if (category.parentId && categoryMap[category.parentId]) {
+                        categoryMap[category.parentId].children.push(categoryMap[category.id]);
+                    } else {
+                        rootCategories.push(categoryMap[category.id]);
+                    }
+                });
+
+                // Generate hierarchical checkboxes recursively
+                function generateCategoryCheckboxes(category, level = 0) {
+                    const prefix = level > 0 ? '└─ ' : '';
+                    
+                    let html = `
+                        <div class="form-check" style="margin-left: ${level * 15}px;">
+                            <input class="form-check-input" type="checkbox" 
+                                   value="${category.id}" id="add_cat_${category.id}">
+                            <label class="form-check-label" for="add_cat_${category.id}">
+                                ${prefix}${category.icon || '📁'} ${category.name}
+                            </label>
+                        </div>
+                    `;
+                    
+                    // Add children
+                    if (category.children.length > 0) {
+                        category.children.forEach(child => {
+                            html += generateCategoryCheckboxes(child, level + 1);
+                        });
+                    }
+                    
+                    return html;
+                }
+
+                // Generate hierarchical HTML
+                const categoriesHtml = rootCategories.map(category => generateCategoryCheckboxes(category)).join('');
+                categoriesContainer.innerHTML = categoriesHtml;
+
+                // Kullanıcı tipi değiştiğinde kategorileri göster/gizle
+                const userTypeSelect = document.getElementById('addUserTypeSelect');
+                userTypeSelect.addEventListener('change', function() {
+                    toggleAddCategoriesSection();
+                });
+
+                // İlk yüklemede kategorileri göster/gizle
+                toggleAddCategoriesSection();
+            } catch (error) {
+                console.error('Kategoriler yüklenirken hata:', error);
+            }
+        }
+
+        function toggleAddCategoriesSection() {
+            const userTypeSelect = document.getElementById('addUserTypeSelect');
+            const categoriesSection = document.getElementById('addCategoriesSection');
+            
+            if (userTypeSelect.value === 'worker') {
+                categoriesSection.style.display = 'block';
+            } else {
+                categoriesSection.style.display = 'none';
+            }
         }
 
         async function addUser() {
             const form = document.getElementById('addUserForm');
             const formData = new FormData(form);
+            
+            // Seçili kategorileri topla
+            const selectedCategories = [];
+            const categoryCheckboxes = document.querySelectorAll('#addCategoriesContainer input[type="checkbox"]:checked');
+            categoryCheckboxes.forEach(checkbox => {
+                selectedCategories.push(checkbox.value);
+            });
             
             const userData = {
                 firstName: formData.get('firstName'),
@@ -851,6 +956,7 @@
                 password: formData.get('password'),
                 userType: formData.get('userType'),
                 bio: formData.get('bio') || null,
+                categoryIds: selectedCategories, // Kategorileri ekle
                 userInfo: {
                     address: formData.get('address') || null,
                     neighborhood: formData.get('neighborhood') || null,
@@ -1047,6 +1153,7 @@
                 statusSwitch.checked = user.status === 'active';
                 
                 updateSwitchLabels();
+                loadEditCategories(user);
 
                 // Fill address fields
                 const userInfo = user.userInfos && user.userInfos.length > 0 ? user.userInfos[0] : {};
@@ -1065,12 +1172,88 @@
             }
         }
 
+        async function loadEditCategories(user) {
+            try {
+                // Aktif kategorileri yükle
+                const categoriesResponse = await fetch(`${API_BASE}/admin/categories/active`, {
+                    headers: {
+                        'Authorization': `Bearer ${adminToken}`,
+                    },
+                });
+                const categories = await categoriesResponse.json();
+
+                const categoriesContainer = document.getElementById('editCategoriesContainer');
+                const categoriesSection = document.getElementById('editCategoriesSection');
+                
+                // Kullanıcı tipine göre kategorileri göster/gizle
+                if (user.userType === 'worker') {
+                    categoriesSection.style.display = 'block';
+                    
+                    // Build hierarchical structure
+                    const categoryMap = {};
+                    const rootCategories = [];
+
+                    // First pass: create map
+                    categories.forEach(category => {
+                        categoryMap[category.id] = {
+                            ...category,
+                            children: []
+                        };
+                    });
+
+                    // Second pass: build hierarchy
+                    categories.forEach(category => {
+                        if (category.parentId && categoryMap[category.parentId]) {
+                            categoryMap[category.parentId].children.push(categoryMap[category.id]);
+                        } else {
+                            rootCategories.push(categoryMap[category.id]);
+                        }
+                    });
+
+                    // Generate hierarchical checkboxes recursively
+                    function generateCategoryCheckboxes(category, level = 0) {
+                        const indent = '&nbsp;'.repeat(level * 4);
+                        const prefix = level > 0 ? '└─ ' : '';
+                        const isChecked = user.categories && user.categories.some(cat => cat.id === category.id) ? 'checked' : '';
+                        
+                        let html = `
+                            <div class="form-check" style="margin-left: ${level * 15}px;">
+                                <input class="form-check-input" type="checkbox" 
+                                       value="${category.id}" id="edit_cat_${category.id}" ${isChecked}>
+                                <label class="form-check-label" for="edit_cat_${category.id}">
+                                    ${prefix}${category.icon || '📁'} ${category.name}
+                                </label>
+                            </div>
+                        `;
+                        
+                        // Add children
+                        if (category.children.length > 0) {
+                            category.children.forEach(child => {
+                                html += generateCategoryCheckboxes(child, level + 1);
+                            });
+                        }
+                        
+                        return html;
+                    }
+
+                    // Generate hierarchical HTML
+                    const categoriesHtml = rootCategories.map(category => generateCategoryCheckboxes(category)).join('');
+                    categoriesContainer.innerHTML = categoriesHtml;
+                } else {
+                    categoriesSection.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Kategoriler yüklenirken hata:', error);
+            }
+        }
+
         // Switch event listeners
         document.addEventListener('DOMContentLoaded', function() {
             // User Type Switch
             const userTypeSwitch = document.getElementById('editUserTypeSwitch');
             userTypeSwitch.addEventListener('change', function() {
                 updateSwitchLabels();
+                toggleCategoriesSection();
             });
 
             // Status Switch
@@ -1079,6 +1262,19 @@
                 updateSwitchLabels();
             });
         });
+
+        function toggleCategoriesSection() {
+            const userTypeSwitch = document.getElementById('editUserTypeSwitch');
+            const categoriesSection = document.getElementById('editCategoriesSection');
+            
+            if (userTypeSwitch.checked) {
+                // İşveren seçildi - kategorileri gizle
+                categoriesSection.style.display = 'none';
+            } else {
+                // İşçi seçildi - kategorileri göster
+                categoriesSection.style.display = 'block';
+            }
+        }
 
         function updateSwitchLabels() {
             const userTypeSwitch = document.getElementById('editUserTypeSwitch');
@@ -1095,6 +1291,13 @@
             const userTypeSwitch = document.getElementById('editUserTypeSwitch');
             const statusSwitch = document.getElementById('editStatusSwitch');
 
+            // Seçili kategorileri topla
+            const selectedCategories = [];
+            const categoryCheckboxes = document.querySelectorAll('#editCategoriesContainer input[type="checkbox"]:checked');
+            categoryCheckboxes.forEach(checkbox => {
+                selectedCategories.push(checkbox.value);
+            });
+
             const userData = {
                 firstName: document.getElementById('editFirstName').value,
                 lastName: document.getElementById('editLastName').value,
@@ -1104,6 +1307,7 @@
                 userType: userTypeSwitch.checked ? 'employer' : 'worker',
                 status: statusSwitch.checked ? 'active' : 'inactive',
                 bio: document.getElementById('editBio').value || null,
+                categoryIds: selectedCategories, // Kategorileri ekle
                 userInfo: {
                     address: document.getElementById('editAddress').value || null,
                     neighborhood: document.getElementById('editNeighborhood').value || null,

@@ -56,7 +56,10 @@ export class UsersService {
   }
 
   async findById(id: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({ 
+      where: { id },
+      relations: ['userInfos', 'categories']
+    });
     if (!user) {
       throw new NotFoundException('Kullanıcı bulunamadı');
     }
@@ -298,7 +301,20 @@ export class UsersService {
 
   async updateProfile(userId: string, updateData: any): Promise<User> {
     const user = await this.findById(userId);
+    
+    // Kategorileri güncelle (eğer categoryIds varsa)
+    if (updateData.categoryIds) {
+      const { Category } = await import('../categories/entities/category.entity');
+      const categoryRepository = this.userRepository.manager.getRepository(Category);
+      
+      const categories = await categoryRepository.findByIds(updateData.categoryIds);
+      user.categories = categories;
+      user.categoryIds = updateData.categoryIds;
+    }
+    
+    // Diğer alanları güncelle
     Object.assign(user, updateData);
+    
     return this.userRepository.save(user);
   }
 

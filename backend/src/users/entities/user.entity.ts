@@ -6,7 +6,9 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToOne,
+  ManyToMany,
   JoinColumn,
+  JoinTable,
   Index,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
@@ -107,8 +109,17 @@ export class User {
   @OneToMany('Message', 'receiver')
   receivedMessages: any[];
 
-  @ManyToOne('Category', 'users', { nullable: true })
-  category: any;
+  @Column('simple-array', { nullable: true })
+  @ApiProperty({ type: [String], description: 'Kullanıcının seçtiği kategori ID\'leri' })
+  categoryIds: string[];
+
+  @ManyToMany('Category', 'users', { nullable: true })
+  @JoinTable({
+    name: 'user_categories',
+    joinColumn: { name: 'userId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'categoryId', referencedColumnName: 'id' }
+  })
+  categories: any[];
 
   @OneToMany(() => UserInfo, 'user')
   userInfos: UserInfo[];

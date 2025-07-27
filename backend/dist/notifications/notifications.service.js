@@ -30,7 +30,7 @@ let NotificationsService = class NotificationsService {
             where: {
                 userType: 'worker',
                 status: user_entity_1.UserStatus.ACTIVE,
-                category: { id: job.categoryId }
+                categoryIds: (0, typeorm_2.Like)(`%${job.categoryId}%`)
             },
             relations: ['userInfos']
         });

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Not } from 'typeorm';
+import { Repository, Not, Like } from 'typeorm';
 import { User, UserStatus } from '../users/entities/user.entity';
 import { UserInfo } from '../users/entities/user-info.entity';
 import { Job, JobStatus } from '../jobs/entities/job.entity';
@@ -147,7 +147,7 @@ export class AdminService {
   // User Management Methods
   async getAllUsers() {
     return this.userRepository.find({
-      relations: ['userInfos'],
+      relations: ['userInfos', 'categories'],
       order: { createdAt: 'DESC' },
     });
   }
@@ -155,7 +155,7 @@ export class AdminService {
   async getUserById(id: string) {
     const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['userInfos'],
+      relations: ['userInfos', 'categories'],
     });
 
     if (!user) {
@@ -181,10 +181,20 @@ export class AdminService {
     // Şifre hash'leme
     const hashedPassword = await bcrypt.hash(createUserDto.password, 12);
 
+    // Kategorileri hazırla (sadece worker için)
+    let categories = [];
+    let categoryIds = [];
+    if (createUserDto.userType === 'worker' && createUserDto.categoryIds) {
+      categories = await this.categoryRepository.findByIds(createUserDto.categoryIds);
+      categoryIds = createUserDto.categoryIds;
+    }
+
     // Kullanıcı oluşturma
     const user = this.userRepository.create({
       ...createUserDto,
       password: hashedPassword,
+      categories: categories,
+      categoryIds: categoryIds,
     });
 
     const savedUser = await this.userRepository.save(user);
@@ -205,7 +215,10 @@ export class AdminService {
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto) {
-    const user = await this.userRepository.findOne({ where: { id } });
+    const user = await this.userRepository.findOne({ 
+      where: { id },
+      relations: ['categories']
+    });
 
     if (!user) {
       throw new NotFoundException('Kullanıcı bulunamadı');
@@ -228,9 +241,28 @@ export class AdminService {
     // Şifre güncelleme (eğer varsa)
     if (updateUserDto.password) {
       updateUserDto.password = await bcrypt.hash(updateUserDto.password, 12);
+    } else {
+      // Şifre güncellenmeyecekse, DTO'dan çıkar
+      delete updateUserDto.password;
     }
 
-    await this.userRepository.update(id, updateUserDto);
+    // Kategorileri güncelle (sadece worker için)
+    if (updateUserDto.categoryIds !== undefined) {
+      if (updateUserDto.userType === 'worker' || user.userType === 'worker') {
+        const categories = await this.categoryRepository.findByIds(updateUserDto.categoryIds);
+        user.categories = categories;
+        user.categoryIds = updateUserDto.categoryIds;
+      } else {
+        // Employer kullanıcıları için kategorileri temizle
+        user.categories = [];
+        user.categoryIds = [];
+      }
+    }
+
+    // Diğer alanları güncelle (password hariç)
+    Object.assign(user, updateUserDto);
+
+    await this.userRepository.save(user);
 
     return {
       message: 'Kullanıcı başarıyla güncellendi',
@@ -294,9 +326,104 @@ export class AdminService {
     };
   }
 
+  async assignCategoriesToUser(id: string, categoryIds: string[]) {
+    const user = await this.userRepository.findOne({ 
+      where: { id },
+      relations: ['categories']
+    });
+    
+    if (!user) {
+      throw new NotFoundException('Kullanıcı bulunamadı');
+    }
+
+    // Kategorileri bul
+    const categories = await this.categoryRepository.findByIds(categoryIds);
+    if (categories.length !== categoryIds.length) {
+      throw new NotFoundException('Bazı kategoriler bulunamadı');
+    }
+
+    // Kullanıcıya kategorileri ata
+    user.categories = categories;
+    user.categoryIds = categoryIds;
+    await this.userRepository.save(user);
+    
+    return { 
+      message: 'Kullanıcıya kategoriler başarıyla atandı',
+      user: {
+        id: user.id,
+        categoryIds: user.categoryIds,
+        categories: categories.map(cat => ({
+          id: cat.id,
+          name: cat.name
+        }))
+      }
+    };
+  }
+
+  async removeCategoriesFromUser(id: string, categoryIds: string[]) {
+    const user = await this.userRepository.findOne({ 
+      where: { id },
+      relations: ['categories']
+    });
+    
+    if (!user) {
+      throw new NotFoundException('Kullanıcı bulunamadı');
+    }
+
+    // Mevcut kategorilerden belirtilenleri çıkar
+    user.categories = user.categories.filter(cat => !categoryIds.includes(cat.id));
+    user.categoryIds = user.categoryIds.filter(catId => !categoryIds.includes(catId));
+    await this.userRepository.save(user);
+    
+    return { 
+      message: 'Kullanıcıdan kategoriler başarıyla kaldırıldı',
+      user: {
+        id: user.id,
+        categoryIds: user.categoryIds,
+        categories: user.categories.map(cat => ({
+          id: cat.id,
+          name: cat.name
+        }))
+      }
+    };
+  }
+
+  async getUserCategories(id: string) {
+    const user = await this.userRepository.findOne({ 
+      where: { id },
+      relations: ['categories']
+    });
+    
+    if (!user) {
+      throw new NotFoundException('Kullanıcı bulunamadı');
+    }
+
+    return {
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        categoryIds: user.categoryIds,
+        categories: user.categories.map(cat => ({
+          id: cat.id,
+          name: cat.name,
+          description: cat.description,
+          icon: cat.icon
+        }))
+      }
+    };
+  }
+
   // Category Management Methods
   async getAllCategories() {
     return this.categoryRepository.find({
+      order: { orderIndex: 'ASC', name: 'ASC' },
+    });
+  }
+
+  async getActiveCategories() {
+    return this.categoryRepository.find({
+      where: { isActive: true },
       order: { orderIndex: 'ASC', name: 'ASC' },
     });
   }
@@ -402,7 +529,7 @@ export class AdminService {
 
     // Kategoriye bağlı kullanıcıları kontrol et
     const usersWithCategory = await this.userRepository.count({
-      where: { category: { id } }
+      where: { categoryIds: Like(`%${id}%`) }
     });
 
     if (usersWithCategory > 0) {

@@ -10,6 +10,8 @@ exports.SeedsModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const seed_service_1 = require("./seed.service");
+const data_seed_service_1 = require("./data-seed.service");
+const seeds_controller_1 = require("./seeds.controller");
 const locations_seed_1 = require("./locations.seed");
 const users_seed_1 = require("./users.seed");
 const user_info_seed_1 = require("./user-info.seed");
@@ -39,8 +41,10 @@ exports.SeedsModule = SeedsModule = __decorate([
                 admin_entity_1.Admin,
             ]),
         ],
+        controllers: [seeds_controller_1.SeedsController],
         providers: [
             seed_service_1.SeedService,
+            data_seed_service_1.DataSeedService,
             locations_seed_1.LocationsSeedService,
             users_seed_1.UsersSeedService,
             user_info_seed_1.UserInfoSeedService,
@@ -48,6 +52,7 @@ exports.SeedsModule = SeedsModule = __decorate([
         ],
         exports: [
             seed_service_1.SeedService,
+            data_seed_service_1.DataSeedService,
             locations_seed_1.LocationsSeedService,
             users_seed_1.UsersSeedService,
             user_info_seed_1.UserInfoSeedService,

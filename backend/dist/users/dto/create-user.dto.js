@@ -63,4 +63,9 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Object)
 ], CreateUserDto.prototype, "userInfo", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false, type: [String], description: 'Kategori ID\'leri (sadece worker için)' }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], CreateUserDto.prototype, "categoryIds", void 0);
 //# sourceMappingURL=create-user.dto.js.map

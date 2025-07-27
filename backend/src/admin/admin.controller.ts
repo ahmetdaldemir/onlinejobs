@@ -96,12 +96,47 @@ export class AdminController {
     return this.adminService.deleteUser(id);
   }
 
+  // Kategori Atama Endpoints
+  @Get('users/:id/categories')
+  @ApiOperation({ summary: 'Kullanıcının kategorilerini getir' })
+  @ApiResponse({ status: 200, description: 'Kullanıcı kategorileri' })
+  async getUserCategories(@Param('id') id: string) {
+    return this.adminService.getUserCategories(id);
+  }
+
+  @Post('users/:id/categories')
+  @ApiOperation({ summary: 'Kullanıcıya kategori ata' })
+  @ApiResponse({ status: 200, description: 'Kategoriler atandı' })
+  async assignCategoriesToUser(
+    @Param('id') id: string, 
+    @Body() body: { categoryIds: string[] }
+  ) {
+    return this.adminService.assignCategoriesToUser(id, body.categoryIds);
+  }
+
+  @Delete('users/:id/categories')
+  @ApiOperation({ summary: 'Kullanıcıdan kategori kaldır' })
+  @ApiResponse({ status: 200, description: 'Kategoriler kaldırıldı' })
+  async removeCategoriesFromUser(
+    @Param('id') id: string, 
+    @Body() body: { categoryIds: string[] }
+  ) {
+    return this.adminService.removeCategoriesFromUser(id, body.categoryIds);
+  }
+
   // Category Management Endpoints
   @Get('categories')
   @ApiOperation({ summary: 'Tüm kategorileri listele' })
   @ApiResponse({ status: 200, description: 'Kategori listesi' })
   async getAllCategories() {
     return this.adminService.getAllCategories();
+  }
+
+  @Get('categories/active')
+  @ApiOperation({ summary: 'Aktif kategorileri listele' })
+  @ApiResponse({ status: 200, description: 'Aktif kategoriler listesi' })
+  async getActiveCategories() {
+    return this.adminService.getActiveCategories();
   }
 
   @Get('categories/:id')

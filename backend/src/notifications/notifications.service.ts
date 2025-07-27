@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { Notification, NotificationType, NotificationStatus } from './entities/notification.entity';
 import { User, UserStatus } from '../users/entities/user.entity';
 import { Job } from '../jobs/entities/job.entity';
@@ -23,7 +23,7 @@ export class NotificationsService {
       where: {
         userType: 'worker',
         status: UserStatus.ACTIVE,
-        category: { id: job.categoryId }
+        categoryIds: Like(`%${job.categoryId}%`)
       },
       relations: ['userInfos']
     });

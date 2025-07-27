@@ -60,10 +60,10 @@ let AuthService = class AuthService {
                 totalReviews: savedUser.totalReviews,
                 profileImage: savedUser.profileImage,
                 bio: savedUser.bio,
-                category: savedUser.category ? {
-                    id: savedUser.category.id,
-                    name: savedUser.category.name,
-                } : undefined,
+                categories: savedUser.categories ? savedUser.categories.map(category => ({
+                    id: category.id,
+                    name: category.name,
+                })) : [],
             },
             message: 'Kullanıcı başarıyla kayıt oldu',
             status: 'success',
@@ -74,7 +74,7 @@ let AuthService = class AuthService {
         const { phone, password, userType } = loginDto;
         const user = await this.userRepository.findOne({
             where: { phone, userType },
-            relations: ['category', 'userInfos'],
+            relations: ['categories', 'userInfos'],
         });
         if (!user) {
             throw new common_1.UnauthorizedException('Geçersiz telefon numarası veya şifre');
@@ -101,10 +101,10 @@ let AuthService = class AuthService {
                 totalReviews: user.totalReviews,
                 profileImage: user.profileImage,
                 bio: user.bio,
-                category: user.category ? {
-                    id: user.category.id,
-                    name: user.category.name,
-                } : undefined,
+                categories: user.categories ? user.categories.map(category => ({
+                    id: category.id,
+                    name: category.name,
+                })) : [],
                 userInfos: user.userInfos ? user.userInfos.map(userInfo => ({
                     id: userInfo.id,
                     name: userInfo.name,
@@ -126,7 +126,7 @@ let AuthService = class AuthService {
     async validateUser(userId) {
         const user = await this.userRepository.findOne({
             where: { id: userId },
-            relations: ['category', 'userInfos'],
+            relations: ['categories', 'userInfos'],
         });
         if (!user) {
             throw new common_1.UnauthorizedException('Kullanıcı bulunamadı');

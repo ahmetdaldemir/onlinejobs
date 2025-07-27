@@ -60,7 +60,10 @@ let UsersService = class UsersService {
         return this.userRepository.find();
     }
     async findById(id) {
-        const user = await this.userRepository.findOne({ where: { id } });
+        const user = await this.userRepository.findOne({
+            where: { id },
+            relations: ['userInfos', 'categories']
+        });
         if (!user) {
             throw new common_1.NotFoundException('Kullanıcı bulunamadı');
         }
@@ -249,6 +252,13 @@ let UsersService = class UsersService {
     }
     async updateProfile(userId, updateData) {
         const user = await this.findById(userId);
+        if (updateData.categoryIds) {
+            const { Category } = await Promise.resolve().then(() => require('../categories/entities/category.entity'));
+            const categoryRepository = this.userRepository.manager.getRepository(Category);
+            const categories = await categoryRepository.findByIds(updateData.categoryIds);
+            user.categories = categories;
+            user.categoryIds = updateData.categoryIds;
+        }
         Object.assign(user, updateData);
         return this.userRepository.save(user);
     }

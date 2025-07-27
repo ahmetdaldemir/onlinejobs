@@ -100,7 +100,48 @@ export declare class AdminController {
     deleteUser(id: string): Promise<{
         message: string;
     }>;
+    getUserCategories(id: string): Promise<{
+        user: {
+            id: string;
+            firstName: string;
+            lastName: string;
+            categoryIds: string[];
+            categories: {
+                id: any;
+                name: any;
+                description: any;
+                icon: any;
+            }[];
+        };
+    }>;
+    assignCategoriesToUser(id: string, body: {
+        categoryIds: string[];
+    }): Promise<{
+        message: string;
+        user: {
+            id: string;
+            categoryIds: string[];
+            categories: {
+                id: string;
+                name: string;
+            }[];
+        };
+    }>;
+    removeCategoriesFromUser(id: string, body: {
+        categoryIds: string[];
+    }): Promise<{
+        message: string;
+        user: {
+            id: string;
+            categoryIds: string[];
+            categories: {
+                id: any;
+                name: any;
+            }[];
+        };
+    }>;
     getAllCategories(): Promise<import("../categories/entities/category.entity").Category[]>;
+    getActiveCategories(): Promise<import("../categories/entities/category.entity").Category[]>;
     getCategoryById(id: string): Promise<import("../categories/entities/category.entity").Category>;
     createCategory(createCategoryDto: CreateCategoryDto): Promise<{
         message: string;
