@@ -40,7 +40,7 @@ exports.AppModule = AppModule = __decorate([
                 entities: [__dirname + '/**/*.entity{.ts,.js}'],
                 synchronize: process.env.NODE_ENV !== 'production',
                 logging: process.env.NODE_ENV !== 'production',
-                ssl: process.env.NODE_ENV === 'production' ? true : true,
+                ssl: true,
             }),
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
