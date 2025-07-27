@@ -948,6 +948,8 @@
                         select.appendChild(option);
                     });
                 });
+                
+                console.log('Parent categories loaded:', categories.filter(cat => !cat.parentId).length);
             } catch (error) {
                 console.error('Üst kategoriler yüklenirken hata:', error);
             }
@@ -1198,6 +1200,8 @@
 
                 const category = await response.json();
 
+                console.log('Editing category:', category);
+                
                 // Fill form fields
                 document.getElementById('editCategoryId').value = category.id;
                 document.getElementById('editCategoryName').value = category.name;
@@ -1206,10 +1210,17 @@
                 document.getElementById('editCategoryOrderIndex').value = category.orderIndex || 0;
                 document.getElementById('editCategoryActive').checked = category.isActive;
 
-                // Load parent categories for the select
-                loadParentCategories();
-                document.getElementById('editParentCategorySelect').value = category.parentId || '';
-
+                // Load parent categories for the select and then set the value
+                await loadParentCategories();
+                
+                // Set the parent category value after a short delay
+                setTimeout(() => {
+                    const parentSelect = document.getElementById('editParentCategorySelect');
+                    parentSelect.value = category.parentId || '';
+                    console.log('Setting parent category to:', category.parentId);
+                    parentSelect.dispatchEvent(new Event('change'));
+                }, 200);
+                
                 const modal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
                 modal.show();
             } catch (error) {
