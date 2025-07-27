@@ -80,7 +80,7 @@ export class UsersService {
       .andWhere('user.status = :status', { status: UserStatus.ACTIVE });
 
     if (categoryId) {
-      query = query.andWhere('user.categoryId = :categoryId', { categoryId });
+      query = query.andWhere('user.categoryIds @> ARRAY[:categoryId]', { categoryId });
     }
 
     if (latitude && longitude && radius) {
@@ -164,7 +164,7 @@ export class UsersService {
       .andWhere('user.status = :status', { status: UserStatus.ACTIVE });
 
     if (categoryId) {
-      query = query.andWhere('user.categoryId = :categoryId', { categoryId });
+      query = query.andWhere('user.categoryIds @> ARRAY[:categoryId]', { categoryId });
     }
 
     if (latitude && longitude && radius) {
