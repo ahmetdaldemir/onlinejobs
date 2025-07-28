@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CategoriesService } from './categories.service';
+import { BadRequestException } from '@nestjs/common';
 
 @ApiTags('Categories')
 @Controller('categories')
@@ -18,7 +19,13 @@ export class CategoriesController {
   @ApiOperation({ summary: 'Kategori detayı' })
   @ApiResponse({ status: 200, description: 'Kategori detayı' })
   @ApiResponse({ status: 404, description: 'Kategori bulunamadı' })
+  @ApiResponse({ status: 400, description: 'Geçersiz UUID formatı' })
   async findById(@Param('id') id: string) {
+    // UUID formatını kontrol et
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new BadRequestException(`Geçersiz UUID formatı: ${id}. Lütfen geçerli bir kategori ID'si girin.`);
+    }
     return this.categoriesService.findById(id);
   }
 

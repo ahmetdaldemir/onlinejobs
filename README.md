@@ -12,6 +12,24 @@ Bu proje, iş verenler ile iş arayanları buluşturan online usta/personel plat
 - **Swagger** - API dokümantasyonu
 - **Docker** - Containerization
 
+## ⚠️ PowerShell Kullanıcıları İçin Önemli Not
+
+Windows PowerShell kullanıyorsanız, komutları zincirlemek için `&&` yerine şu yöntemleri kullanın:
+
+```powershell
+# Yöntem 1: & operatörü (ardışık çalıştırma)
+cd backend & npm run start:dev
+
+# Yöntem 2: ; operatörü (sıralı çalıştırma)
+cd backend ; npm run start:dev
+
+# Yöntem 3: Ayrı komutlar
+cd backend
+npm run start:dev
+```
+
+**Alternatif:** Git Bash, WSL veya Command Prompt kullanabilirsiniz.
+
 ## 📋 Özellikler
 
 ### Kullanıcı Yönetimi

@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApplicationStatus } from './entities/job-application.entity';
 import { CreateJobDto } from './dto/create-job.dto';
 import { UsersService } from '../users/users.service';
+import { BadRequestException } from '@nestjs/common';
 
 @ApiTags('Jobs')
 @Controller('jobs')
@@ -42,11 +43,26 @@ export class JobsController {
     return this.jobsService.findAll(filters);
   }
 
+  @Get('my/applications')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Kendi başvurularımı listele' })
+  @ApiResponse({ status: 200, description: 'Başvurular listelendi' })
+  async getMyApplications(@Request() req) {
+    return this.jobsService.getMyApplications(req.user.sub);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'İş ilanı detayı' })
   @ApiResponse({ status: 200, description: 'İş ilanı detayı' })
   @ApiResponse({ status: 404, description: 'İş ilanı bulunamadı' })
+  @ApiResponse({ status: 400, description: 'Geçersiz UUID formatı' })
   async findById(@Param('id') id: string) {
+    // UUID formatını kontrol et
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new BadRequestException(`Geçersiz UUID formatı: ${id}. Lütfen geçerli bir iş ilanı ID'si girin.`);
+    }
     return this.jobsService.findById(id);
   }
 
@@ -88,15 +104,6 @@ export class JobsController {
     @Request() req,
   ) {
     return this.jobsService.updateApplicationStatus(applicationId, status, req.user.sub);
-  }
-
-  @Get('my/applications')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kendi başvurularımı listele' })
-  @ApiResponse({ status: 200, description: 'Başvurular listelendi' })
-  async getMyApplications(@Request() req) {
-    return this.jobsService.getMyApplications(req.user.sub);
   }
 
   @Get(':id/applications')

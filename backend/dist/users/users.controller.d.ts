@@ -13,6 +13,7 @@ export declare class UsersController {
     findOnlineEmployers(latitude?: number, longitude?: number, radius?: number, categoryId?: string): Promise<any[]>;
     findUsersByType(userType: string): Promise<import("./entities/user.entity").User[]>;
     updateUserTypes(req: any, userType: string): Promise<import("./entities/user.entity").User>;
+    getUserInfo(req: any): Promise<import("./entities/user-info.entity").UserInfo>;
     findById(id: string): Promise<import("./entities/user.entity").User>;
     updateStatus(req: any, status: UserStatus): Promise<import("./entities/user.entity").User>;
     updateIsOnline(req: any, isOnline: boolean): Promise<import("./entities/user.entity").User>;
@@ -21,7 +22,6 @@ export declare class UsersController {
         latitude: number;
         longitude: number;
     }): Promise<import("./entities/user.entity").User>;
-    getUserInfo(req: any): Promise<import("./entities/user-info.entity").UserInfo>;
     updateUserInfo(req: any, updateUserInfoDto: UpdateUserInfoDto): Promise<import("./entities/user.entity").User>;
     updateProfile(req: any, updateData: any, file?: Express.Multer.File): Promise<import("./entities/user.entity").User>;
     updateProfileImage(req: any, body: {

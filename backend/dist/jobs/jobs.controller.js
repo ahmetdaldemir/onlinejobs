@@ -20,6 +20,7 @@ const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const job_application_entity_1 = require("./entities/job-application.entity");
 const create_job_dto_1 = require("./dto/create-job.dto");
 const users_service_1 = require("../users/users.service");
+const common_2 = require("@nestjs/common");
 let JobsController = class JobsController {
     constructor(jobsService, usersService) {
         this.jobsService = jobsService;
@@ -35,7 +36,14 @@ let JobsController = class JobsController {
     async findAll(filters) {
         return this.jobsService.findAll(filters);
     }
+    async getMyApplications(req) {
+        return this.jobsService.getMyApplications(req.user.sub);
+    }
     async findById(id) {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(id)) {
+            throw new common_2.BadRequestException(`Geçersiz UUID formatı: ${id}. Lütfen geçerli bir iş ilanı ID'si girin.`);
+        }
         return this.jobsService.findById(id);
     }
     async update(id, updateJobDto, req) {
@@ -49,9 +57,6 @@ let JobsController = class JobsController {
     }
     async updateApplicationStatus(applicationId, status, req) {
         return this.jobsService.updateApplicationStatus(applicationId, status, req.user.sub);
-    }
-    async getMyApplications(req) {
-        return this.jobsService.getMyApplications(req.user.sub);
     }
     async getJobApplications(jobId, req) {
         return this.jobsService.getJobApplications(jobId, req.user.sub);
@@ -86,10 +91,22 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], JobsController.prototype, "findAll", null);
 __decorate([
+    (0, common_1.Get)('my/applications'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Kendi başvurularımı listele' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Başvurular listelendi' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], JobsController.prototype, "getMyApplications", null);
+__decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'İş ilanı detayı' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'İş ilanı detayı' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'İş ilanı bulunamadı' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Geçersiz UUID formatı' }),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -146,17 +163,6 @@ __decorate([
     __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", Promise)
 ], JobsController.prototype, "updateApplicationStatus", null);
-__decorate([
-    (0, common_1.Get)('my/applications'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Kendi başvurularımı listele' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Başvurular listelendi' }),
-    __param(0, (0, common_1.Request)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], JobsController.prototype, "getMyApplications", null);
 __decorate([
     (0, common_1.Get)(':id/applications'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

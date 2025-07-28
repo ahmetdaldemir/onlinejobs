@@ -51,7 +51,14 @@ let UsersController = class UsersController {
     async updateUserTypes(req, userType) {
         return this.usersService.updateUserTypes(req.user.sub, userType);
     }
+    async getUserInfo(req) {
+        return this.usersService.getUserInfo(req.user.sub);
+    }
     async findById(id) {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(id)) {
+            throw new common_1.BadRequestException(`Geçersiz UUID formatı: ${id}. Lütfen geçerli bir kullanıcı ID'si girin.`);
+        }
         return this.usersService.findById(id);
     }
     async updateStatus(req, status) {
@@ -62,9 +69,6 @@ let UsersController = class UsersController {
     }
     async updateLocation(req, locationData) {
         return this.usersService.updateLocation(req.user.sub, locationData.latitude, locationData.longitude, locationData.name);
-    }
-    async getUserInfo(req) {
-        return this.usersService.getUserInfo(req.user.sub);
     }
     async updateUserInfo(req, updateUserInfoDto) {
         return this.usersService.updateUserInfo(req.user.sub, updateUserInfoDto);
@@ -185,12 +189,24 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateUserTypes", null);
 __decorate([
+    (0, common_1.Get)('user-info'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı bilgilerini getir' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı bilgileri getirildi' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getUserInfo", null);
+__decorate([
     (0, common_1.Get)(':id'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı detayı' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı detayı' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Kullanıcı bulunamadı' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Geçersiz UUID formatı' }),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -232,17 +248,6 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateLocation", null);
-__decorate([
-    (0, common_1.Get)('user-info'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı bilgilerini getir' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı bilgileri getirildi' }),
-    __param(0, (0, common_1.Request)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "getUserInfo", null);
 __decorate([
     (0, common_1.Put)('user-info'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

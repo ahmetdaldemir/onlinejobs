@@ -1,10 +1,11 @@
-import { Controller, Get, Put, Body, Param, Query, UseGuards, Request, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Put, Body, Param, Query, UseGuards, Request, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiParam, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserStatus } from './entities/user.entity';
 import { UpdateUserInfoDto } from './dto/update-user-info.dto';
+import { IsUUID } from 'class-validator';
 
 @ApiTags('Users')
 @Controller('users')
@@ -110,13 +111,28 @@ export class UsersController {
     return this.usersService.updateUserTypes(req.user.sub, userType);
   }
 
+  @Get('user-info')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Kullanıcı bilgilerini getir' })
+  @ApiResponse({ status: 200, description: 'Kullanıcı bilgileri getirildi' })
+  async getUserInfo(@Request() req) {
+    return this.usersService.getUserInfo(req.user.sub);
+  }
+
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Kullanıcı detayı' })
   @ApiResponse({ status: 200, description: 'Kullanıcı detayı' })
   @ApiResponse({ status: 404, description: 'Kullanıcı bulunamadı' })
+  @ApiResponse({ status: 400, description: 'Geçersiz UUID formatı' })
   async findById(@Param('id') id: string) {
+    // UUID formatını kontrol et
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new BadRequestException(`Geçersiz UUID formatı: ${id}. Lütfen geçerli bir kullanıcı ID'si girin.`);
+    }
     return this.usersService.findById(id);
   }
 
@@ -155,15 +171,6 @@ export class UsersController {
     @Body() locationData: { name?: string; latitude: number; longitude: number },
   ) {
     return this.usersService.updateLocation(req.user.sub, locationData.latitude, locationData.longitude, locationData.name);
-  }
-
-  @Get('user-info')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcı bilgilerini getir' })
-  @ApiResponse({ status: 200, description: 'Kullanıcı bilgileri getirildi' })
-  async getUserInfo(@Request() req) {
-    return this.usersService.getUserInfo(req.user.sub);
   }
 
   @Put('user-info')

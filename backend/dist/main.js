@@ -25,6 +25,7 @@ async function bootstrap() {
     app.useGlobalPipes(new common_1.ValidationPipe());
     app.use('/public', express.static((0, path_1.join)(__dirname, '..', 'public')));
     app.use('/uploads', express.static((0, path_1.join)(__dirname, '..', 'uploads')));
+    app.use('/test', express.static((0, path_1.join)(__dirname, '..')));
     const config = new swagger_1.DocumentBuilder()
         .setTitle('Online Jobs API')
         .setDescription('Online Jobs platformu için REST API')

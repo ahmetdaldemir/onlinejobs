@@ -16,6 +16,7 @@ exports.CategoriesController = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const categories_service_1 = require("./categories.service");
+const common_2 = require("@nestjs/common");
 let CategoriesController = class CategoriesController {
     constructor(categoriesService) {
         this.categoriesService = categoriesService;
@@ -24,6 +25,10 @@ let CategoriesController = class CategoriesController {
         return this.categoriesService.findAll();
     }
     async findById(id) {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(id)) {
+            throw new common_2.BadRequestException(`Geçersiz UUID formatı: ${id}. Lütfen geçerli bir kategori ID'si girin.`);
+        }
         return this.categoriesService.findById(id);
     }
     async create(createCategoryDto) {
@@ -56,6 +61,7 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Kategori detayı' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Kategori detayı' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Kategori bulunamadı' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Geçersiz UUID formatı' }),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
