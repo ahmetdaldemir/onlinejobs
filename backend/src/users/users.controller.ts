@@ -217,7 +217,7 @@ export class UsersController {
   async updateProfile(
     @Request() req,
     @Body() updateData: any,
-    @UploadedFile() file?: Express.Multer.File
+    @UploadedFile() file?: any
   ) {
     return this.usersService.updateProfile(req.user.sub, updateData, file);
   }

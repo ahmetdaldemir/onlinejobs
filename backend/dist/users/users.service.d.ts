@@ -27,7 +27,7 @@ export declare class UsersService {
     updateLocation(userId: string, latitude: number, longitude: number, name?: string): Promise<User>;
     getUserInfo(userId: string): Promise<UserInfo | null>;
     updateUserInfo(userId: string, updateUserInfoDto: UpdateUserInfoDto): Promise<User>;
-    updateProfile(userId: string, updateData: any, file?: Express.Multer.File): Promise<User>;
+    updateProfile(userId: string, updateData: any, file?: any): Promise<User>;
     updateProfileImage(userId: string, imageUrl: string): Promise<User>;
     setUserOnline(userId: string): Promise<User>;
     setUserOffline(userId: string): Promise<User>;

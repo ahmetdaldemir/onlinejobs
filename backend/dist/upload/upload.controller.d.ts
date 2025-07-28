@@ -3,19 +3,19 @@ import { UploadService } from './upload.service';
 export declare class UploadController {
     private readonly uploadService;
     constructor(uploadService: UploadService);
-    uploadProfileImage(file: Express.Multer.File, req: any): Promise<{
+    uploadProfileImage(file: any, req: any): Promise<{
         message: string;
-        filename: string;
-        originalName: string;
-        size: number;
+        filename: any;
+        originalName: any;
+        size: any;
         url: string;
     }>;
-    uploadAdminProfileImage(file: Express.Multer.File, userId: string): Promise<{
+    uploadAdminProfileImage(file: any, userId: string): Promise<{
         message: string;
         userId: string;
-        filename: string;
-        originalName: string;
-        size: number;
+        filename: any;
+        originalName: any;
+        size: any;
         url: string;
     }>;
     serveFile(filename: string, res: Response): Promise<void | Response<any, Record<string, any>>>;
@@ -24,11 +24,11 @@ export declare class UploadController {
         uploadPath: string;
         timestamp: string;
     }>;
-    testUploadFile(file: Express.Multer.File): Promise<{
+    testUploadFile(file: any): Promise<{
         message: string;
-        filename: string;
-        originalName: string;
-        size: number;
+        filename: any;
+        originalName: any;
+        size: any;
         url: string;
         test: boolean;
     }>;

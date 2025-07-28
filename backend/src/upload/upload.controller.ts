@@ -43,7 +43,7 @@ export class UploadController {
   })
   @UseInterceptors(FileInterceptor('file'))
   async uploadProfileImage(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: any,
     @Request() req: any,
   ) {
     if (!file) {
@@ -81,7 +81,7 @@ export class UploadController {
   })
   @UseInterceptors(FileInterceptor('file'))
   async uploadAdminProfileImage(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: any,
     @Param('userId') userId: string,
   ) {
     if (!file) {
@@ -139,7 +139,7 @@ export class UploadController {
     },
   })
   @UseInterceptors(FileInterceptor('file'))
-  async testUploadFile(@UploadedFile() file: Express.Multer.File) {
+  async testUploadFile(@UploadedFile() file: any) {
     if (!file) {
       throw new BadRequestException('Dosya yüklenmedi');
     }

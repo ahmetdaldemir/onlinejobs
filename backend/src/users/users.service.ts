@@ -386,7 +386,7 @@ export class UsersService {
 
 
 
-  async updateProfile(userId: string, updateData: any, file?: Express.Multer.File): Promise<User> {
+  async updateProfile(userId: string, updateData: any, file?: any): Promise<User> {
     const user = await this.findById(userId);
     
     // Profil fotoğrafı yükleme (eğer dosya varsa)
