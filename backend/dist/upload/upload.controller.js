@@ -59,6 +59,27 @@ let UploadController = class UploadController {
         }
         return res.sendFile(filePath);
     }
+    async testUpload() {
+        return {
+            message: 'Upload modülü çalışıyor',
+            uploadPath: this.uploadService.uploadPath,
+            timestamp: new Date().toISOString()
+        };
+    }
+    async testUploadFile(file) {
+        if (!file) {
+            throw new common_1.BadRequestException('Dosya yüklenmedi');
+        }
+        const fileUrl = this.uploadService.getFileUrl(file.filename);
+        return {
+            message: 'Test dosyası başarıyla yüklendi',
+            filename: file.filename,
+            originalName: file.originalname,
+            size: file.size,
+            url: fileUrl,
+            test: true
+        };
+    }
 };
 exports.UploadController = UploadController;
 __decorate([
@@ -120,6 +141,35 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], UploadController.prototype, "serveFile", null);
+__decorate([
+    (0, common_1.Get)('test'),
+    (0, swagger_1.ApiOperation)({ summary: 'Upload modülü test endpoint' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UploadController.prototype, "testUpload", null);
+__decorate([
+    (0, common_1.Post)('test-upload'),
+    (0, swagger_1.ApiOperation)({ summary: 'Upload test endpoint (JWT guard yok)' }),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
+    (0, swagger_1.ApiBody)({
+        schema: {
+            type: 'object',
+            properties: {
+                file: {
+                    type: 'string',
+                    format: 'binary',
+                    description: 'Test dosyası',
+                },
+            },
+        },
+    }),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
+    __param(0, (0, common_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UploadController.prototype, "testUploadFile", null);
 exports.UploadController = UploadController = __decorate([
     (0, swagger_1.ApiTags)('Upload'),
     (0, common_1.Controller)('upload'),

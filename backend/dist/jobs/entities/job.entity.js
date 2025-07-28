@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Job = exports.JobType = exports.JobStatus = void 0;
+exports.Job = exports.JobStatus = void 0;
 const typeorm_1 = require("typeorm");
 const swagger_1 = require("@nestjs/swagger");
 var JobStatus;
@@ -19,12 +19,6 @@ var JobStatus;
     JobStatus["COMPLETED"] = "completed";
     JobStatus["CANCELLED"] = "cancelled";
 })(JobStatus || (exports.JobStatus = JobStatus = {}));
-var JobType;
-(function (JobType) {
-    JobType["URGENT"] = "urgent";
-    JobType["NORMAL"] = "normal";
-    JobType["SCHEDULED"] = "scheduled";
-})(JobType || (exports.JobType = JobType = {}));
 let Job = class Job {
 };
 exports.Job = Job;
@@ -53,34 +47,19 @@ __decorate([
     __metadata("design:type", String)
 ], Job.prototype, "status", void 0);
 __decorate([
-    (0, typeorm_1.Column)({
-        type: 'enum',
-        enum: JobType,
-        default: JobType.NORMAL,
-    }),
-    (0, swagger_1.ApiProperty)({ enum: JobType }),
-    __metadata("design:type", String)
-], Job.prototype, "jobType", void 0);
-__decorate([
     (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 2, nullable: true }),
     (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", Number)
+    __metadata("design:type", String)
 ], Job.prototype, "budget", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ length: 255, nullable: true }),
+    (0, typeorm_1.ManyToOne)('UserInfo', { nullable: true }),
+    __metadata("design:type", Object)
+], Job.prototype, "userInfo", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
-], Job.prototype, "location", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 8, nullable: true }),
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", Number)
-], Job.prototype, "latitude", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ type: 'decimal', precision: 11, scale: 8, nullable: true }),
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", Number)
-], Job.prototype, "longitude", void 0);
+], Job.prototype, "userInfoId", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'date', nullable: true }),
     (0, swagger_1.ApiProperty)(),

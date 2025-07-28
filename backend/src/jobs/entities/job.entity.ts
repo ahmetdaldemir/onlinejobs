@@ -17,12 +17,8 @@ export enum JobStatus {
   CANCELLED = 'cancelled',
 }
 
-export enum JobType {
-  URGENT = 'urgent',
-  NORMAL = 'normal',
-  SCHEDULED = 'scheduled',
-}
-
+ 
+ 
 @Entity('jobs')
 @Index(['status'])
 @Index(['categoryId'])
@@ -48,29 +44,19 @@ export class Job {
   @ApiProperty({ enum: JobStatus })
   status: JobStatus;
 
-  @Column({
-    type: 'enum',
-    enum: JobType,
-    default: JobType.NORMAL,
-  })
-  @ApiProperty({ enum: JobType })
-  jobType: JobType;
+ 
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   @ApiProperty()
-  budget: number;
+  budget: string;
+ 
 
-  @Column({ length: 255, nullable: true })
-  @ApiProperty()
-  location: string;
+  @ManyToOne('UserInfo', { nullable: true })
+  userInfo: any;
 
-  @Column({ type: 'decimal', precision: 10, scale: 8, nullable: true })
+  @Column({ nullable: true })
   @ApiProperty()
-  latitude: number;
-
-  @Column({ type: 'decimal', precision: 11, scale: 8, nullable: true })
-  @ApiProperty()
-  longitude: number;
+  userInfoId: string;
 
   @Column({ type: 'date', nullable: true })
   @ApiProperty()

@@ -249,8 +249,19 @@ export class AdminService {
 
     // Profil fotoğrafı yükleme (eğer dosya varsa)
     if (file) {
+      console.log('📸 Profil fotoğrafı yükleniyor:', {
+        originalName: file.originalname,
+        filename: file.filename,
+        size: file.size,
+        mimetype: file.mimetype
+      });
+      
       const fileUrl = this.uploadService.getFileUrl(file.filename);
       user.profileImage = fileUrl;
+      
+      console.log('✅ Profil fotoğrafı URL\'i oluşturuldu:', fileUrl);
+    } else {
+      console.log('ℹ️ Profil fotoğrafı yüklenmedi');
     }
 
     // Şifre güncelleme (eğer varsa)

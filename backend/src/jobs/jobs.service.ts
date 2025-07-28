@@ -5,6 +5,7 @@ import { Job, JobStatus } from './entities/job.entity';
 import { JobApplication, ApplicationStatus } from './entities/job-application.entity';
 import { NotificationsService } from '../notifications/notifications.service';
 import { User } from '../users/entities/user.entity';
+import { UserInfo } from '../users/entities/user-info.entity';
 
 @Injectable()
 export class JobsService {
@@ -15,10 +16,26 @@ export class JobsService {
     private applicationRepository: Repository<JobApplication>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(UserInfo)
+    private userInfoRepository: Repository<UserInfo>,
     private notificationsService: NotificationsService,
   ) {}
 
   async create(createJobDto: any, employerId: string): Promise<Job> {
+    // Eğer userInfoId verilmişse, konum bilgilerini de ekle
+    if (createJobDto.userInfoId) {
+      // UserInfo'dan konum bilgilerini al
+      const userInfo = await this.userInfoRepository.findOne({
+        where: { id: createJobDto.userInfoId }
+      });
+
+      if (userInfo) {
+        createJobDto.latitude = userInfo.latitude;
+        createJobDto.longitude = userInfo.longitude;
+        createJobDto.location = userInfo.address;
+      }
+    }
+
     const job = this.jobRepository.create({
       ...createJobDto,
       employerId,

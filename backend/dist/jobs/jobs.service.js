@@ -20,14 +20,26 @@ const job_entity_1 = require("./entities/job.entity");
 const job_application_entity_1 = require("./entities/job-application.entity");
 const notifications_service_1 = require("../notifications/notifications.service");
 const user_entity_1 = require("../users/entities/user.entity");
+const user_info_entity_1 = require("../users/entities/user-info.entity");
 let JobsService = class JobsService {
-    constructor(jobRepository, applicationRepository, userRepository, notificationsService) {
+    constructor(jobRepository, applicationRepository, userRepository, userInfoRepository, notificationsService) {
         this.jobRepository = jobRepository;
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
+        this.userInfoRepository = userInfoRepository;
         this.notificationsService = notificationsService;
     }
     async create(createJobDto, employerId) {
+        if (createJobDto.userInfoId) {
+            const userInfo = await this.userInfoRepository.findOne({
+                where: { id: createJobDto.userInfoId }
+            });
+            if (userInfo) {
+                createJobDto.latitude = userInfo.latitude;
+                createJobDto.longitude = userInfo.longitude;
+                createJobDto.location = userInfo.address;
+            }
+        }
         const job = this.jobRepository.create({
             ...createJobDto,
             employerId,
@@ -145,7 +157,9 @@ exports.JobsService = JobsService = __decorate([
     __param(0, (0, typeorm_1.InjectRepository)(job_entity_1.Job)),
     __param(1, (0, typeorm_1.InjectRepository)(job_application_entity_1.JobApplication)),
     __param(2, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
+    __param(3, (0, typeorm_1.InjectRepository)(user_info_entity_1.UserInfo)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         notifications_service_1.NotificationsService])

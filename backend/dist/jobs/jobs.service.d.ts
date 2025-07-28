@@ -3,12 +3,14 @@ import { Job } from './entities/job.entity';
 import { JobApplication, ApplicationStatus } from './entities/job-application.entity';
 import { NotificationsService } from '../notifications/notifications.service';
 import { User } from '../users/entities/user.entity';
+import { UserInfo } from '../users/entities/user-info.entity';
 export declare class JobsService {
     private jobRepository;
     private applicationRepository;
     private userRepository;
+    private userInfoRepository;
     private notificationsService;
-    constructor(jobRepository: Repository<Job>, applicationRepository: Repository<JobApplication>, userRepository: Repository<User>, notificationsService: NotificationsService);
+    constructor(jobRepository: Repository<Job>, applicationRepository: Repository<JobApplication>, userRepository: Repository<User>, userInfoRepository: Repository<UserInfo>, notificationsService: NotificationsService);
     create(createJobDto: any, employerId: string): Promise<Job>;
     findAll(filters?: any): Promise<Job[]>;
     findById(id: string): Promise<Job>;

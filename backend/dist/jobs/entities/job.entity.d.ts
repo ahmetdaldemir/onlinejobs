@@ -4,21 +4,14 @@ export declare enum JobStatus {
     COMPLETED = "completed",
     CANCELLED = "cancelled"
 }
-export declare enum JobType {
-    URGENT = "urgent",
-    NORMAL = "normal",
-    SCHEDULED = "scheduled"
-}
 export declare class Job {
     id: string;
     title: string;
     description: string;
     status: JobStatus;
-    jobType: JobType;
-    budget: number;
-    location: string;
-    latitude: number;
-    longitude: number;
+    budget: string;
+    userInfo: any;
+    userInfoId: string;
     scheduledDate: Date;
     scheduledTime: string;
     isUrgent: boolean;

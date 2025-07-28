@@ -26,6 +26,30 @@ let NotificationsService = class NotificationsService {
         this.userInfoRepository = userInfoRepository;
     }
     async createJobNotification(job, employer) {
+        console.log(`🔔 Job notification başlatılıyor: Job ID: ${job.id}, UserInfo ID: ${job.userInfoId}`);
+        let jobLocation = null;
+        if (job.userInfoId) {
+            jobLocation = await this.userInfoRepository.findOne({
+                where: { id: job.userInfoId }
+            });
+            console.log(`📍 Job konum bilgisi:`, jobLocation ? {
+                address: jobLocation.address,
+                latitude: jobLocation.latitude,
+                longitude: jobLocation.longitude
+            } : 'Bulunamadı');
+        }
+        else {
+            console.log(`⚠️ Job'da userInfoId bulunamadı`);
+        }
+        if (!jobLocation || !jobLocation.latitude || !jobLocation.longitude) {
+            console.log(`❌ Job konum bilgisi eksik, bildirim gönderilmedi`);
+            return {
+                message: 'İş ilanının konum bilgisi bulunamadı, bildirim gönderilmedi',
+                notifiedWorkers: 0,
+                totalWorkers: 0,
+                error: 'Konum bilgisi eksik'
+            };
+        }
         const workers = await this.userRepository.find({
             where: {
                 userType: 'worker',
@@ -34,17 +58,25 @@ let NotificationsService = class NotificationsService {
             },
             relations: ['userInfos']
         });
+        console.log(`👥 Kategoriye uygun ${workers.length} worker bulundu`);
         const nearbyWorkers = workers.filter(worker => {
-            if (!worker.userInfos || worker.userInfos.length === 0)
+            if (!worker.userInfos || worker.userInfos.length === 0) {
+                console.log(`⚠️ Worker ${worker.id} konum bilgisi yok`);
                 return false;
-            if (!job.latitude || !job.longitude)
-                return false;
+            }
             const workerLocation = worker.userInfos[0];
-            if (!workerLocation.latitude || !workerLocation.longitude)
+            if (!workerLocation.latitude || !workerLocation.longitude) {
+                console.log(`⚠️ Worker ${worker.id} koordinat bilgisi yok`);
                 return false;
-            const distance = this.calculateDistance(job.latitude, job.longitude, workerLocation.latitude, workerLocation.longitude);
-            return distance <= 20;
+            }
+            const distance = this.calculateDistance(jobLocation.latitude, jobLocation.longitude, workerLocation.latitude, workerLocation.longitude);
+            const isNearby = distance <= 20;
+            if (isNearby) {
+                console.log(`✅ Worker ${worker.id} (${worker.firstName} ${worker.lastName}) ${distance.toFixed(1)}km uzaklıkta`);
+            }
+            return isNearby;
         });
+        console.log(`📍 20km içinde ${nearbyWorkers.length} worker bulundu`);
         const notifications = nearbyWorkers.map(worker => {
             const notification = new notification_entity_1.Notification();
             notification.type = notification_entity_1.NotificationType.JOB_CREATED;
@@ -58,20 +90,38 @@ let NotificationsService = class NotificationsService {
                 jobTitle: job.title,
                 jobDescription: job.description,
                 budget: job.budget,
-                location: job.location,
+                location: jobLocation.address,
                 employerName: `${employer.firstName} ${employer.lastName}`,
-                distance: this.calculateDistance(job.latitude, job.longitude, worker.userInfos[0].latitude, worker.userInfos[0].longitude)
+                distance: this.calculateDistance(jobLocation.latitude, jobLocation.longitude, worker.userInfos[0].latitude, worker.userInfos[0].longitude).toFixed(1)
             };
             return notification;
         });
         if (notifications.length > 0) {
             await this.notificationRepository.save(notifications);
+            console.log(`📨 ${notifications.length} bildirim veritabanına kaydedildi`);
         }
-        return {
+        else {
+            console.log(`📭 Bildirim gönderilecek worker bulunamadı`);
+        }
+        const result = {
             message: `${notifications.length} worker'a bildirim gönderildi`,
             notifiedWorkers: notifications.length,
-            totalWorkers: workers.length
+            totalWorkers: workers.length,
+            jobLocation: {
+                address: jobLocation.address,
+                latitude: jobLocation.latitude,
+                longitude: jobLocation.longitude
+            },
+            details: {
+                jobId: job.id,
+                jobTitle: job.title,
+                userInfoId: job.userInfoId,
+                categoryId: job.categoryId,
+                searchRadius: '20km'
+            }
         };
+        console.log(`✅ Job notification tamamlandı:`, result);
+        return result;
     }
     async getUserNotifications(userId) {
         return this.notificationRepository.find({

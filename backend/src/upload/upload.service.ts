@@ -6,7 +6,7 @@ import * as fs from 'fs';
 
 @Injectable()
 export class UploadService {
-  private uploadPath = 'uploads';
+  public uploadPath = 'uploads';
 
   constructor() {
     // Uploads klasörünü oluştur (eğer yoksa)
@@ -50,6 +50,8 @@ export class UploadService {
   }
 
   getFileUrl(filename: string): string {
-    return `/uploads/${filename}`;
+    const url = `/uploads/${filename}`;
+    console.log('🔗 Dosya URL\'i oluşturuldu:', url);
+    return url;
   }
 } 

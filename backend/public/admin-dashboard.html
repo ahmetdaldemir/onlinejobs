@@ -166,7 +166,7 @@
                         
                         <!-- Add User Button -->
                         <div class="mb-3">
-                            <button class="btn btn-primary" onclick="showAddUserModal()">
+                            <button class="btn btn-primary" onclick="showUserModal('add')">
                                 <i class="fas fa-plus me-2"></i>Yeni Kullanıcı Ekle
                             </button>
                         </div>
@@ -234,186 +234,86 @@
         </div>
     </div>
 
-    <!-- Add User Modal -->
-    <div class="modal fade" id="addUserModal" tabindex="-1">
+    <!-- Unified User Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Yeni Kullanıcı Ekle</h5>
+                    <h5 class="modal-title" id="userModalTitle">Kullanıcı Ekle</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addUserForm">
+                    <form id="userForm">
+                        <input type="hidden" id="userId" name="userId">
                         <div class="row">
                             <div class="col-md-6">
                                 <h6>Kullanıcı Bilgileri</h6>
                                 <div class="mb-3">
                                     <label class="form-label">Ad *</label>
-                                    <input type="text" class="form-control" name="firstName" required>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Soyad *</label>
-                                    <input type="text" class="form-control" name="lastName" required>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" name="email">
+                                    <input type="email" class="form-control" id="email" name="email">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Telefon *</label>
-                                    <input type="text" class="form-control" name="phone" required>
+                                    <input type="text" class="form-control" id="phone" name="phone" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label">Şifre *</label>
-                                    <input type="password" class="form-control" name="password" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Kullanıcı Tipi *</label>
-                                    <select class="form-control" name="userType" id="addUserTypeSelect" required>
-                                        <option value="worker">İşçi</option>
-                                        <option value="employer">İşveren</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Biyografi</label>
-                                    <textarea class="form-control" name="bio" rows="3"></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Profil Fotoğrafı</label>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <img id="addProfileImage" src="" alt="Profil Fotoğrafı" 
-                                             class="rounded-circle" style="width: 60px; height: 60px; object-fit: cover; display: none;">
-                                        <div class="flex-grow-1">
-                                            <input type="file" class="form-control" id="addProfileImageFile" 
-                                                   accept="image/*" onchange="previewAddImage(this)">
-                                            <small class="text-muted">Maksimum 5MB, sadece resim dosyaları</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mb-3" id="addCategoriesSection" style="display: none;">
-                                    <label class="form-label">Kategoriler (Sadece İşçi için)</label>
-                                    <div id="addCategoriesContainer" class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
-                                        <!-- Kategoriler buraya yüklenecek -->
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <h6>Adres Bilgileri</h6>
-                                <div class="mb-3">
-                                    <label class="form-label">Adres</label>
-                                    <textarea class="form-control" name="address" rows="2"></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Mahalle/Cadde/Sokak</label>
-                                    <input type="text" class="form-control" name="neighborhood">
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">Bina No</label>
-                                            <input type="text" class="form-control" name="buildingNo">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">Kat</label>
-                                            <input type="text" class="form-control" name="floor">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">Daire No</label>
-                                            <input type="text" class="form-control" name="apartmentNo">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Açıklama</label>
-                                    <textarea class="form-control" name="description" rows="3"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                    <button type="button" class="btn btn-primary" onclick="addUser()">Kullanıcı Ekle</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit User Modal -->
-    <div class="modal fade" id="editUserModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Kullanıcı Düzenle</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editUserForm">
-                        <input type="hidden" id="editUserId" name="userId">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6>Kullanıcı Bilgileri</h6>
-                                <div class="mb-3">
-                                    <label class="form-label">Ad *</label>
-                                    <input type="text" class="form-control" id="editFirstName" name="firstName" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Soyad *</label>
-                                    <input type="text" class="form-control" id="editLastName" name="lastName" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="editEmail" name="email">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Telefon *</label>
-                                    <input type="text" class="form-control" id="editPhone" name="phone" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Yeni Şifre (Boş bırakılırsa değişmez)</label>
-                                    <input type="password" class="form-control" id="editPassword" name="password">
+                                    <label class="form-label" id="passwordLabel">Şifre *</label>
+                                    <input type="password" class="form-control" id="password" name="password">
+                                    <small class="text-muted" id="passwordHelp">Düzenleme modunda boş bırakılırsa değişmez</small>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Kullanıcı Tipi</label>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="editUserTypeSwitch">
-                                        <label class="form-check-label" for="editUserTypeSwitch">
-                                            <span id="editUserTypeLabel">İşçi</span>
-                                        </label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="userType" id="userTypeWorker" value="worker" checked>
+                                            <label class="form-check-label" for="userTypeWorker">
+                                                İşçi
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="userType" id="userTypeEmployer" value="employer">
+                                            <label class="form-check-label" for="userTypeEmployer">
+                                                İşveren
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="mb-3">
+                                <div class="mb-3" id="statusSection" style="display: none;">
                                     <label class="form-label">Durum</label>
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" id="editStatusSwitch" checked>
-                                        <label class="form-check-label" for="editStatusSwitch">
-                                            <span id="editStatusLabel">Aktif</span>
+                                        <input class="form-check-input" type="checkbox" id="statusSwitch" checked>
+                                        <label class="form-check-label" for="statusSwitch">
+                                            <span id="statusLabel">Aktif</span>
                                         </label>
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Biyografi</label>
-                                    <textarea class="form-control" id="editBio" name="bio" rows="3"></textarea>
+                                    <textarea class="form-control" id="bio" name="bio" rows="3"></textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Profil Fotoğrafı</label>
                                     <div class="d-flex align-items-center gap-3">
-                                        <img id="editProfileImage" src="" alt="Profil Fotoğrafı" 
+                                        <img id="profileImage" src="" alt="Profil Fotoğrafı" 
                                              class="rounded-circle" style="width: 60px; height: 60px; object-fit: cover; display: none;">
                                         <div class="flex-grow-1">
-                                            <input type="file" class="form-control" id="editProfileImageFile" 
-                                                   accept="image/*" onchange="previewEditImage(this)">
+                                            <input type="file" class="form-control" id="profileImageFile" 
+                                                   accept="image/*" onchange="previewImage(this)">
                                             <small class="text-muted">Maksimum 5MB, sadece resim dosyaları</small>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="mb-3" id="editCategoriesSection" style="display: none;">
+                                <div class="mb-3" id="categoriesSection" style="display: none;">
                                     <label class="form-label">Kategoriler (Sadece İşçi için)</label>
-                                    <div id="editCategoriesContainer" class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                    <div id="categoriesContainer" class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
                                         <!-- Kategoriler buraya yüklenecek -->
                                     </div>
                                 </div>
@@ -422,35 +322,35 @@
                                 <h6>Adres Bilgileri</h6>
                                 <div class="mb-3">
                                     <label class="form-label">Adres</label>
-                                    <textarea class="form-control" id="editAddress" name="address" rows="2"></textarea>
+                                    <textarea class="form-control" id="address" name="address" rows="2"></textarea>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Mahalle/Cadde/Sokak</label>
-                                    <input type="text" class="form-control" id="editNeighborhood" name="neighborhood">
+                                    <input type="text" class="form-control" id="neighborhood" name="neighborhood">
                                 </div>
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label">Bina No</label>
-                                            <input type="text" class="form-control" id="editBuildingNo" name="buildingNo">
+                                            <input type="text" class="form-control" id="buildingNo" name="buildingNo">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label">Kat</label>
-                                            <input type="text" class="form-control" id="editFloor" name="floor">
+                                            <input type="text" class="form-control" id="floor" name="floor">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label">Daire No</label>
-                                            <input type="text" class="form-control" id="editApartmentNo" name="apartmentNo">
+                                            <input type="text" class="form-control" id="apartmentNo" name="apartmentNo">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Açıklama</label>
-                                    <textarea class="form-control" id="editDescription" name="description" rows="3"></textarea>
+                                    <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -458,7 +358,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                    <button type="button" class="btn btn-primary" onclick="updateUser()">Güncelle</button>
+                    <button type="button" class="btn btn-primary" id="userModalSubmitBtn" onclick="saveUser()">Kaydet</button>
                 </div>
             </div>
         </div>
@@ -869,14 +769,29 @@
             }
         }
 
-        function showAddUserModal() {
-            document.getElementById('addUserForm').reset();
-            loadAddCategories();
-            const modal = new bootstrap.Modal(document.getElementById('addUserModal'));
+        function showUserModal(mode) {
+            document.getElementById('userForm').reset();
+            document.getElementById('userModalTitle').textContent = mode === 'add' ? 'Yeni Kullanıcı Ekle' : 'Kullanıcı Düzenle';
+            document.getElementById('userModalSubmitBtn').textContent = mode === 'add' ? 'Kullanıcı Ekle' : 'Güncelle';
+            document.getElementById('userId').value = ''; // Clear user ID for add mode
+            document.getElementById('password').value = ''; // Clear password for edit mode
+            document.getElementById('passwordLabel').textContent = 'Şifre *'; // Reset password label
+            document.getElementById('passwordHelp').style.display = 'none'; // Hide password help for add mode
+            document.getElementById('statusSection').style.display = 'none'; // Hide status section by default
+            document.getElementById('categoriesSection').style.display = 'none'; // Hide categories section by default
+
+            // Set default values for add mode
+            if (mode === 'add') {
+                document.getElementById('userTypeWorker').checked = true; // Default to worker for add
+                document.getElementById('statusSwitch').checked = true; // Default to active for add
+                loadCategories(); // Load categories for add mode
+            }
+
+            const modal = new bootstrap.Modal(document.getElementById('userModal'));
             modal.show();
         }
 
-        async function loadAddCategories() {
+        async function loadCategories() {
             try {
                 // Aktif kategorileri yükle
                 const categoriesResponse = await fetch(`${API_BASE}/admin/categories/active`, {
@@ -886,7 +801,7 @@
                 });
                 const categories = await categoriesResponse.json();
 
-                const categoriesContainer = document.getElementById('addCategoriesContainer');
+                const categoriesContainer = document.getElementById('categoriesContainer');
                 
                 // Build hierarchical structure
                 const categoryMap = {};
@@ -916,8 +831,8 @@
                     let html = `
                         <div class="form-check" style="margin-left: ${level * 15}px;">
                             <input class="form-check-input" type="checkbox" 
-                                   value="${category.id}" id="add_cat_${category.id}">
-                            <label class="form-check-label" for="add_cat_${category.id}">
+                                   value="${category.id}" id="cat_${category.id}">
+                            <label class="form-check-label" for="cat_${category.id}">
                                 ${prefix}${category.icon || '📁'} ${category.name}
                             </label>
                         </div>
@@ -938,23 +853,32 @@
                 categoriesContainer.innerHTML = categoriesHtml;
 
                 // Kullanıcı tipi değiştiğinde kategorileri göster/gizle
-                const userTypeSelect = document.getElementById('addUserTypeSelect');
-                userTypeSelect.addEventListener('change', function() {
-                    toggleAddCategoriesSection();
+                const userTypeRadios = document.querySelectorAll('#userForm input[name="userType"]');
+                userTypeRadios.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        toggleCategoriesSection();
+                    });
                 });
 
                 // İlk yüklemede kategorileri göster/gizle
-                toggleAddCategoriesSection();
+                toggleCategoriesSection();
             } catch (error) {
                 console.error('Kategoriler yüklenirken hata:', error);
             }
         }
 
-        function toggleAddCategoriesSection() {
-            const userTypeSelect = document.getElementById('addUserTypeSelect');
-            const categoriesSection = document.getElementById('addCategoriesSection');
+        function toggleCategoriesSection() {
+            const userTypeRadios = document.querySelectorAll('#userForm input[name="userType"]');
+            const categoriesSection = document.getElementById('categoriesSection');
             
-            if (userTypeSelect.value === 'worker') {
+            let isWorkerSelected = false;
+            userTypeRadios.forEach(radio => {
+                if (radio.checked) {
+                    isWorkerSelected = radio.value === 'worker';
+                }
+            });
+
+            if (isWorkerSelected) {
                 categoriesSection.style.display = 'block';
             } else {
                 categoriesSection.style.display = 'none';
@@ -962,14 +886,23 @@
         }
 
         async function addUser() {
-            const form = document.getElementById('addUserForm');
+            const form = document.getElementById('userForm');
             const formData = new FormData(form);
             
             // Seçili kategorileri topla
             const selectedCategories = [];
-            const categoryCheckboxes = document.querySelectorAll('#addCategoriesContainer input[type="checkbox"]:checked');
+            const categoryCheckboxes = document.querySelectorAll('#categoriesContainer input[type="checkbox"]:checked');
             categoryCheckboxes.forEach(checkbox => {
                 selectedCategories.push(checkbox.value);
+            });
+            
+            // Get user type from radio buttons
+            let userType = 'worker';
+            const userTypeRadios = document.querySelectorAll('#userForm input[name="userType"]');
+            userTypeRadios.forEach(radio => {
+                if (radio.checked) {
+                    userType = radio.value;
+                }
             });
             
             const userData = {
@@ -978,7 +911,7 @@
                 email: formData.get('email') || null,
                 phone: formData.get('phone'),
                 password: formData.get('password'),
-                userType: formData.get('userType'),
+                userType: userType,
                 bio: formData.get('bio') || null,
                 categoryIds: selectedCategories, // Kategorileri ekle
                 userInfo: {
@@ -992,13 +925,19 @@
             };
 
             try {
-                const profileImageFile = document.getElementById('addProfileImageFile');
+                const profileImageFile = document.getElementById('profileImageFile');
                 const hasFile = profileImageFile.files.length > 0;
 
                 if (hasFile) {
                     // Dosya varsa FormData kullan
                     const requestFormData = new FormData();
                     requestFormData.append('file', profileImageFile.files[0]);
+                    
+                    console.log('📤 Dosya yükleniyor (Add User):', {
+                        name: profileImageFile.files[0].name,
+                        size: profileImageFile.files[0].size,
+                        type: profileImageFile.files[0].type
+                    });
                     
                     // Diğer verileri de ekle
                     Object.keys(userData).forEach(key => {
@@ -1020,9 +959,10 @@
                     });
 
                     const data = await response.json();
+                    console.log('📥 Sunucu yanıtı (Add User):', data);
 
                     if (response.ok) {
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('userModal'));
                         modal.hide();
                         loadUsers();
                         alert('✅ Kullanıcı başarıyla eklendi!');
@@ -1043,7 +983,7 @@
                     const data = await response.json();
 
                     if (response.ok) {
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('userModal'));
                         modal.hide();
                         loadUsers();
                         alert('✅ Kullanıcı başarıyla eklendi!');
@@ -1200,18 +1140,25 @@
 
                 const user = await response.json();
 
+                // Configure modal for edit mode
+                document.getElementById('userModalTitle').textContent = 'Kullanıcı Düzenle';
+                document.getElementById('userModalSubmitBtn').textContent = 'Güncelle';
+                document.getElementById('statusSection').style.display = 'block';
+                document.getElementById('passwordLabel').textContent = 'Yeni Şifre (Boş bırakılırsa değişmez)';
+                document.getElementById('passwordHelp').style.display = 'block';
+
                 // Fill form fields
-                document.getElementById('editUserId').value = user.id;
-                document.getElementById('editFirstName').value = user.firstName;
-                document.getElementById('editLastName').value = user.lastName;
-                document.getElementById('editEmail').value = user.email || '';
-                document.getElementById('editPhone').value = user.phone;
-                document.getElementById('editPassword').value = ''; // Clear password field
-                document.getElementById('editBio').value = user.bio || '';
+                document.getElementById('userId').value = user.id;
+                document.getElementById('firstName').value = user.firstName;
+                document.getElementById('lastName').value = user.lastName;
+                document.getElementById('email').value = user.email || '';
+                document.getElementById('phone').value = user.phone;
+                document.getElementById('password').value = ''; // Clear password field
+                document.getElementById('bio').value = user.bio || '';
 
                 // Set profile image
-                const profileImage = document.getElementById('editProfileImage');
-                const profileImageFile = document.getElementById('editProfileImageFile');
+                const profileImage = document.getElementById('profileImage');
+                const profileImageFile = document.getElementById('profileImageFile');
                 if (user.profileImage) {
                     profileImage.src = user.profileImage;
                     profileImage.style.display = 'block';
@@ -1220,26 +1167,32 @@
                 }
                 profileImageFile.value = ''; // Clear file input
 
-                // Set switch states
-                const userTypeSwitch = document.getElementById('editUserTypeSwitch');
-                const statusSwitch = document.getElementById('editStatusSwitch');
-                
-                userTypeSwitch.checked = user.userType === 'employer';
+                // Set radio button states
+                const userTypeRadios = document.querySelectorAll('#userForm input[name="userType"]');
+                userTypeRadios.forEach(radio => {
+                    if (radio.value === user.userType) {
+                        radio.checked = true;
+                    }
+                });
+
+                // Set status switch
+                const statusSwitch = document.getElementById('statusSwitch');
                 statusSwitch.checked = user.status === 'active';
-                
                 updateSwitchLabels();
-                loadEditCategories(user);
+
+                // Load categories and fill address fields
+                await loadEditCategories(user);
 
                 // Fill address fields
                 const userInfo = user.userInfos && user.userInfos.length > 0 ? user.userInfos[0] : {};
-                document.getElementById('editAddress').value = userInfo.address || '';
-                document.getElementById('editNeighborhood').value = userInfo.neighborhood || '';
-                document.getElementById('editBuildingNo').value = userInfo.buildingNo || '';
-                document.getElementById('editFloor').value = userInfo.floor || '';
-                document.getElementById('editApartmentNo').value = userInfo.apartmentNo || '';
-                document.getElementById('editDescription').value = userInfo.description || '';
+                document.getElementById('address').value = userInfo.address || '';
+                document.getElementById('neighborhood').value = userInfo.neighborhood || '';
+                document.getElementById('buildingNo').value = userInfo.buildingNo || '';
+                document.getElementById('floor').value = userInfo.floor || '';
+                document.getElementById('apartmentNo').value = userInfo.apartmentNo || '';
+                document.getElementById('description').value = userInfo.description || '';
 
-                const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+                const modal = new bootstrap.Modal(document.getElementById('userModal'));
                 modal.show();
             } catch (error) {
                 console.error('Kullanıcı düzenleme bilgileri yüklenirken hata:', error);
@@ -1257,8 +1210,8 @@
                 });
                 const categories = await categoriesResponse.json();
 
-                const categoriesContainer = document.getElementById('editCategoriesContainer');
-                const categoriesSection = document.getElementById('editCategoriesSection');
+                const categoriesContainer = document.getElementById('categoriesContainer');
+                const categoriesSection = document.getElementById('categoriesSection');
                 
                 // Kullanıcı tipine göre kategorileri göster/gizle
                 if (user.userType === 'worker') {
@@ -1287,15 +1240,14 @@
 
                     // Generate hierarchical checkboxes recursively
                     function generateCategoryCheckboxes(category, level = 0) {
-                        const indent = '&nbsp;'.repeat(level * 4);
                         const prefix = level > 0 ? '└─ ' : '';
                         const isChecked = user.categories && user.categories.some(cat => cat.id === category.id) ? 'checked' : '';
                         
                         let html = `
                             <div class="form-check" style="margin-left: ${level * 15}px;">
                                 <input class="form-check-input" type="checkbox" 
-                                       value="${category.id}" id="edit_cat_${category.id}" ${isChecked}>
-                                <label class="form-check-label" for="edit_cat_${category.id}">
+                                       value="${category.id}" id="cat_${category.id}" ${isChecked}>
+                                <label class="form-check-label" for="cat_${category.id}">
                                     ${prefix}${category.icon || '📁'} ${category.name}
                                 </label>
                             </div>
@@ -1322,85 +1274,83 @@
             }
         }
 
-        // Switch event listeners
+        // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
-            // User Type Switch
-            const userTypeSwitch = document.getElementById('editUserTypeSwitch');
-            userTypeSwitch.addEventListener('change', function() {
-                updateSwitchLabels();
-                toggleCategoriesSection();
+            // User Type Radio Buttons
+            const userTypeRadios = document.querySelectorAll('#userForm input[name="userType"]');
+            userTypeRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    toggleCategoriesSection();
+                });
             });
 
             // Status Switch
-            const statusSwitch = document.getElementById('editStatusSwitch');
+            const statusSwitch = document.getElementById('statusSwitch');
             statusSwitch.addEventListener('change', function() {
                 updateSwitchLabels();
             });
         });
 
-        function toggleCategoriesSection() {
-            const userTypeSwitch = document.getElementById('editUserTypeSwitch');
-            const categoriesSection = document.getElementById('editCategoriesSection');
-            
-            if (userTypeSwitch.checked) {
-                // İşveren seçildi - kategorileri gizle
-                categoriesSection.style.display = 'none';
-            } else {
-                // İşçi seçildi - kategorileri göster
-                categoriesSection.style.display = 'block';
-            }
-        }
-
         function updateSwitchLabels() {
-            const userTypeSwitch = document.getElementById('editUserTypeSwitch');
-            const statusSwitch = document.getElementById('editStatusSwitch');
-            const userTypeLabel = document.getElementById('editUserTypeLabel');
-            const statusLabel = document.getElementById('editStatusLabel');
-
-            userTypeLabel.textContent = userTypeSwitch.checked ? 'İşveren' : 'İşçi';
+            const statusSwitch = document.getElementById('statusSwitch');
+            const statusLabel = document.getElementById('statusLabel');
             statusLabel.textContent = statusSwitch.checked ? 'Aktif' : 'Pasif';
         }
 
         async function updateUser() {
-            const userId = document.getElementById('editUserId').value;
-            const userTypeSwitch = document.getElementById('editUserTypeSwitch');
-            const statusSwitch = document.getElementById('editStatusSwitch');
+            const userId = document.getElementById('userId').value;
+            const userTypeRadios = document.querySelectorAll('#userForm input[name="userType"]');
+            const statusSwitch = document.getElementById('statusSwitch');
 
             // Seçili kategorileri topla
             const selectedCategories = [];
-            const categoryCheckboxes = document.querySelectorAll('#editCategoriesContainer input[type="checkbox"]:checked');
+            const categoryCheckboxes = document.querySelectorAll('#categoriesContainer input[type="checkbox"]:checked');
             categoryCheckboxes.forEach(checkbox => {
                 selectedCategories.push(checkbox.value);
             });
 
+            // Get user type from radio buttons
+            let userType = 'worker';
+            userTypeRadios.forEach(radio => {
+                if (radio.checked) {
+                    userType = radio.value;
+                }
+            });
+
             const userData = {
-                firstName: document.getElementById('editFirstName').value,
-                lastName: document.getElementById('editLastName').value,
-                email: document.getElementById('editEmail').value || null,
-                phone: document.getElementById('editPhone').value,
-                password: document.getElementById('editPassword').value || null,
-                userType: userTypeSwitch.checked ? 'employer' : 'worker',
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value || null,
+                phone: document.getElementById('phone').value,
+                password: document.getElementById('password').value || null,
+                userType: userType,
                 status: statusSwitch.checked ? 'active' : 'inactive',
-                bio: document.getElementById('editBio').value || null,
+                bio: document.getElementById('bio').value || null,
                 categoryIds: selectedCategories, // Kategorileri ekle
                 userInfo: {
-                    address: document.getElementById('editAddress').value || null,
-                    neighborhood: document.getElementById('editNeighborhood').value || null,
-                    buildingNo: document.getElementById('editBuildingNo').value || null,
-                    floor: document.getElementById('editFloor').value || null,
-                    apartmentNo: document.getElementById('editApartmentNo').value || null,
-                    description: document.getElementById('editDescription').value || null,
+                    address: document.getElementById('address').value || null,
+                    neighborhood: document.getElementById('neighborhood').value || null,
+                    buildingNo: document.getElementById('buildingNo').value || null,
+                    floor: document.getElementById('floor').value || null,
+                    apartmentNo: document.getElementById('apartmentNo').value || null,
+                    description: document.getElementById('description').value || null,
                 }
             };
 
             try {
-                const profileImageFile = document.getElementById('editProfileImageFile');
+                const profileImageFile = document.getElementById('profileImageFile');
                 const hasFile = profileImageFile.files.length > 0;
 
                 if (hasFile) {
                     // Dosya varsa FormData kullan
                     const formData = new FormData();
                     formData.append('file', profileImageFile.files[0]);
+                    
+                    console.log('📤 Dosya yükleniyor:', {
+                        name: profileImageFile.files[0].name,
+                        size: profileImageFile.files[0].size,
+                        type: profileImageFile.files[0].type
+                    });
                     
                     // Diğer verileri de ekle
                     Object.keys(userData).forEach(key => {
@@ -1422,9 +1372,10 @@
                     });
 
                     const data = await response.json();
+                    console.log('📥 Sunucu yanıtı:', data);
 
                     if (response.ok) {
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('userModal'));
                         modal.hide();
                         loadUsers();
                         alert('✅ Kullanıcı başarıyla güncellendi!');
@@ -1445,7 +1396,7 @@
                     const data = await response.json();
 
                     if (response.ok) {
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('userModal'));
                         modal.hide();
                         loadUsers();
                         alert('✅ Kullanıcı başarıyla güncellendi!');
@@ -1588,36 +1539,20 @@
             }
         }
 
-        // Profil Fotoğrafı Upload Fonksiyonları
-        function previewEditImage(input) {
-            const file = input.files[0];
-            const preview = document.getElementById('editProfileImage');
-            
-            if (file) {
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('❌ Dosya boyutu 5MB\'dan büyük olamaz!');
-                    input.value = '';
-                    return;
-                }
-                
-                if (!file.type.startsWith('image/')) {
-                    alert('❌ Sadece resim dosyaları yüklenebilir!');
-                    input.value = '';
-                    return;
-                }
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+        // Unified save function for both add and update
+        function saveUser() {
+            const userId = document.getElementById('userId').value;
+            if (userId) {
+                updateUser();
+            } else {
+                addUser();
             }
         }
 
-        function previewAddImage(input) {
+        // Profil Fotoğrafı Upload Fonksiyonları
+        function previewImage(input) {
             const file = input.files[0];
-            const preview = document.getElementById('addProfileImage');
+            const preview = document.getElementById('profileImage');
             
             if (file) {
                 if (file.size > 5 * 1024 * 1024) {

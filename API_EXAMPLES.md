@@ -115,6 +115,7 @@ Content-Type: application/json
   "latitude": 41.0082,
   "longitude": 28.9784,
   "categoryId": "uuid-of-electrician",
+  "userInfoId": "uuid-of-user-info",
   "isUrgent": true,
   "jobType": "urgent"
 }

@@ -1,8 +1,6 @@
-import { JobType } from '../entities/job.entity';
 export declare class CreateJobDto {
     title: string;
     description: string;
-    jobType: JobType;
     budget?: number;
     location?: string;
     latitude?: number;
@@ -11,4 +9,5 @@ export declare class CreateJobDto {
     scheduledTime?: string;
     isUrgent?: boolean;
     categoryId?: string;
+    userInfoId?: string;
 }

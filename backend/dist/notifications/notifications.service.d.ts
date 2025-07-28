@@ -12,6 +12,23 @@ export declare class NotificationsService {
         message: string;
         notifiedWorkers: number;
         totalWorkers: number;
+        jobLocation: {
+            address: any;
+            latitude: any;
+            longitude: any;
+        };
+        details: {
+            jobId: string;
+            jobTitle: string;
+            userInfoId: string;
+            categoryId: string;
+            searchRadius: string;
+        };
+    } | {
+        message: string;
+        notifiedWorkers: number;
+        totalWorkers: number;
+        error: string;
     }>;
     getUserNotifications(userId: string): Promise<Notification[]>;
     markAsRead(notificationId: string): Promise<Notification>;

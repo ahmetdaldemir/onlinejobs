@@ -318,8 +318,18 @@ let UsersService = class UsersService {
     async updateProfile(userId, updateData, file) {
         const user = await this.findById(userId);
         if (file) {
+            console.log('📸 Profil fotoğrafı yükleniyor (Users Service):', {
+                originalName: file.originalname,
+                filename: file.filename,
+                size: file.size,
+                mimetype: file.mimetype
+            });
             const fileUrl = this.uploadService.getFileUrl(file.filename);
             user.profileImage = fileUrl;
+            console.log('✅ Profil fotoğrafı URL\'i oluşturuldu (Users Service):', fileUrl);
+        }
+        else {
+            console.log('ℹ️ Profil fotoğrafı yüklenmedi (Users Service)');
         }
         if (updateData.categoryIds) {
             const { Category } = await Promise.resolve().then(() => require('../categories/entities/category.entity'));

@@ -53,7 +53,9 @@ let UploadService = class UploadService {
         }
     }
     getFileUrl(filename) {
-        return `/uploads/${filename}`;
+        const url = `/uploads/${filename}`;
+        console.log('🔗 Dosya URL\'i oluşturuldu:', url);
+        return url;
     }
 };
 exports.UploadService = UploadService;

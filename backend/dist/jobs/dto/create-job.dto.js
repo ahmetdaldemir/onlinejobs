@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateJobDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
-const job_entity_1 = require("../entities/job.entity");
 class CreateJobDto {
 }
 exports.CreateJobDto = CreateJobDto;
@@ -26,11 +25,6 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateJobDto.prototype, "description", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ enum: job_entity_1.JobType }),
-    (0, class_validator_1.IsEnum)(job_entity_1.JobType),
-    __metadata("design:type", String)
-], CreateJobDto.prototype, "jobType", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
     (0, class_validator_1.IsOptional)(),
@@ -79,4 +73,10 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateJobDto.prototype, "categoryId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false, description: 'İş ilanının konum bilgilerini içeren UserInfo ID' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateJobDto.prototype, "userInfoId", void 0);
 //# sourceMappingURL=create-job.dto.js.map

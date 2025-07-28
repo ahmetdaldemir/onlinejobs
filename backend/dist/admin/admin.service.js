@@ -206,8 +206,18 @@ let AdminService = class AdminService {
             }
         }
         if (file) {
+            console.log('📸 Profil fotoğrafı yükleniyor:', {
+                originalName: file.originalname,
+                filename: file.filename,
+                size: file.size,
+                mimetype: file.mimetype
+            });
             const fileUrl = this.uploadService.getFileUrl(file.filename);
             user.profileImage = fileUrl;
+            console.log('✅ Profil fotoğrafı URL\'i oluşturuldu:', fileUrl);
+        }
+        else {
+            console.log('ℹ️ Profil fotoğrafı yüklenmedi');
         }
         if (updateUserDto.password) {
             updateUserDto.password = await bcrypt.hash(updateUserDto.password, 12);

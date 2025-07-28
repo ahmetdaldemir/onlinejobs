@@ -112,4 +112,47 @@ export class UploadController {
 
     return res.sendFile(filePath);
   }
+
+  @Get('test')
+  @ApiOperation({ summary: 'Upload modülü test endpoint' })
+  async testUpload() {
+    return {
+      message: 'Upload modülü çalışıyor',
+      uploadPath: this.uploadService.uploadPath,
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  @Post('test-upload')
+  @ApiOperation({ summary: 'Upload test endpoint (JWT guard yok)' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'Test dosyası',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  async testUploadFile(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('Dosya yüklenmedi');
+    }
+
+    const fileUrl = this.uploadService.getFileUrl(file.filename);
+
+    return {
+      message: 'Test dosyası başarıyla yüklendi',
+      filename: file.filename,
+      originalName: file.originalname,
+      size: file.size,
+      url: fileUrl,
+      test: true
+    };
+  }
 } 

@@ -19,4 +19,17 @@ export declare class UploadController {
         url: string;
     }>;
     serveFile(filename: string, res: Response): Promise<void | Response<any, Record<string, any>>>;
+    testUpload(): Promise<{
+        message: string;
+        uploadPath: string;
+        timestamp: string;
+    }>;
+    testUploadFile(file: Express.Multer.File): Promise<{
+        message: string;
+        filename: string;
+        originalName: string;
+        size: number;
+        url: string;
+        test: boolean;
+    }>;
 }
