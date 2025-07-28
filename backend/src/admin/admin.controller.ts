@@ -95,7 +95,7 @@ export class AdminController {
   @UseInterceptors(FileInterceptor('file'))
   async createUser(
     @Body() createUserDto: any,
-    @UploadedFile() file?: Express.Multer.File
+    @UploadedFile() file?: any
   ) {
     // FormData'dan gelen JSON string'leri parse et
     if (typeof createUserDto.categoryIds === 'string') {
@@ -139,7 +139,7 @@ export class AdminController {
   async updateUser(
     @Param('id') id: string, 
     @Body() updateUserDto: any,
-    @UploadedFile() file?: Express.Multer.File
+    @UploadedFile() file?: any
   ) {
     // FormData'dan gelen JSON string'leri parse et
     if (typeof updateUserDto.categoryIds === 'string') {

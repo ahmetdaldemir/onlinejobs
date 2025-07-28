@@ -70,11 +70,11 @@ export declare class AdminController {
     }>;
     getAllUsers(): Promise<import("../users/entities/user.entity").User[]>;
     getUserById(id: string): Promise<import("../users/entities/user.entity").User>;
-    createUser(createUserDto: any, file?: Express.Multer.File): Promise<{
+    createUser(createUserDto: any, file?: any): Promise<{
         message: string;
         user: import("../users/entities/user.entity").User;
     }>;
-    updateUser(id: string, updateUserDto: any, file?: Express.Multer.File): Promise<{
+    updateUser(id: string, updateUserDto: any, file?: any): Promise<{
         message: string;
         profileImage: string;
     }>;

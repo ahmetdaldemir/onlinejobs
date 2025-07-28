@@ -167,7 +167,7 @@ export class AdminService {
     return user;
   }
 
-  async createUser(createUserDto: CreateUserDto, file?: Express.Multer.File) {
+  async createUser(createUserDto: CreateUserDto, file?: any) {
     // Email ve telefon kontrolü
     const existingUser = await this.userRepository.findOne({
       where: [
@@ -223,7 +223,7 @@ export class AdminService {
     };
   }
 
-  async updateUser(id: string, updateUserDto: UpdateUserDto, file?: Express.Multer.File) {
+  async updateUser(id: string, updateUserDto: UpdateUserDto, file?: any) {
     const user = await this.userRepository.findOne({ 
       where: { id },
       relations: ['categories']

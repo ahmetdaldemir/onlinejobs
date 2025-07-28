@@ -85,11 +85,11 @@ export declare class AdminService {
     }>;
     getAllUsers(): Promise<User[]>;
     getUserById(id: string): Promise<User>;
-    createUser(createUserDto: CreateUserDto, file?: Express.Multer.File): Promise<{
+    createUser(createUserDto: CreateUserDto, file?: any): Promise<{
         message: string;
         user: User;
     }>;
-    updateUser(id: string, updateUserDto: UpdateUserDto, file?: Express.Multer.File): Promise<{
+    updateUser(id: string, updateUserDto: UpdateUserDto, file?: any): Promise<{
         message: string;
         profileImage: string;
     }>;
