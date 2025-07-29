@@ -4,6 +4,7 @@ import { JobsService } from './jobs.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApplicationStatus } from './entities/job-application.entity';
 import { CreateJobDto } from './dto/create-job.dto';
+import { CreateJobApplicationDto } from './dto/create-job-application.dto';
 import { UsersService } from '../users/users.service';
 import { BadRequestException } from '@nestjs/common';
 
@@ -98,7 +99,7 @@ export class JobsController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'İş için başvuru yap' })
   @ApiResponse({ status: 201, description: 'Başvuru yapıldı' })
-  async applyForJob(@Param('id') jobId: string, @Body() applicationData: any, @Request() req) {
+  async applyForJob(@Param('id') jobId: string, @Body() applicationData: CreateJobApplicationDto, @Request() req) {
     return this.jobsService.applyForJob(jobId, req.user.sub, applicationData);
   }
 

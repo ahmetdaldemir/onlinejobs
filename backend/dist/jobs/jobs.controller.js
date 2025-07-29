@@ -19,6 +19,7 @@ const jobs_service_1 = require("./jobs.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const job_application_entity_1 = require("./entities/job-application.entity");
 const create_job_dto_1 = require("./dto/create-job.dto");
+const create_job_application_dto_1 = require("./dto/create-job-application.dto");
 const users_service_1 = require("../users/users.service");
 const common_2 = require("@nestjs/common");
 let JobsController = class JobsController {
@@ -161,7 +162,7 @@ __decorate([
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:paramtypes", [String, create_job_application_dto_1.CreateJobApplicationDto, Object]),
     __metadata("design:returntype", Promise)
 ], JobsController.prototype, "applyForJob", null);
 __decorate([

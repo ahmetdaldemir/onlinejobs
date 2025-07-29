@@ -1,6 +1,7 @@
 import { JobsService } from './jobs.service';
 import { ApplicationStatus } from './entities/job-application.entity';
 import { CreateJobDto } from './dto/create-job.dto';
+import { CreateJobApplicationDto } from './dto/create-job-application.dto';
 import { UsersService } from '../users/users.service';
 export declare class JobsController {
     private readonly jobsService;
@@ -13,7 +14,7 @@ export declare class JobsController {
     findById(id: string): Promise<import("./entities/job.entity").Job>;
     update(id: string, updateJobDto: any, req: any): Promise<import("./entities/job.entity").Job>;
     delete(id: string, req: any): Promise<void>;
-    applyForJob(jobId: string, applicationData: any, req: any): Promise<import("./entities/job-application.entity").JobApplication>;
+    applyForJob(jobId: string, applicationData: CreateJobApplicationDto, req: any): Promise<import("./entities/job-application.entity").JobApplication>;
     updateApplicationStatus(applicationId: string, status: ApplicationStatus, req: any): Promise<import("./entities/job-application.entity").JobApplication>;
     getJobApplications(jobId: string, req: any): Promise<import("./entities/job-application.entity").JobApplication[]>;
 }

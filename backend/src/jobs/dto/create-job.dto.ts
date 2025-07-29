@@ -14,8 +14,8 @@ export class CreateJobDto {
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsNumber()
-  budget?: number;
+  @IsString()
+  budget?: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
