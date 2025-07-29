@@ -14,6 +14,7 @@ export declare class UsersController {
     findUsersByType(userType: string): Promise<import("./entities/user.entity").User[]>;
     updateUserTypes(req: any, userType: string): Promise<import("./entities/user.entity").User>;
     getUserInfo(req: any): Promise<import("./entities/user-info.entity").UserInfo>;
+    getUserInfos(req: any): Promise<import("./entities/user-info.entity").UserInfo>;
     findById(id: string): Promise<import("./entities/user.entity").User>;
     updateStatus(req: any, status: UserStatus): Promise<import("./entities/user.entity").User>;
     updateIsOnline(req: any, isOnline: boolean): Promise<import("./entities/user.entity").User>;

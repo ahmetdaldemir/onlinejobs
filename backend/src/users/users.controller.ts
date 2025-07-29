@@ -114,9 +114,18 @@ export class UsersController {
   @Get('user-info')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcı bilgilerini getir' })
-  @ApiResponse({ status: 200, description: 'Kullanıcı bilgileri getirildi' })
+  @ApiOperation({ summary: 'Kullanıcının kendi bilgilerini getir' })
+  @ApiResponse({ status: 200, description: 'Kullanıcı bilgileri' })
   async getUserInfo(@Request() req) {
+    return this.usersService.getUserInfo(req.user.sub);
+  }
+
+  @Get('user-infos')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Kullanıcının kendi bilgilerini getir (alias)' })
+  @ApiResponse({ status: 200, description: 'Kullanıcı bilgileri' })
+  async getUserInfos(@Request() req) {
     return this.usersService.getUserInfo(req.user.sub);
   }
 

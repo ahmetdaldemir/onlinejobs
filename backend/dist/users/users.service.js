@@ -191,7 +191,7 @@ let UsersService = class UsersService {
             .andWhere('user.isOnline = :isOnline', { isOnline: true })
             .andWhere('user.status = :status', { status: user_entity_1.UserStatus.ACTIVE });
         if (categoryId) {
-            query = query.andWhere('user.categoryIds @> ARRAY[:categoryId]', { categoryId });
+            query = query.andWhere('user.categoryIds LIKE :categoryId', { categoryId: `%${categoryId}%` });
         }
         if (latitude && longitude && radius) {
             query = query.andWhere(`(

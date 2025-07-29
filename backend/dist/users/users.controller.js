@@ -54,6 +54,9 @@ let UsersController = class UsersController {
     async getUserInfo(req) {
         return this.usersService.getUserInfo(req.user.sub);
     }
+    async getUserInfos(req) {
+        return this.usersService.getUserInfo(req.user.sub);
+    }
     async findById(id) {
         const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
         if (!uuidRegex.test(id)) {
@@ -192,13 +195,24 @@ __decorate([
     (0, common_1.Get)('user-info'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı bilgilerini getir' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı bilgileri getirildi' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcının kendi bilgilerini getir' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı bilgileri' }),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getUserInfo", null);
+__decorate([
+    (0, common_1.Get)('user-infos'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcının kendi bilgilerini getir (alias)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı bilgileri' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getUserInfos", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

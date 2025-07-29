@@ -76,6 +76,32 @@ if (!uuidRegex.test(id)) {
 }
 ```
 
+### 5. Express.Multer TypeScript Hatası
+
+**Sorun:**
+```
+error TS2503: Cannot find namespace 'Express'.
+```
+
+**Neden:** TypeScript, Express namespace'ini bulamıyor.
+
+**Çözüm:** `Express.Multer.File` yerine `any` tipini kullanın:
+
+```typescript
+// ❌ Hatalı
+@UploadedFile() file?: Express.Multer.File
+
+// ✅ Doğru
+@UploadedFile() file?: any
+```
+
+**Düzeltilen Dosyalar:**
+- `src/upload/upload.controller.ts`
+- `src/users/users.controller.ts`
+- `src/users/users.service.ts`
+- `src/admin/admin.controller.ts`
+- `src/admin/admin.service.ts`
+
 ## 🧪 Test Araçları
 
 ### 1. UUID Test Sayfası
@@ -159,6 +185,7 @@ Backend'i başlatmadan önce:
 - [ ] Redis çalışıyor (opsiyonel)
 - [ ] `.env` dosyası doğru yapılandırılmış
 - [ ] `npm install` çalıştırıldı
+- [ ] TypeScript build başarılı (`npm run build`)
 
 ## 🆘 Hala Sorun Yaşıyorsanız
 
@@ -166,6 +193,7 @@ Backend'i başlatmadan önce:
 2. **Test sayfalarını kullanın:** UUID ve upload test sayfalarını deneyin
 3. **API dokümantasyonunu kontrol edin:** Swagger UI'da endpoint'leri test edin
 4. **Veritabanı bağlantısını kontrol edin:** PostgreSQL'in çalıştığından emin olun
+5. **Build'i kontrol edin:** `npm run build` komutunun başarılı olduğundan emin olun
 
 ## 📞 Destek
 
