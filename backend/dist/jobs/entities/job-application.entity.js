@@ -42,9 +42,9 @@ __decorate([
     __metadata("design:type", String)
 ], JobApplication.prototype, "coverLetter", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 2, nullable: true }),
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
     (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", Number)
+    __metadata("design:type", String)
 ], JobApplication.prototype, "proposedPrice", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'text', nullable: true }),

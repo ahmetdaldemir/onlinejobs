@@ -39,6 +39,9 @@ let JobsController = class JobsController {
     async getMyApplications(req) {
         return this.jobsService.getMyApplications(req.user.sub);
     }
+    async getMyJobsApplications(req) {
+        return this.jobsService.getMyJobsApplications(req.user.sub);
+    }
     async findById(id) {
         const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
         if (!uuidRegex.test(id)) {
@@ -101,6 +104,17 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], JobsController.prototype, "getMyApplications", null);
+__decorate([
+    (0, common_1.Get)('my/jobs/applications'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Employer: İş ilanlarıma gelen başvuruları listele' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'İş ilanlarıma gelen başvurular listelendi' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], JobsController.prototype, "getMyJobsApplications", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'İş ilanı detayı' }),

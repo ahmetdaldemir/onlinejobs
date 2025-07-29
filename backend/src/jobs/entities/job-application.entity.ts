@@ -36,9 +36,9 @@ export class JobApplication {
   @ApiProperty()
   coverLetter: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  @Column({ type: 'text', nullable: true })
   @ApiProperty()
-  proposedPrice: number;
+  proposedPrice: string;
 
   @Column({ type: 'text', nullable: true })
   @ApiProperty()

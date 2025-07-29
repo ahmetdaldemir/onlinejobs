@@ -19,5 +19,6 @@ export declare class JobsService {
     applyForJob(jobId: string, applicantId: string, applicationData: any): Promise<JobApplication>;
     updateApplicationStatus(applicationId: string, status: ApplicationStatus, employerId: string): Promise<JobApplication>;
     getMyApplications(userId: string): Promise<JobApplication[]>;
+    getMyJobsApplications(employerId: string): Promise<JobApplication[]>;
     getJobApplications(jobId: string, employerId: string): Promise<JobApplication[]>;
 }

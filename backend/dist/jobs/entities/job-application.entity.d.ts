@@ -8,7 +8,7 @@ export declare class JobApplication {
     id: string;
     status: ApplicationStatus;
     coverLetter: string;
-    proposedPrice: number;
+    proposedPrice: string;
     estimatedDuration: string;
     proposedStartDate: Date;
     createdAt: Date;
