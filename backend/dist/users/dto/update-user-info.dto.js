@@ -16,6 +16,12 @@ class UpdateUserInfoDto {
 }
 exports.UpdateUserInfoDto = UpdateUserInfoDto;
 __decorate([
+    (0, swagger_1.ApiProperty)({ required: false, description: 'UserInfo ID (güncelleme için)' }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsUUID)(),
+    __metadata("design:type", String)
+], UpdateUserInfoDto.prototype, "userInfoId", void 0);
+__decorate([
     (0, swagger_1.ApiProperty)({ required: false, description: 'Adres adı' }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),

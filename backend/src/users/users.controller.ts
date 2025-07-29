@@ -185,8 +185,9 @@ export class UsersController {
   @Put('user-info')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcı bilgilerini güncelle' })
+  @ApiOperation({ summary: 'Kullanıcı bilgilerini güncelle (ID ile güncelleme veya yeni ekleme)' })
   @ApiResponse({ status: 200, description: 'Kullanıcı bilgileri güncellendi' })
+  @ApiResponse({ status: 400, description: 'Geçersiz veri veya kayıt bulunamadı' })
   async updateUserInfo(
     @Request() req,
     @Body() updateUserInfoDto: UpdateUserInfoDto,

@@ -1,4 +1,5 @@
 export declare class UpdateUserInfoDto {
+    userInfoId?: string;
     name?: string;
     latitude?: number;
     longitude?: number;
