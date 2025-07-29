@@ -336,9 +336,9 @@ export class UsersService {
   async updateUserInfo(userId: string, updateUserInfoDto: UpdateUserInfoDto): Promise<User> {
     const user = await this.findById(userId);
     
-    // Name alanı zorunlu olmalı
-    if (!updateUserInfoDto.name) {
-      throw new Error('Adres adı (name) zorunludur');
+    // Name alanı zorunlu olmalı (ID yoksa)
+    if (!updateUserInfoDto.userInfoId && !updateUserInfoDto.name) {
+      throw new Error('Adres adı (name) zorunludur veya userInfoId belirtilmelidir');
     }
     
     // Koordinat değerlerini kontrol et
@@ -353,17 +353,43 @@ export class UsersService {
       }
     }
     
-    // userId ve name ile eşleşen UserInfo'yu bul
-    let userInfo = await this.userInfoRepository.findOne({
-      where: { 
-        user: { id: userId },
-        name: updateUserInfoDto.name
-      },
-      relations: ['user']
-    });
+    let userInfo = null;
+    
+    // Eğer userInfoId varsa, o kaydı bul ve güncelle
+    if (updateUserInfoDto.userInfoId) {
+      userInfo = await this.userInfoRepository.findOne({
+        where: { 
+          id: updateUserInfoDto.userInfoId,
+          user: { id: userId }
+        },
+        relations: ['user']
+      });
+      
+      if (!userInfo) {
+        throw new Error('Belirtilen userInfoId ile kayıt bulunamadı veya bu kullanıcıya ait değil');
+      }
+      
+      console.log(`🔄 UserInfo güncelleniyor (ID: ${userInfo.id})`);
+    } else {
+      // userInfoId yoksa, name ile eşleşen kaydı bul
+      userInfo = await this.userInfoRepository.findOne({
+        where: { 
+          user: { id: userId },
+          name: updateUserInfoDto.name
+        },
+        relations: ['user']
+      });
+      
+      if (userInfo) {
+        console.log(`🔄 UserInfo güncelleniyor (Name: ${userInfo.name})`);
+      } else {
+        console.log(`➕ Yeni UserInfo oluşturuluyor (Name: ${updateUserInfoDto.name})`);
+      }
+    }
 
     if (userInfo) {
       // Mevcut kaydı güncelle
+      if (updateUserInfoDto.name !== undefined) userInfo.name = updateUserInfoDto.name;
       if (updateUserInfoDto.latitude !== undefined) userInfo.latitude = updateUserInfoDto.latitude;
       if (updateUserInfoDto.longitude !== undefined) userInfo.longitude = updateUserInfoDto.longitude;
       if (updateUserInfoDto.address !== undefined) userInfo.address = updateUserInfoDto.address;
@@ -380,7 +406,13 @@ export class UsersService {
       });
     }
 
-    await this.userInfoRepository.save(userInfo);
+    const savedUserInfo = await this.userInfoRepository.save(userInfo);
+    console.log(`✅ UserInfo ${userInfo.id ? 'güncellendi' : 'oluşturuldu'}:`, {
+      id: savedUserInfo.id,
+      name: savedUserInfo.name,
+      address: savedUserInfo.address
+    });
+    
     return user;
   }
 

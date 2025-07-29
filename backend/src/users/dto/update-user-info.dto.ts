@@ -1,7 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, IsNumber } from 'class-validator';
+import { IsOptional, IsString, IsNumber, IsUUID } from 'class-validator';
 
 export class UpdateUserInfoDto {
+  @ApiProperty({ required: false, description: 'UserInfo ID (güncelleme için)' })
+  @IsOptional()
+  @IsUUID()
+  userInfoId?: string;
+
   @ApiProperty({ required: false, description: 'Adres adı' })
   @IsOptional()
   @IsString()
