@@ -52,6 +52,15 @@ export class JobsController {
     return this.jobsService.getMyApplications(req.user.sub);
   }
 
+  @Get('my/jobs/applications')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Employer: İş ilanlarıma gelen başvuruları listele' })
+  @ApiResponse({ status: 200, description: 'İş ilanlarıma gelen başvurular listelendi' })
+  async getMyJobsApplications(@Request() req) {
+    return this.jobsService.getMyJobsApplications(req.user.sub);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'İş ilanı detayı' })
   @ApiResponse({ status: 200, description: 'İş ilanı detayı' })

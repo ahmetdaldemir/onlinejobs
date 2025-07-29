@@ -173,6 +173,13 @@ export class JobsService {
     });
   }
 
+  async getMyJobsApplications(employerId: string): Promise<JobApplication[]> {
+    return this.applicationRepository.find({
+      where: { job: { employerId } },
+      relations: ['job', 'job.employer', 'job.category', 'applicant'],
+    });
+  }
+
   async getJobApplications(jobId: string, employerId: string): Promise<JobApplication[]> {
     const job = await this.findById(jobId);
 
