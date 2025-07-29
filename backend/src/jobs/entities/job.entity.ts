@@ -46,7 +46,7 @@ export class Job {
 
  
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  @Column({ nullable: true })
   @ApiProperty()
   budget: string;
  
