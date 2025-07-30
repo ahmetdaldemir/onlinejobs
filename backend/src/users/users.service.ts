@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User, UserStatus } from './entities/user.entity';
@@ -423,18 +423,31 @@ export class UsersService {
     
     // Name alanı zorunlu olmalı
     if (!createUserInfoDto.name) {
-      throw new Error('Adres adı (name) zorunludur');
+      throw new BadRequestException('Adres adı (name) zorunludur');
     }
+
+    // Aynı kullanıcı için aynı isimde adres var mı kontrol et
+    const existingUserInfo = await this.userInfoRepository.findOne({
+      where: { 
+        user: { id: userId },
+        name: createUserInfoDto.name
+      },
+      relations: ['user']
+    });
+    
+    if (existingUserInfo) {
+      throw new BadRequestException(`Bu kullanıcı için '${createUserInfoDto.name}' adında bir adres zaten mevcut`);
+    }  
     
     // Koordinat değerlerini kontrol et
     if (createUserInfoDto.latitude !== undefined) {
       if (createUserInfoDto.latitude < -90 || createUserInfoDto.latitude > 90) {
-        throw new Error('Latitude değeri -90 ile 90 arasında olmalıdır');
+        throw new BadRequestException('Latitude değeri -90 ile 90 arasında olmalıdır');
       }
     }
     if (createUserInfoDto.longitude !== undefined) {
       if (createUserInfoDto.longitude < -180 || createUserInfoDto.longitude > 180) {
-        throw new Error('Longitude değeri -180 ile 180 arasında olmalıdır');
+        throw new BadRequestException('Longitude değeri -180 ile 180 arasında olmalıdır');
       }
     }
     
@@ -445,7 +458,7 @@ export class UsersService {
     });
 
     await this.userInfoRepository.save(userInfo);
-    console.log(`✅ UserInfo oluşturuldu`);
+    console.log(`✅ UserInfo oluşturuldu: ${createUserInfoDto.name}`);
     
     return user;
   }

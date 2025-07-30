@@ -347,16 +347,26 @@ let UsersService = class UsersService {
     async createUserInfo(userId, createUserInfoDto) {
         const user = await this.findById(userId);
         if (!createUserInfoDto.name) {
-            throw new Error('Adres adı (name) zorunludur');
+            throw new common_1.BadRequestException('Adres adı (name) zorunludur');
+        }
+        const existingUserInfo = await this.userInfoRepository.findOne({
+            where: {
+                user: { id: userId },
+                name: createUserInfoDto.name
+            },
+            relations: ['user']
+        });
+        if (existingUserInfo) {
+            throw new common_1.BadRequestException(`Bu kullanıcı için '${createUserInfoDto.name}' adında bir adres zaten mevcut`);
         }
         if (createUserInfoDto.latitude !== undefined) {
             if (createUserInfoDto.latitude < -90 || createUserInfoDto.latitude > 90) {
-                throw new Error('Latitude değeri -90 ile 90 arasında olmalıdır');
+                throw new common_1.BadRequestException('Latitude değeri -90 ile 90 arasında olmalıdır');
             }
         }
         if (createUserInfoDto.longitude !== undefined) {
             if (createUserInfoDto.longitude < -180 || createUserInfoDto.longitude > 180) {
-                throw new Error('Longitude değeri -180 ile 180 arasında olmalıdır');
+                throw new common_1.BadRequestException('Longitude değeri -180 ile 180 arasında olmalıdır');
             }
         }
         const userInfo = this.userInfoRepository.create({
@@ -364,7 +374,7 @@ let UsersService = class UsersService {
             ...createUserInfoDto
         });
         await this.userInfoRepository.save(userInfo);
-        console.log(`✅ UserInfo oluşturuldu`);
+        console.log(`✅ UserInfo oluşturuldu: ${createUserInfoDto.name}`);
         return user;
     }
     async updateProfile(userId, updateData, file) {

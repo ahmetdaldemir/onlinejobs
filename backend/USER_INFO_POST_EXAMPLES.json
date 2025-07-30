@@ -72,6 +72,19 @@
             "error": "Bad Request"
           }
         },
+        "duplicate_name": {
+          "description": "Aynı kullanıcı için aynı isimde adres zaten mevcut",
+          "request": {
+            "name": "Ev Adresi",
+            "latitude": 41.0082,
+            "longitude": 28.9784
+          },
+          "error": {
+            "statusCode": 400,
+            "message": "Bu kullanıcı için 'Ev Adresi' adında bir adres zaten mevcut",
+            "error": "Bad Request"
+          }
+        },
         "invalid_latitude": {
           "description": "Geçersiz latitude değeri",
           "request": {
@@ -104,7 +117,7 @@
       "name": {
         "type": "string",
         "required": true,
-        "description": "Adres adı (örn: 'Ev Adresi', 'İş Adresi')"
+        "description": "Adres adı (örn: 'Ev Adresi', 'İş Adresi') - aynı kullanıcı için benzersiz olmalı"
       },
       "latitude": {
         "type": "number",
@@ -164,6 +177,7 @@
       "validation": "Name alanı zorunludur, koordinatlar opsiyoneldir",
       "coordinates": "Latitude -90 ile 90, longitude -180 ile 180 arasında olmalıdır",
       "multiple_addresses": "Bir kullanıcının birden fazla adresi olabilir",
+      "unique_names": "Aynı kullanıcı için aynı isimde adres oluşturulamaz",
       "usage": "Bu endpoint yeni bir adres bilgisi oluşturur, mevcut adresi güncellemez"
     }
   }
