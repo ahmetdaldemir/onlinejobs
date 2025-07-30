@@ -1,0 +1,784 @@
+{
+  "api_documentation": {
+    "title": "Online Jobs Backend API - Tüm Endpoint'ler",
+    "version": "1.0.0",
+    "base_url": "http://localhost:3000",
+    "authentication": {
+      "type": "JWT Bearer Token",
+      "header": "Authorization: Bearer YOUR_JWT_TOKEN"
+    },
+    "endpoints": {
+      "authentication": {
+        "admin_login": {
+          "method": "POST",
+          "url": "/auth/admin/login",
+          "description": "Admin girişi",
+          "request": {
+            "email": "admin@example.com",
+            "password": "admin123"
+          },
+          "response": {
+            "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            "admin": {
+              "id": "admin-id",
+              "email": "admin@example.com"
+            }
+          }
+        },
+        "user_login": {
+          "method": "POST",
+          "url": "/auth/login",
+          "description": "Kullanıcı girişi",
+          "request": {
+            "email": "user@example.com",
+            "password": "password123"
+          },
+          "response": {
+            "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            "user": {
+              "id": "user-id",
+              "firstName": "John",
+              "lastName": "Doe",
+              "email": "user@example.com",
+              "userType": "worker"
+            }
+          }
+        },
+        "register": {
+          "method": "POST",
+          "url": "/auth/register",
+          "description": "Kullanıcı kaydı",
+          "request": {
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "user@example.com",
+            "phone": "+905551234567",
+            "password": "password123",
+            "userType": "worker",
+            "bio": "Deneyimli temizlik görevlisi",
+            "categoryIds": ["550e8400-e29b-41d4-a716-446655440000"],
+            "userInfo": {
+              "name": "Ev Adresi",
+              "latitude": 41.0082,
+              "longitude": 28.9784,
+              "address": "İstanbul, Türkiye"
+            }
+          },
+          "response": {
+            "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+            "user": {
+              "id": "user-id",
+              "firstName": "John",
+              "lastName": "Doe",
+              "email": "user@example.com"
+            }
+          }
+        }
+      },
+      "users": {
+        "get_user_info": {
+          "method": "GET",
+          "url": "/users/user-info",
+          "description": "Kullanıcının kendi bilgilerini getir",
+          "headers": {
+            "Authorization": "Bearer YOUR_JWT_TOKEN"
+          },
+          "response": {
+            "id": "user-id",
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "user@example.com",
+            "userType": "worker",
+            "userInfos": [
+              {
+                "id": "userinfo-id",
+                "name": "Ev Adresi",
+                "latitude": 41.0082,
+                "longitude": 28.9784,
+                "address": "İstanbul, Türkiye"
+              }
+            ]
+          }
+        },
+        "update_user_info": {
+          "method": "PUT",
+          "url": "/users/user-info",
+          "description": "Kullanıcı bilgilerini güncelle (ID ile güncelleme veya yeni ekleme)",
+          "headers": {
+            "Authorization": "Bearer YOUR_JWT_TOKEN",
+            "Content-Type": "application/json"
+          },
+          "request": {
+            "userInfoId": "550e8400-e29b-41d4-a716-446655440000",
+            "name": "Ev Adresi",
+            "latitude": 41.0082,
+            "longitude": 28.9784,
+            "address": "İstanbul, Türkiye",
+            "neighborhood": "Kadıköy",
+            "buildingNo": "123",
+            "floor": "3",
+            "apartmentNo": "A",
+            "description": "Ana giriş, asansör var"
+          },
+          "response": {
+            "id": "user-id",
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "user@example.com"
+          }
+        },
+        "update_profile": {
+          "method": "PUT",
+          "url": "/users/profile",
+          "description": "Kullanıcı profilini güncelle (profil fotoğrafı dahil)",
+          "headers": {
+            "Authorization": "Bearer YOUR_JWT_TOKEN",
+            "Content-Type": "multipart/form-data"
+          },
+          "request": {
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "user@example.com",
+            "phone": "+905551234567",
+            "bio": "Deneyimli temizlik görevlisi",
+            "categoryIds": ["550e8400-e29b-41d4-a716-446655440000"],
+            "file": "profile-image.jpg"
+          },
+          "response": {
+            "id": "user-id",
+            "firstName": "John",
+            "lastName": "Doe",
+            "profileImage": "/uploads/profile-image.jpg"
+          }
+        },
+        "get_online_workers": {
+          "method": "GET",
+          "url": "/users/online-workers",
+          "description": "Yakındaki online worker'ları listele",
+          "headers": {
+            "Authorization": "Bearer YOUR_JWT_TOKEN"
+          },
+          "query_params": {
+            "latitude": 40.9909,
+            "longitude": 29.0303,
+            "radius": 20,
+            "categoryId": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "response": [
+            {
+              "id": "worker-id",
+              "firstName": "Jane",
+              "lastName": "Smith",
+              "userType": "worker",
+              "isOnline": true,
+              "distance": 5.2,
+              "categoryIds": {
+                "Temizlik": [
+                  {
+                    "name": "Ev Temizliği",
+                    "id": "category-id"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "jobs": {
+        "create_job": {
+          "method": "POST",
+          "url": "/jobs",
+          "description": "İş ilanı oluştur (Sadece employer'lar)",
+          "headers": {
+            "Authorization": "Bearer YOUR_JWT_TOKEN",
+            "Content-Type": "application/json"
+          },
+          "request": {
+            "title": "Ev Temizliği İhtiyacı",
+            "description": "3+1 evimizin haftalık temizliği için güvenilir temizlik görevlisi arıyoruz.",
+            "budget": "500-800 TL",
+            "scheduledDate": "2024-01-15",
+            "scheduledTime": "09:00",
+            "isUrgent": false,
+            "categoryId": "550e8400-e29b-41d4-a716-446655440000",
+            "userInfoId": "550e8400-e29b-41d4-a716-446655440001"
+          },
+          "response": {
+            "id": "550e8400-e29b-41d4-a716-446655440002",
+            "title": "Ev Temizliği İhtiyacı",
+            "description": "3+1 evimizin haftalık temizliği için güvenilir temizlik görevlisi arıyoruz.",
+            "status": "open",
+            "budget": "500-800 TL",
+            "scheduledDate": "2024-01-15",
+            "scheduledTime": "09:00",
+            "isUrgent": false,
+            "viewCount": 0,
+            "applicationCount": 0,
+            "createdAt": "2024-01-10T10:30:00.000Z",
+            "updatedAt": "2024-01-10T10:30:00.000Z",
+            "employerId": "550e8400-e29b-41d4-a716-446655440003",
+            "categoryId": "550e8400-e29b-41d4-a716-446655440000",
+            "userInfoId": "550e8400-e29b-41d4-a716-446655440001",
+            "employer": {
+              "id": "550e8400-e29b-41d4-a716-446655440003",
+              "firstName": "John",
+              "lastName": "Doe",
+              "email": "john@example.com"
+            },
+            "category": {
+              "id": "550e8400-e29b-41d4-a716-446655440000",
+              "name": "Temizlik",
+              "description": "Temizlik hizmetleri"
+            }
+          }
+        },
+        "get_jobs": {
+          "method": "GET",
+          "url": "/jobs",
+          "description": "İş ilanlarını listele",
+          "query_params": {
+            "status": "open",
+            "categoryId": "550e8400-e29b-41d4-a716-446655440000",
+            "employerId": "550e8400-e29b-41d4-a716-446655440003",
+            "latitude": 40.9909,
+            "longitude": 29.0303,
+            "radius": 10
+          },
+          "response": [
+            {
+              "id": "job-id",
+              "title": "Ev Temizliği İhtiyacı",
+              "description": "3+1 evimizin haftalık temizliği için güvenilir temizlik görevlisi arıyoruz.",
+              "status": "open",
+              "budget": "500-800 TL",
+              "employer": {
+                "id": "employer-id",
+                "firstName": "John",
+                "lastName": "Doe"
+              }
+            }
+          ]
+        },
+        "get_job_detail": {
+          "method": "GET",
+          "url": "/jobs/:id",
+          "description": "İş ilanı detayı",
+          "response": {
+            "id": "job-id",
+            "title": "Ev Temizliği İhtiyacı",
+            "description": "3+1 evimizin haftalık temizliği için güvenilir temizlik görevlisi arıyoruz.",
+            "status": "open",
+            "budget": "500-800 TL",
+            "scheduledDate": "2024-01-15",
+            "scheduledTime": "09:00",
+            "isUrgent": false,
+            "viewCount": 5,
+            "applicationCount": 2,
+            "employer": {
+              "id": "employer-id",
+              "firstName": "John",
+              "lastName": "Doe",
+              "email": "john@example.com"
+            },
+            "category": {
+              "id": "category-id",
+              "name": "Temizlik",
+              "description": "Temizlik hizmetleri"
+            }
+          }
+        },
+        "apply_for_job": {
+          "method": "POST",
+          "url": "/jobs/:id/apply",
+          "description": "İş için başvuru yap",
+          "headers": {
+            "Authorization": "Bearer YOUR_JWT_TOKEN",
+            "Content-Type": "application/json"
+          },
+          "request": {
+            "message": "Bu iş için başvuruyorum. Deneyimliyim ve referans verebilirim.",
+            "proposedBudget": "600 TL",
+            "scheduledDate": "2024-01-15",
+            "scheduledTime": "09:00"
+          },
+          "response": {
+            "id": "application-id",
+            "status": "pending",
+            "message": "Başvuru başarıyla gönderildi",
+            "job": {
+              "id": "job-id",
+              "title": "Ev Temizliği İhtiyacı"
+            },
+            "applicant": {
+              "id": "applicant-id",
+              "firstName": "Jane",
+              "lastName": "Smith"
+            }
+          }
+        }
+      },
+      "admin": {
+        "get_dashboard_stats": {
+          "method": "GET",
+          "url": "/admin/dashboard",
+          "description": "Admin dashboard istatistikleri",
+          "headers": {
+            "Authorization": "Bearer YOUR_ADMIN_JWT_TOKEN"
+          },
+          "response": {
+            "users": {
+              "total": 150,
+              "online": 45,
+              "offline": 105,
+              "types": {
+                "workers": 100,
+                "employers": 50
+              }
+            },
+            "jobs": {
+              "total": 75,
+              "active": 30,
+              "completed": 45,
+              "statuses": {
+                "open": 20,
+                "in_progress": 10,
+                "completed": 40,
+                "cancelled": 5
+              }
+            },
+            "messages": {
+              "total": 200
+            },
+            "categories": {
+              "total": 25
+            }
+          }
+        },
+        "get_all_users": {
+          "method": "GET",
+          "url": "/admin/users",
+          "description": "Tüm kullanıcıları listele",
+          "headers": {
+            "Authorization": "Bearer YOUR_ADMIN_JWT_TOKEN"
+          },
+          "response": [
+            {
+              "id": "user-id",
+              "firstName": "John",
+              "lastName": "Doe",
+              "email": "user@example.com",
+              "userType": "worker",
+              "status": "active",
+              "isOnline": true,
+              "createdAt": "2024-01-01T10:00:00.000Z",
+              "userInfos": [
+                {
+                  "id": "userinfo-id",
+                  "name": "Ev Adresi",
+                  "address": "İstanbul, Türkiye"
+                }
+              ],
+              "categories": [
+                {
+                  "id": "category-id",
+                  "name": "Temizlik"
+                }
+              ]
+            }
+          ]
+        },
+        "create_user": {
+          "method": "POST",
+          "url": "/admin/users",
+          "description": "Yeni kullanıcı oluştur (profil fotoğrafı dahil)",
+          "headers": {
+            "Authorization": "Bearer YOUR_ADMIN_JWT_TOKEN",
+            "Content-Type": "multipart/form-data"
+          },
+          "request": {
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "user@example.com",
+            "phone": "+905551234567",
+            "password": "password123",
+            "userType": "worker",
+            "bio": "Deneyimli temizlik görevlisi",
+            "categoryIds": ["550e8400-e29b-41d4-a716-446655440000"],
+            "userInfo": {
+              "name": "Ev Adresi",
+              "latitude": 41.0082,
+              "longitude": 28.9784,
+              "address": "İstanbul, Türkiye"
+            },
+            "file": "profile-image.jpg"
+          },
+          "response": {
+            "message": "Kullanıcı başarıyla oluşturuldu",
+            "user": {
+              "id": "user-id",
+              "firstName": "John",
+              "lastName": "Doe",
+              "email": "user@example.com"
+            }
+          }
+        },
+        "update_user": {
+          "method": "PUT",
+          "url": "/admin/users/:id",
+          "description": "Kullanıcı güncelle (profil fotoğrafı dahil)",
+          "headers": {
+            "Authorization": "Bearer YOUR_ADMIN_JWT_TOKEN",
+            "Content-Type": "multipart/form-data"
+          },
+          "request": {
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "user@example.com",
+            "phone": "+905551234567",
+            "password": "newpassword123",
+            "userType": "worker",
+            "bio": "Deneyimli temizlik görevlisi",
+            "categoryIds": ["550e8400-e29b-41d4-a716-446655440000"],
+            "userInfo": {
+              "name": "Ev Adresi",
+              "latitude": 41.0082,
+              "longitude": 28.9784,
+              "address": "İstanbul, Türkiye"
+            },
+            "file": "profile-image.jpg"
+          },
+          "response": {
+            "message": "Kullanıcı başarıyla güncellendi",
+            "profileImage": "/uploads/profile-image.jpg"
+          }
+        },
+        "get_all_categories": {
+          "method": "GET",
+          "url": "/admin/categories",
+          "description": "Tüm kategorileri listele",
+          "headers": {
+            "Authorization": "Bearer YOUR_ADMIN_JWT_TOKEN"
+          },
+          "response": [
+            {
+              "id": "category-id",
+              "name": "Temizlik",
+              "description": "Temizlik hizmetleri",
+              "icon": "cleaning",
+              "isActive": true,
+              "orderIndex": 1,
+              "parentId": null,
+              "children": [
+                {
+                  "id": "subcategory-id",
+                  "name": "Ev Temizliği",
+                  "description": "Ev temizlik hizmetleri",
+                  "icon": "home-cleaning",
+                  "isActive": true,
+                  "orderIndex": 1,
+                  "parentId": "category-id"
+                }
+              ]
+            }
+          ]
+        },
+        "create_category": {
+          "method": "POST",
+          "url": "/admin/categories",
+          "description": "Yeni kategori oluştur",
+          "headers": {
+            "Authorization": "Bearer YOUR_ADMIN_JWT_TOKEN",
+            "Content-Type": "application/json"
+          },
+          "request": {
+            "name": "Temizlik",
+            "description": "Temizlik hizmetleri",
+            "icon": "cleaning",
+            "isActive": true,
+            "orderIndex": 1,
+            "parentId": null
+          },
+          "response": {
+            "message": "Kategori başarıyla oluşturuldu",
+            "category": {
+              "id": "category-id",
+              "name": "Temizlik",
+              "description": "Temizlik hizmetleri"
+            }
+          }
+        }
+      },
+      "notifications": {
+        "get_user_notifications": {
+          "method": "GET",
+          "url": "/notifications",
+          "description": "Kullanıcının bildirimlerini getir",
+          "headers": {
+            "Authorization": "Bearer YOUR_JWT_TOKEN"
+          },
+          "response": [
+            {
+              "id": "notification-id",
+              "type": "job_created",
+              "title": "Yeni İş İlanı",
+              "message": "John Doe tarafından \"Ev Temizliği İhtiyacı\" başlıklı yeni bir iş ilanı oluşturuldu.",
+              "status": "unread",
+              "createdAt": "2024-01-10T10:30:00.000Z",
+              "data": {
+                "jobTitle": "Ev Temizliği İhtiyacı",
+                "jobDescription": "3+1 evimizin haftalık temizliği için güvenilir temizlik görevlisi arıyoruz.",
+                "budget": "500-800 TL",
+                "location": "İstanbul, Kadıköy",
+                "employerName": "John Doe",
+                "distance": "2.5"
+              }
+            }
+          ]
+        },
+        "mark_as_read": {
+          "method": "PUT",
+          "url": "/notifications/:id/read",
+          "description": "Bildirimi okundu olarak işaretle",
+          "headers": {
+            "Authorization": "Bearer YOUR_JWT_TOKEN"
+          },
+          "response": {
+            "message": "Bildirim okundu olarak işaretlendi"
+          }
+        }
+      },
+      "messages": {
+        "get_conversations": {
+          "method": "GET",
+          "url": "/messages/conversations",
+          "description": "Kullanıcının konuşmalarını getir",
+          "headers": {
+            "Authorization": "Bearer YOUR_JWT_TOKEN"
+          },
+          "response": [
+            {
+              "id": "conversation-id",
+              "participants": [
+                {
+                  "id": "user1-id",
+                  "firstName": "John",
+                  "lastName": "Doe"
+                },
+                {
+                  "id": "user2-id",
+                  "firstName": "Jane",
+                  "lastName": "Smith"
+                }
+              ],
+              "lastMessage": {
+                "id": "message-id",
+                "content": "Merhaba, iş hakkında konuşabilir miyiz?",
+                "createdAt": "2024-01-10T10:30:00.000Z",
+                "isRead": false
+              },
+              "unreadCount": 2
+            }
+          ]
+        },
+        "get_messages": {
+          "method": "GET",
+          "url": "/messages/:conversationId",
+          "description": "Konuşma mesajlarını getir",
+          "headers": {
+            "Authorization": "Bearer YOUR_JWT_TOKEN"
+          },
+          "response": [
+            {
+              "id": "message-id",
+              "content": "Merhaba, iş hakkında konuşabilir miyiz?",
+              "senderId": "user1-id",
+              "receiverId": "user2-id",
+              "isRead": true,
+              "createdAt": "2024-01-10T10:30:00.000Z",
+              "sender": {
+                "id": "user1-id",
+                "firstName": "John",
+                "lastName": "Doe"
+              }
+            }
+          ]
+        },
+        "send_message": {
+          "method": "POST",
+          "url": "/messages",
+          "description": "Mesaj gönder",
+          "headers": {
+            "Authorization": "Bearer YOUR_JWT_TOKEN",
+            "Content-Type": "application/json"
+          },
+          "request": {
+            "receiverId": "user2-id",
+            "content": "Merhaba, iş hakkında konuşabilir miyiz?"
+          },
+          "response": {
+            "id": "message-id",
+            "content": "Merhaba, iş hakkında konuşabilir miyiz?",
+            "senderId": "user1-id",
+            "receiverId": "user2-id",
+            "isRead": false,
+            "createdAt": "2024-01-10T10:30:00.000Z"
+          }
+        }
+      },
+      "upload": {
+        "upload_file": {
+          "method": "POST",
+          "url": "/upload",
+          "description": "Dosya yükle",
+          "headers": {
+            "Authorization": "Bearer YOUR_JWT_TOKEN",
+            "Content-Type": "multipart/form-data"
+          },
+          "request": {
+            "file": "profile-image.jpg"
+          },
+          "response": {
+            "filename": "profile-image-123456.jpg",
+            "originalname": "profile-image.jpg",
+            "mimetype": "image/jpeg",
+            "size": 1024000,
+            "url": "/uploads/profile-image-123456.jpg"
+          }
+        }
+      },
+      "categories": {
+        "get_categories_optional_auth": {
+          "method": "GET",
+          "url": "/categories",
+          "description": "Kategorileri listele (Authentication opsiyonel)",
+          "headers": {
+            "Authorization": "Bearer YOUR_JWT_TOKEN (opsiyonel)"
+          },
+          "notes": "Token varsa ve admin ise tüm kategorileri döndürür, yoksa sadece aktif kategorileri döndürür",
+          "response": [
+            {
+              "id": "category-id",
+              "name": "Temizlik",
+              "description": "Temizlik hizmetleri",
+              "icon": "cleaning",
+              "isActive": true,
+              "orderIndex": 1,
+              "parentId": null,
+              "children": [
+                {
+                  "id": "subcategory-id",
+                  "name": "Ev Temizliği",
+                  "description": "Ev temizlik hizmetleri",
+                  "icon": "home-cleaning",
+                  "isActive": true,
+                  "orderIndex": 1,
+                  "parentId": "category-id"
+                }
+              ]
+            }
+          ]
+        },
+        "get_categories_public": {
+          "method": "GET",
+          "url": "/categories/public",
+          "description": "Aktif kategorileri listele (Public endpoint)",
+          "response": [
+            {
+              "id": "category-id",
+              "name": "Temizlik",
+              "description": "Temizlik hizmetleri",
+              "icon": "cleaning",
+              "isActive": true,
+              "orderIndex": 1,
+              "parentId": null
+            }
+          ]
+        },
+        "get_category_detail": {
+          "method": "GET",
+          "url": "/categories/:id",
+          "description": "Kategori detayı",
+          "response": {
+            "id": "category-id",
+            "name": "Temizlik",
+            "description": "Temizlik hizmetleri",
+            "icon": "cleaning",
+            "isActive": true,
+            "orderIndex": 1,
+            "parentId": null,
+            "createdAt": "2024-01-01T10:00:00.000Z",
+            "updatedAt": "2024-01-01T10:00:00.000Z"
+          }
+        },
+        "get_categories_by_parent": {
+          "method": "GET",
+          "url": "/categories/parent/:parentId",
+          "description": "Üst kategoriye göre kategorileri listele",
+          "response": [
+            {
+              "id": "subcategory-id",
+              "name": "Ev Temizliği",
+              "description": "Ev temizlik hizmetleri",
+              "icon": "home-cleaning",
+              "isActive": true,
+              "orderIndex": 1,
+              "parentId": "parent-category-id"
+            }
+          ]
+        }
+      }
+    },
+    "error_responses": {
+      "validation_error": {
+        "statusCode": 400,
+        "message": "Validation failed",
+        "error": "Bad Request",
+        "details": [
+          {
+            "field": "email",
+            "message": "email must be an email"
+          }
+        ]
+      },
+      "unauthorized": {
+        "statusCode": 401,
+        "message": "Unauthorized",
+        "error": "Unauthorized"
+      },
+      "forbidden": {
+        "statusCode": 403,
+        "message": "Sadece employer'lar iş ilanı oluşturabilir",
+        "error": "Forbidden"
+      },
+      "not_found": {
+        "statusCode": 404,
+        "message": "Kullanıcı bulunamadı",
+        "error": "Not Found"
+      },
+      "conflict": {
+        "statusCode": 409,
+        "message": "Email veya telefon numarası zaten kullanımda",
+        "error": "Conflict"
+      },
+      "internal_server_error": {
+        "statusCode": 500,
+        "message": "Internal server error",
+        "error": "Internal Server Error"
+      }
+    },
+    "data_types": {
+      "user_types": ["worker", "employer"],
+      "job_statuses": ["open", "in_progress", "completed", "cancelled"],
+      "application_statuses": ["pending", "accepted", "rejected", "cancelled"],
+      "notification_types": ["job_created", "application_received", "message_received"],
+      "notification_statuses": ["unread", "read"]
+    },
+    "notes": {
+      "authentication": "Tüm korumalı endpoint'ler için JWT token gereklidir",
+      "file_upload": "Dosya yüklemeleri multipart/form-data formatında yapılmalıdır",
+      "pagination": "Liste endpoint'leri için page ve limit parametreleri kullanılabilir",
+      "filtering": "Çoğu liste endpoint'i query parametreleri ile filtrelenebilir",
+      "sorting": "Liste endpoint'leri createdAt, updatedAt gibi alanlarla sıralanabilir"
+    }
+  }
+} 

@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CategoriesService } from './categories.service';
 import { BadRequestException } from '@nestjs/common';
+import { OptionalAuthGuard } from '../auth/guards/optional-auth.guard';
 
 @ApiTags('Categories')
 @Controller('categories')
@@ -9,9 +10,25 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Tüm kategorileri listele' })
+  @UseGuards(OptionalAuthGuard)
+  @ApiOperation({ summary: 'Kategorileri listele (Authentication opsiyonel)' })
   @ApiResponse({ status: 200, description: 'Kategoriler listelendi' })
-  async findAll() {
+  @ApiBearerAuth()
+  async findAll(@Request() req?: any) {
+    // Token varsa ve admin ise tüm kategorileri döndür
+    // Yoksa sadece aktif kategorileri döndür
+    if (req.user && req.user.role === 'admin') {
+      return this.categoriesService.findAllWithInactive();
+    }
+    
+    // Token yok veya admin değilse sadece aktif kategorileri döndür
+    return this.categoriesService.findAll();
+  }
+
+  @Get('public')
+  @ApiOperation({ summary: 'Aktif kategorileri listele (Public endpoint)' })
+  @ApiResponse({ status: 200, description: 'Aktif kategoriler listelendi' })
+  async findActive() {
     return this.categoriesService.findAll();
   }
 
@@ -27,34 +44,6 @@ export class CategoriesController {
       throw new BadRequestException(`Geçersiz UUID formatı: ${id}. Lütfen geçerli bir kategori ID'si girin.`);
     }
     return this.categoriesService.findById(id);
-  }
-
-  @Post()
-  @ApiOperation({ summary: 'Yeni kategori oluştur' })
-  @ApiResponse({ status: 201, description: 'Kategori oluşturuldu' })
-  async create(@Body() createCategoryDto: any) {
-    return this.categoriesService.create(createCategoryDto);
-  }
-
-  @Put(':id')
-  @ApiOperation({ summary: 'Kategori güncelle' })
-  @ApiResponse({ status: 200, description: 'Kategori güncellendi' })
-  async update(@Param('id') id: string, @Body() updateCategoryDto: any) {
-    return this.categoriesService.update(id, updateCategoryDto);
-  }
-
-  @Delete('clear')
-  @ApiOperation({ summary: 'Tüm kategorileri sil' })
-  @ApiResponse({ status: 200, description: 'Tüm kategoriler silindi' })
-  async clearAll() {
-    return this.categoriesService.clearAll();
-  }
-
-  @Delete(':id')
-  @ApiOperation({ summary: 'Kategori sil' })
-  @ApiResponse({ status: 200, description: 'Kategori silindi' })
-  async delete(@Param('id') id: string) {
-    return this.categoriesService.delete(id);
   }
 
   @Get('parent/:parentId')

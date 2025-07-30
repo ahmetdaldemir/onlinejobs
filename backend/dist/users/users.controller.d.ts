@@ -24,6 +24,7 @@ export declare class UsersController {
         longitude: number;
     }): Promise<import("./entities/user.entity").User>;
     updateUserInfo(req: any, updateUserInfoDto: UpdateUserInfoDto): Promise<import("./entities/user.entity").User>;
+    createUserInfo(req: any, createUserInfoDto: any): Promise<import("./entities/user.entity").User>;
     updateProfile(req: any, updateData: any, file?: any): Promise<import("./entities/user.entity").User>;
     updateProfileImage(req: any, body: {
         imageUrl: string;

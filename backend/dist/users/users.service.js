@@ -344,6 +344,29 @@ let UsersService = class UsersService {
         });
         return user;
     }
+    async createUserInfo(userId, createUserInfoDto) {
+        const user = await this.findById(userId);
+        if (!createUserInfoDto.name) {
+            throw new Error('Adres adı (name) zorunludur');
+        }
+        if (createUserInfoDto.latitude !== undefined) {
+            if (createUserInfoDto.latitude < -90 || createUserInfoDto.latitude > 90) {
+                throw new Error('Latitude değeri -90 ile 90 arasında olmalıdır');
+            }
+        }
+        if (createUserInfoDto.longitude !== undefined) {
+            if (createUserInfoDto.longitude < -180 || createUserInfoDto.longitude > 180) {
+                throw new Error('Longitude değeri -180 ile 180 arasında olmalıdır');
+            }
+        }
+        const userInfo = this.userInfoRepository.create({
+            user: { id: userId },
+            ...createUserInfoDto
+        });
+        await this.userInfoRepository.save(userInfo);
+        console.log(`✅ UserInfo oluşturuldu`);
+        return user;
+    }
     async updateProfile(userId, updateData, file) {
         const user = await this.findById(userId);
         if (file) {

@@ -1,0 +1,170 @@
+{
+  "user_info_post_examples": {
+    "endpoint": "POST /users/user-info",
+    "authentication": "JWT Bearer Token required",
+    "content_type": "application/json",
+    "examples": {
+      "basic_example": {
+        "description": "Temel kullanıcı bilgisi oluşturma",
+        "request": {
+          "name": "Ev Adresi",
+          "latitude": 41.0082,
+          "longitude": 28.9784,
+          "address": "İstanbul, Türkiye"
+        },
+        "response": {
+          "message": "UserInfo oluşturuldu",
+          "user": {
+            "id": "user-id",
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        }
+      },
+      "detailed_example": {
+        "description": "Detaylı kullanıcı bilgisi oluşturma",
+        "request": {
+          "name": "Ev Adresi",
+          "latitude": 41.0082,
+          "longitude": 28.9784,
+          "address": "İstanbul, Türkiye",
+          "neighborhood": "Kadıköy",
+          "buildingNo": "123",
+          "floor": "3",
+          "apartmentNo": "A",
+          "description": "Ana giriş, asansör var"
+        },
+        "response": {
+          "message": "UserInfo oluşturuldu",
+          "user": {
+            "id": "user-id",
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        }
+      },
+      "minimal_example": {
+        "description": "Minimum gerekli alanlarla oluşturma",
+        "request": {
+          "name": "İş Adresi",
+          "latitude": 40.9909,
+          "longitude": 29.0303
+        },
+        "response": {
+          "message": "UserInfo oluşturuldu",
+          "user": {
+            "id": "user-id",
+            "firstName": "John",
+            "lastName": "Doe"
+          }
+        }
+      },
+      "error_examples": {
+        "missing_name": {
+          "description": "Name alanı eksik",
+          "request": {
+            "latitude": 41.0082,
+            "longitude": 28.9784
+          },
+          "error": {
+            "statusCode": 400,
+            "message": "Adres adı (name) zorunludur",
+            "error": "Bad Request"
+          }
+        },
+        "invalid_latitude": {
+          "description": "Geçersiz latitude değeri",
+          "request": {
+            "name": "Ev Adresi",
+            "latitude": 100,
+            "longitude": 28.9784
+          },
+          "error": {
+            "statusCode": 400,
+            "message": "Latitude değeri -90 ile 90 arasında olmalıdır",
+            "error": "Bad Request"
+          }
+        },
+        "invalid_longitude": {
+          "description": "Geçersiz longitude değeri",
+          "request": {
+            "name": "Ev Adresi",
+            "latitude": 41.0082,
+            "longitude": 200
+          },
+          "error": {
+            "statusCode": 400,
+            "message": "Longitude değeri -180 ile 180 arasında olmalıdır",
+            "error": "Bad Request"
+          }
+        }
+      }
+    },
+    "field_descriptions": {
+      "name": {
+        "type": "string",
+        "required": true,
+        "description": "Adres adı (örn: 'Ev Adresi', 'İş Adresi')"
+      },
+      "latitude": {
+        "type": "number",
+        "required": false,
+        "description": "Enlem koordinatı (-90 ile 90 arası)",
+        "example": 41.0082
+      },
+      "longitude": {
+        "type": "number",
+        "required": false,
+        "description": "Boylam koordinatı (-180 ile 180 arası)",
+        "example": 28.9784
+      },
+      "address": {
+        "type": "string",
+        "required": false,
+        "description": "Tam adres bilgisi",
+        "example": "İstanbul, Türkiye"
+      },
+      "neighborhood": {
+        "type": "string",
+        "required": false,
+        "description": "Mahalle bilgisi",
+        "example": "Kadıköy"
+      },
+      "buildingNo": {
+        "type": "string",
+        "required": false,
+        "description": "Bina numarası",
+        "example": "123"
+      },
+      "floor": {
+        "type": "string",
+        "required": false,
+        "description": "Kat bilgisi",
+        "example": "3"
+      },
+      "apartmentNo": {
+        "type": "string",
+        "required": false,
+        "description": "Daire numarası",
+        "example": "A"
+      },
+      "description": {
+        "type": "string",
+        "required": false,
+        "description": "Ek açıklama",
+        "example": "Ana giriş, asansör var"
+      }
+    },
+    "curl_examples": {
+      "basic_request": "curl -X POST http://localhost:3000/users/user-info \\\n  -H 'Authorization: Bearer YOUR_JWT_TOKEN' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n    \"name\": \"Ev Adresi\",\n    \"latitude\": 41.0082,\n    \"longitude\": 28.9784,\n    \"address\": \"İstanbul, Türkiye\"\n  }'",
+      "detailed_request": "curl -X POST http://localhost:3000/users/user-info \\\n  -H 'Authorization: Bearer YOUR_JWT_TOKEN' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n    \"name\": \"Ev Adresi\",\n    \"latitude\": 41.0082,\n    \"longitude\": 28.9784,\n    \"address\": \"İstanbul, Türkiye\",\n    \"neighborhood\": \"Kadıköy\",\n    \"buildingNo\": \"123\",\n    \"floor\": \"3\",\n    \"apartmentNo\": \"A\",\n    \"description\": \"Ana giriş, asansör var\"\n  }'"
+    },
+    "notes": {
+      "authentication": "Bu endpoint için JWT token zorunludur",
+      "validation": "Name alanı zorunludur, koordinatlar opsiyoneldir",
+      "coordinates": "Latitude -90 ile 90, longitude -180 ile 180 arasında olmalıdır",
+      "multiple_addresses": "Bir kullanıcının birden fazla adresi olabilir",
+      "usage": "Bu endpoint yeni bir adres bilgisi oluşturur, mevcut adresi güncellemez"
+    }
+  }
+} 

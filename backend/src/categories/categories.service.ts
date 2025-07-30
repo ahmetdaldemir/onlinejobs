@@ -17,6 +17,13 @@ export class CategoriesService {
     });
   }
 
+  async findAllWithInactive(): Promise<Category[]> {
+    return this.categoryRepository.find({
+      where: { parentId: IsNull() },
+      order: { orderIndex: 'ASC' },
+    });
+  }
+
   async findById(id: string): Promise<Category> {
     const category = await this.categoryRepository.findOne({
       where: { id },

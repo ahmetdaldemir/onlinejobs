@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Body, Param, Query, UseGuards, Request, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Put, Body, Param, Query, UseGuards, Request, UseInterceptors, UploadedFile, BadRequestException, Post } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiParam, ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
@@ -193,6 +193,20 @@ export class UsersController {
     @Body() updateUserInfoDto: UpdateUserInfoDto,
   ) {
     return this.usersService.updateUserInfo(req.user.sub, updateUserInfoDto);
+  }
+
+
+  @Post('user-info')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Kullanıcı bilgilerini güncelle (ID ile güncelleme veya yeni ekleme)' })
+  @ApiResponse({ status: 200, description: 'Kullanıcı bilgileri güncellendi' })
+  @ApiResponse({ status: 400, description: 'Geçersiz veri veya kayıt bulunamadı' })
+  async createUserInfo(
+    @Request() req,
+    @Body() createUserInfoDto: any,
+  ) {
+    return this.usersService.createUserInfo(req.user.sub, createUserInfoDto);
   }
 
 

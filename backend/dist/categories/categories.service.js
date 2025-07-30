@@ -27,6 +27,12 @@ let CategoriesService = class CategoriesService {
             order: { orderIndex: 'ASC' },
         });
     }
+    async findAllWithInactive() {
+        return this.categoryRepository.find({
+            where: { parentId: (0, typeorm_2.IsNull)() },
+            order: { orderIndex: 'ASC' },
+        });
+    }
     async findById(id) {
         const category = await this.categoryRepository.findOne({
             where: { id },

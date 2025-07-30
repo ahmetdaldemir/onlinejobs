@@ -76,6 +76,9 @@ let UsersController = class UsersController {
     async updateUserInfo(req, updateUserInfoDto) {
         return this.usersService.updateUserInfo(req.user.sub, updateUserInfoDto);
     }
+    async createUserInfo(req, createUserInfoDto) {
+        return this.usersService.createUserInfo(req.user.sub, createUserInfoDto);
+    }
     async updateProfile(req, updateData, file) {
         return this.usersService.updateProfile(req.user.sub, updateData, file);
     }
@@ -275,6 +278,19 @@ __decorate([
     __metadata("design:paramtypes", [Object, update_user_info_dto_1.UpdateUserInfoDto]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateUserInfo", null);
+__decorate([
+    (0, common_1.Post)('user-info'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı bilgilerini güncelle (ID ile güncelleme veya yeni ekleme)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı bilgileri güncellendi' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Geçersiz veri veya kayıt bulunamadı' }),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "createUserInfo", null);
 __decorate([
     (0, common_1.Put)('profile'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

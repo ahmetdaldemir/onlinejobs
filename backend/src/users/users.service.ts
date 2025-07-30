@@ -417,6 +417,42 @@ export class UsersService {
   }
 
 
+  
+  async createUserInfo(userId: string, createUserInfoDto: any): Promise<User> {
+    const user = await this.findById(userId);
+    
+    // Name alanı zorunlu olmalı
+    if (!createUserInfoDto.name) {
+      throw new Error('Adres adı (name) zorunludur');
+    }
+    
+    // Koordinat değerlerini kontrol et
+    if (createUserInfoDto.latitude !== undefined) {
+      if (createUserInfoDto.latitude < -90 || createUserInfoDto.latitude > 90) {
+        throw new Error('Latitude değeri -90 ile 90 arasında olmalıdır');
+      }
+    }
+    if (createUserInfoDto.longitude !== undefined) {
+      if (createUserInfoDto.longitude < -180 || createUserInfoDto.longitude > 180) {
+        throw new Error('Longitude değeri -180 ile 180 arasında olmalıdır');
+      }
+    }
+    
+    // Yeni kayıt oluştur
+    const userInfo = this.userInfoRepository.create({
+      user: { id: userId },
+      ...createUserInfoDto
+    });
+
+    await this.userInfoRepository.save(userInfo);
+    console.log(`✅ UserInfo oluşturuldu`);
+    
+    return user;
+  }
+
+
+  
+
 
   async updateProfile(userId: string, updateData: any, file?: any): Promise<User> {
     const user = await this.findById(userId);

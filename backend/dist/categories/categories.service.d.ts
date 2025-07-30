@@ -4,6 +4,7 @@ export declare class CategoriesService {
     private categoryRepository;
     constructor(categoryRepository: Repository<Category>);
     findAll(): Promise<Category[]>;
+    findAllWithInactive(): Promise<Category[]>;
     findById(id: string): Promise<Category>;
     create(createCategoryDto: any): Promise<Category>;
     update(id: string, updateCategoryDto: any): Promise<Category>;
