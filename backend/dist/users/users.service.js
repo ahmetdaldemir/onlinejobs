@@ -261,7 +261,7 @@ let UsersService = class UsersService {
         return user;
     }
     async getUserInfo(userId) {
-        return this.userInfoRepository.findOne({
+        return this.userInfoRepository.find({
             where: { user: { id: userId } },
             relations: ['user']
         });
@@ -269,16 +269,16 @@ let UsersService = class UsersService {
     async updateUserInfo(userId, updateUserInfoDto) {
         const user = await this.findById(userId);
         if (!updateUserInfoDto.userInfoId && !updateUserInfoDto.name) {
-            throw new Error('Adres adı (name) zorunludur veya userInfoId belirtilmelidir');
+            throw new common_1.BadRequestException('Adres adı (name) zorunludur veya userInfoId belirtilmelidir');
         }
         if (updateUserInfoDto.latitude !== undefined) {
             if (updateUserInfoDto.latitude < -90 || updateUserInfoDto.latitude > 90) {
-                throw new Error('Latitude değeri -90 ile 90 arasında olmalıdır');
+                throw new common_1.BadRequestException('Latitude değeri -90 ile 90 arasında olmalıdır');
             }
         }
         if (updateUserInfoDto.longitude !== undefined) {
             if (updateUserInfoDto.longitude < -180 || updateUserInfoDto.longitude > 180) {
-                throw new Error('Longitude değeri -180 ile 180 arasında olmalıdır');
+                throw new common_1.BadRequestException('Longitude değeri -180 ile 180 arasında olmalıdır');
             }
         }
         let userInfo = null;
@@ -291,7 +291,7 @@ let UsersService = class UsersService {
                 relations: ['user']
             });
             if (!userInfo) {
-                throw new Error('Belirtilen userInfoId ile kayıt bulunamadı veya bu kullanıcıya ait değil');
+                throw new common_1.BadRequestException('Belirtilen userInfoId ile kayıt bulunamadı veya bu kullanıcıya ait değil');
             }
             console.log(`🔄 UserInfo güncelleniyor (ID: ${userInfo.id})`);
         }

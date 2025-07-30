@@ -25,7 +25,7 @@ export declare class UsersService {
     updateUserTypes(userId: string, userType: string): Promise<User>;
     updateStatus(userId: string, status: UserStatus): Promise<User>;
     updateLocation(userId: string, latitude: number, longitude: number, name?: string): Promise<User>;
-    getUserInfo(userId: string): Promise<UserInfo | null>;
+    getUserInfo(userId: string): Promise<UserInfo[]>;
     updateUserInfo(userId: string, updateUserInfoDto: UpdateUserInfoDto): Promise<User>;
     createUserInfo(userId: string, createUserInfoDto: any): Promise<User>;
     updateProfile(userId: string, updateData: any, file?: any): Promise<User>;

@@ -326,8 +326,8 @@ export class UsersService {
     return user;
   }
 
-  async getUserInfo(userId: string): Promise<UserInfo | null> {
-    return this.userInfoRepository.findOne({
+  async getUserInfo(userId: string): Promise<UserInfo[]> {
+    return this.userInfoRepository.find({
       where: { user: { id: userId } },
       relations: ['user']
     });
@@ -338,18 +338,18 @@ export class UsersService {
     
     // Name alanı zorunlu olmalı (ID yoksa)
     if (!updateUserInfoDto.userInfoId && !updateUserInfoDto.name) {
-      throw new Error('Adres adı (name) zorunludur veya userInfoId belirtilmelidir');
+      throw new BadRequestException('Adres adı (name) zorunludur veya userInfoId belirtilmelidir');
     }
     
     // Koordinat değerlerini kontrol et
     if (updateUserInfoDto.latitude !== undefined) {
       if (updateUserInfoDto.latitude < -90 || updateUserInfoDto.latitude > 90) {
-        throw new Error('Latitude değeri -90 ile 90 arasında olmalıdır');
+        throw new BadRequestException('Latitude değeri -90 ile 90 arasında olmalıdır');
       }
     }
     if (updateUserInfoDto.longitude !== undefined) {
       if (updateUserInfoDto.longitude < -180 || updateUserInfoDto.longitude > 180) {
-        throw new Error('Longitude değeri -180 ile 180 arasında olmalıdır');
+        throw new BadRequestException('Longitude değeri -180 ile 180 arasında olmalıdır');
       }
     }
     
@@ -366,7 +366,7 @@ export class UsersService {
       });
       
       if (!userInfo) {
-        throw new Error('Belirtilen userInfoId ile kayıt bulunamadı veya bu kullanıcıya ait değil');
+        throw new BadRequestException('Belirtilen userInfoId ile kayıt bulunamadı veya bu kullanıcıya ait değil');
       }
       
       console.log(`🔄 UserInfo güncelleniyor (ID: ${userInfo.id})`);
