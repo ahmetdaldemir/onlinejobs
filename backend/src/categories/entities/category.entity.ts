@@ -5,6 +5,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
   Index,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
@@ -50,4 +52,11 @@ export class Category {
   // İlişkiler
   @OneToMany('User', 'category')
   users: any[];
+
+  @ManyToOne('Category', 'subCategories')
+  @JoinColumn({ name: 'parentId' })
+  parent: any;
+
+  @OneToMany('Category', 'parent')
+  subCategories: any[];
 } 

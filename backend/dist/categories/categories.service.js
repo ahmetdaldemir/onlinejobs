@@ -25,17 +25,20 @@ let CategoriesService = class CategoriesService {
         return this.categoryRepository.find({
             where: { isActive: true, parentId: (0, typeorm_2.IsNull)() },
             order: { orderIndex: 'ASC' },
+            relations: ['subCategories'],
         });
     }
     async findAllWithInactive() {
         return this.categoryRepository.find({
             where: { parentId: (0, typeorm_2.IsNull)() },
             order: { orderIndex: 'ASC' },
+            relations: ['subCategories'],
         });
     }
     async findById(id) {
         const category = await this.categoryRepository.findOne({
             where: { id },
+            relations: ['subCategories'],
         });
         if (!category) {
             throw new common_1.NotFoundException('Kategori bulunamadı');

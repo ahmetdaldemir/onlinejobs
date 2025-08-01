@@ -64,6 +64,15 @@ __decorate([
     (0, typeorm_1.OneToMany)('User', 'category'),
     __metadata("design:type", Array)
 ], Category.prototype, "users", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)('Category', 'subCategories'),
+    (0, typeorm_1.JoinColumn)({ name: 'parentId' }),
+    __metadata("design:type", Object)
+], Category.prototype, "parent", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)('Category', 'parent'),
+    __metadata("design:type", Array)
+], Category.prototype, "subCategories", void 0);
 exports.Category = Category = __decorate([
     (0, typeorm_1.Entity)('categories')
 ], Category);

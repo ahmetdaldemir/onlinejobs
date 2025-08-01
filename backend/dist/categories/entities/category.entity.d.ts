@@ -9,4 +9,6 @@ export declare class Category {
     createdAt: Date;
     updatedAt: Date;
     users: any[];
+    parent: any;
+    subCategories: any[];
 }

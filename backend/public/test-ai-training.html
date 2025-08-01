@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Training Data Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .response {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background-color: #e9ecef;
+            border: none;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Training Data Test</h1>
+    
+    <div class="tabs">
+        <button class="tab active" onclick="showTab('models')">AI Modelleri</button>
+        <button class="tab" onclick="showTab('training')">Eğitim Verisi Ekle</button>
+        <button class="tab" onclick="showTab('train')">Model Eğit</button>
+        <button class="tab" onclick="showTab('test')">AI Test</button>
+    </div>
+
+    <!-- AI Modelleri -->
+    <div id="models" class="tab-content active">
+        <div class="container">
+            <h2>AI Modelleri</h2>
+            <div class="form-group">
+                <label for="modelName">Model Adı:</label>
+                <input type="text" id="modelName" placeholder="Örn: Job Matching AI">
+            </div>
+            <div class="form-group">
+                <label for="modelDescription">Açıklama:</label>
+                <textarea id="modelDescription" rows="3" placeholder="Model açıklaması"></textarea>
+            </div>
+            <button onclick="createModel()">Model Oluştur</button>
+            <button onclick="getAllModels()">Modelleri Listele</button>
+            <div id="modelsResponse" class="response"></div>
+        </div>
+    </div>
+
+    <!-- Eğitim Verisi Ekle -->
+    <div id="training" class="tab-content">
+        <div class="container">
+            <h2>Eğitim Verisi Ekle</h2>
+            <div class="form-group">
+                <label for="trainingModelId">Model ID:</label>
+                <input type="text" id="trainingModelId" placeholder="UUID">
+            </div>
+            <div class="form-group">
+                <label for="trainingUserId">Kullanıcı ID:</label>
+                <input type="text" id="trainingUserId" placeholder="UUID">
+            </div>
+            <div class="form-group">
+                <label for="inputMessage">Giriş Mesajı:</label>
+                <textarea id="inputMessage" rows="3" placeholder="Kullanıcının sorduğu soru"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="responseMessage">Yanıt Mesajı:</label>
+                <textarea id="responseMessage" rows="3" placeholder="AI'nin vereceği yanıt"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="rating">Rating (0-5):</label>
+                <select id="rating">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5" selected>5</option>
+                </select>
+            </div>
+            <button onclick="addTrainingData()">Eğitim Verisi Ekle</button>
+            <div id="trainingResponse" class="response"></div>
+        </div>
+    </div>
+
+    <!-- Model Eğit -->
+    <div id="train" class="tab-content">
+        <div class="container">
+            <h2>Model Eğit</h2>
+            <div class="form-group">
+                <label for="trainModelId">Model ID:</label>
+                <input type="text" id="trainModelId" placeholder="UUID">
+            </div>
+            <button onclick="trainModel()">Modeli Eğit</button>
+            <div id="trainResponse" class="response"></div>
+        </div>
+    </div>
+
+    <!-- AI Test -->
+    <div id="test" class="tab-content">
+        <div class="container">
+            <h2>AI Test</h2>
+            <div class="form-group">
+                <label for="testMessage">Test Mesajı:</label>
+                <textarea id="testMessage" rows="3" placeholder="Test mesajı"></textarea>
+            </div>
+            <button onclick="testAI()">AI Yanıtı Al</button>
+            <div id="testResponse" class="response"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000';
+        let token = localStorage.getItem('token');
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function showResponse(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = JSON.stringify(data, null, 2);
+            element.className = 'response ' + (isError ? 'error' : 'success');
+        }
+
+        async function makeRequest(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token ? `Bearer ${token}` : '',
+                        ...options.headers
+                    },
+                    ...options
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Bir hata oluştu');
+                }
+
+                return data;
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        async function createModel() {
+            try {
+                const data = {
+                    name: document.getElementById('modelName').value,
+                    description: document.getElementById('modelDescription').value
+                };
+
+                const result = await makeRequest(`${API_BASE}/ai/models`, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+
+                showResponse('modelsResponse', result);
+            } catch (error) {
+                showResponse('modelsResponse', { error: error.message }, true);
+            }
+        }
+
+        async function getAllModels() {
+            try {
+                const result = await makeRequest(`${API_BASE}/ai/models`);
+                showResponse('modelsResponse', result);
+            } catch (error) {
+                showResponse('modelsResponse', { error: error.message }, true);
+            }
+        }
+
+        async function addTrainingData() {
+            try {
+                const data = {
+                    userId: document.getElementById('trainingUserId').value,
+                    inputMessage: document.getElementById('inputMessage').value,
+                    responseMessage: document.getElementById('responseMessage').value,
+                    rating: parseFloat(document.getElementById('rating').value)
+                };
+
+                const modelId = document.getElementById('trainingModelId').value;
+                const result = await makeRequest(`${API_BASE}/ai/models/${modelId}/training-data`, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+
+                showResponse('trainingResponse', result);
+            } catch (error) {
+                showResponse('trainingResponse', { error: error.message }, true);
+            }
+        }
+
+        async function trainModel() {
+            try {
+                const modelId = document.getElementById('trainModelId').value;
+                const result = await makeRequest(`${API_BASE}/ai/models/${modelId}/train`, {
+                    method: 'POST'
+                });
+
+                showResponse('trainResponse', result);
+            } catch (error) {
+                showResponse('trainResponse', { error: error.message }, true);
+            }
+        }
+
+        async function testAI() {
+            try {
+                const data = {
+                    message: document.getElementById('testMessage').value
+                };
+
+                const result = await makeRequest(`${API_BASE}/ai/generate-response`, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+
+                showResponse('testResponse', result);
+            } catch (error) {
+                showResponse('testResponse', { error: error.message }, true);
+            }
+        }
+
+        // Token kontrolü
+        if (!token) {
+            alert('Token bulunamadı! Lütfen önce giriş yapın.');
+        }
+    </script>
+</body>
+</html> 

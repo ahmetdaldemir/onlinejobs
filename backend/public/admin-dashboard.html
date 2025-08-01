@@ -84,6 +84,18 @@
                         <a class="nav-link" href="#" onclick="showSection('categories')">
                             <i class="fas fa-tags me-2"></i> Kategoriler
                         </a>
+                        <a class="nav-link" href="#" onclick="showSection('ai-analysis')">
+                            <i class="fas fa-robot me-2"></i> AI Analiz
+                        </a>
+                        <a class="nav-link" href="test-ai-status.html" target="_blank">
+                            <i class="fas fa-cog me-2"></i> AI Durumu
+                        </a>
+                        <a class="nav-link" href="create-ai-model.html" target="_blank">
+                            <i class="fas fa-plus me-2"></i> AI Model Oluştur
+                        </a>
+                        <a class="nav-link" href="auto-ai-training.html" target="_blank">
+                            <i class="fas fa-rocket me-2"></i> Otomatik AI Eğitimi
+                        </a>
                         <hr class="my-3">
                         <a class="nav-link" href="#" onclick="logout()">
                             <i class="fas fa-sign-out-alt me-2"></i> Çıkış
@@ -226,6 +238,78 @@
                             </div>
                             <div class="card-body">
                                 <div id="categoriesList"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI Analysis Section -->
+                    <div id="ai-analysisSection" class="section" style="display: none;">
+                        <h2 class="mb-4">🤖 AI Analiz Paneli</h2>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-robot me-2"></i>AI Kullanıcı Analizi</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Kullanıcı davranışları, mesajlaşma analizleri ve AI puanlamaları için detaylı analiz paneli.</p>
+                                        <button class="btn btn-primary" onclick="openAIAnalysis()">
+                                            <i class="fas fa-chart-line me-2"></i>AI Analiz Paneli Aç
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-brain me-2"></i>AI Eğitim Sistemi</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>Kullanıcı mesajlarından otomatik eğitim verisi oluşturma ve AI model eğitimi.</p>
+                                        <a href="test-ai-auto-training.html" target="_blank" class="btn btn-success">
+                                            <i class="fas fa-graduation-cap me-2"></i>AI Eğitim Testi
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-info-circle me-2"></i>AI Sistem Özellikleri</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <h6><i class="fas fa-comments me-2"></i>Otomatik Mesajlaşma</h6>
+                                                <ul class="list-unstyled">
+                                                    <li>✅ Kullanıcı tipine göre karşılama mesajları</li>
+                                                    <li>✅ İş detayları için bilgilendirme mesajları</li>
+                                                    <li>✅ Kişiselleştirilmiş içerik</li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6><i class="fas fa-chart-bar me-2"></i>Kullanıcı Analizi</h6>
+                                                <ul class="list-unstyled">
+                                                    <li>✅ Detaylı mesaj analizi</li>
+                                                    <li>✅ AI puanlama sistemi</li>
+                                                    <li>✅ Öneriler ve tavsiyeler</li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h6><i class="fas fa-cogs me-2"></i>Akıllı Sistem</h6>
+                                                <ul class="list-unstyled">
+                                                    <li>✅ Profil bazlı eğitim</li>
+                                                    <li>✅ Otomatik rating hesaplama</li>
+                                                    <li>✅ Bağlam analizi</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -519,6 +603,9 @@
                     break;
                 case 'categories':
                     loadCategories();
+                    break;
+                case 'ai-analysis':
+                    // AI Analysis section doesn't need data loading
                     break;
             }
         }
@@ -1604,6 +1691,11 @@
                 console.error('Profil fotoğrafı yüklenirken hata:', error);
                 throw error;
             }
+        }
+
+        // AI Analiz Fonksiyonları
+        function openAIAnalysis() {
+            window.open('admin-ai-analysis.html', '_blank');
         }
     </script>
 </body>

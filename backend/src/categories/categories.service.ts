@@ -14,6 +14,7 @@ export class CategoriesService {
     return this.categoryRepository.find({
       where: { isActive: true, parentId: IsNull() },
       order: { orderIndex: 'ASC' },
+      relations: ['subCategories'],
     });
   }
 
@@ -21,12 +22,14 @@ export class CategoriesService {
     return this.categoryRepository.find({
       where: { parentId: IsNull() },
       order: { orderIndex: 'ASC' },
+      relations: ['subCategories'],
     });
   }
 
   async findById(id: string): Promise<Category> {
     const category = await this.categoryRepository.findOne({
       where: { id },
+      relations: ['subCategories'],
     });
 
     if (!category) {

@@ -14,13 +14,15 @@ const ai_service_1 = require("./ai.service");
 const ai_model_entity_1 = require("./entities/ai-model.entity");
 const ai_training_data_entity_1 = require("./entities/ai-training-data.entity");
 const message_entity_1 = require("../messages/entities/message.entity");
+const user_entity_1 = require("../users/entities/user.entity");
+const job_entity_1 = require("../jobs/entities/job.entity");
 let AiModule = class AiModule {
 };
 exports.AiModule = AiModule;
 exports.AiModule = AiModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([ai_model_entity_1.AiModel, ai_training_data_entity_1.AiTrainingData, message_entity_1.Message]),
+            typeorm_1.TypeOrmModule.forFeature([ai_model_entity_1.AiModel, ai_training_data_entity_1.AiTrainingData, message_entity_1.Message, user_entity_1.User, job_entity_1.Job]),
         ],
         controllers: [ai_controller_1.AiController],
         providers: [ai_service_1.AiService],

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otomatik AI Eğitimi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .status-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .status-active {
+            border-left: 4px solid #28a745;
+            background: #d4edda;
+        }
+        .status-inactive {
+            border-left: 4px solid #dc3545;
+            background: #f8d7da;
+        }
+        .status-training {
+            border-left: 4px solid #ffc107;
+            background: #fff3cd;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        .progress {
+            background: #e9ecef;
+            border-radius: 5px;
+            height: 20px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            background: #007bff;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Otomatik AI Eğitimi Başlat</h1>
+        
+        <div class="status-card">
+            <h3>📊 Mevcut AI Modeli</h3>
+            <button onclick="getActiveModel()">Aktif Modeli Kontrol Et</button>
+            <div id="activeModelResult" class="result"></div>
+        </div>
+
+        <div class="status-card">
+            <h3>👥 Kullanıcı Sayısı</h3>
+            <button onclick="getUserCount()">Kullanıcı Sayısını Kontrol Et</button>
+            <div id="userCountResult" class="result"></div>
+        </div>
+
+        <div class="status-card">
+            <h3>📈 Eğitim Verisi Durumu</h3>
+            <button onclick="getTrainingDataStatus()">Eğitim Verisi Durumunu Kontrol Et</button>
+            <div id="trainingDataResult" class="result"></div>
+        </div>
+
+        <div class="status-card">
+            <h3>🚀 Otomatik Eğitim Başlat</h3>
+            <p><strong>⚠️ Dikkat:</strong> Bu işlem tüm kullanıcılar için AI modelini eğitecektir. Bu işlem biraz zaman alabilir.</p>
+            <button onclick="startAutoTraining()" id="startTrainingBtn">Otomatik Eğitimi Başlat</button>
+            <div class="progress" id="progressBar" style="display: none;">
+                <div class="progress-bar" id="progressBarFill"></div>
+            </div>
+            <div id="autoTrainingResult" class="result"></div>
+        </div>
+
+        <div class="status-card">
+            <h3>💬 Test Mesajları</h3>
+            <button onclick="generateTestMessages()">Test Mesajları Oluştur</button>
+            <div id="testMessagesResult" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000';
+        let activeModelId = null;
+
+        async function makeRequest(endpoint, options = {}) {
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    return { 
+                        success: false, 
+                        error: `HTTP ${response.status}: ${errorText || 'Bilinmeyen hata'}`,
+                        status: response.status 
+                    };
+                }
+                
+                const data = await response.json();
+                return { success: true, data, status: response.status };
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        function displayResult(elementId, result, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.className = `result ${type}`;
+            
+            if (result.success) {
+                element.textContent = JSON.stringify(result.data, null, 2);
+            } else {
+                element.textContent = `Hata: ${result.error || 'Bilinmeyen hata'}`;
+            }
+        }
+
+        async function getActiveModel() {
+            const result = await makeRequest('/ai/active-model');
+            if (result.success && result.data) {
+                activeModelId = result.data.id;
+                displayResult('activeModelResult', result, 'success');
+            } else {
+                displayResult('activeModelResult', result, 'error');
+            }
+        }
+
+        async function getUserCount() {
+            const result = await makeRequest('/users');
+            if (result.success) {
+                const userCount = result.data.length;
+                displayResult('userCountResult', { 
+                    success: true, 
+                    data: { 
+                        totalUsers: userCount,
+                        message: `Sistemde ${userCount} kullanıcı bulunmaktadır.`
+                    }
+                }, 'success');
+            } else {
+                displayResult('userCountResult', result, 'error');
+            }
+        }
+
+        async function getTrainingDataStatus() {
+            if (!activeModelId) {
+                displayResult('trainingDataResult', { 
+                    success: false, 
+                    error: 'Önce aktif modeli kontrol edin!' 
+                }, 'error');
+                return;
+            }
+
+            const result = await makeRequest(`/ai/training-data-count/${activeModelId}`);
+            displayResult('trainingDataResult', result, result.success ? 'success' : 'error');
+        }
+
+        async function startAutoTraining() {
+            if (!activeModelId) {
+                displayResult('autoTrainingResult', { 
+                    success: false, 
+                    error: 'Önce aktif modeli kontrol edin!' 
+                }, 'error');
+                return;
+            }
+
+            const startBtn = document.getElementById('startTrainingBtn');
+            const progressBar = document.getElementById('progressBar');
+            const progressBarFill = document.getElementById('progressBarFill');
+
+            startBtn.disabled = true;
+            startBtn.textContent = 'Eğitim Başlatılıyor...';
+            progressBar.style.display = 'block';
+            progressBarFill.style.width = '0%';
+
+            displayResult('autoTrainingResult', { 
+                success: true, 
+                data: { message: 'Otomatik eğitim başlatılıyor... Bu işlem biraz zaman alabilir.' }
+            }, 'info');
+
+            try {
+                const result = await makeRequest(`/ai/auto-train-all-users/${activeModelId}`, {
+                    method: 'POST'
+                });
+
+                progressBarFill.style.width = '100%';
+                startBtn.disabled = false;
+                startBtn.textContent = 'Otomatik Eğitimi Başlat';
+
+                if (result.success) {
+                    displayResult('autoTrainingResult', result, 'success');
+                } else {
+                    displayResult('autoTrainingResult', result, 'error');
+                }
+            } catch (error) {
+                startBtn.disabled = false;
+                startBtn.textContent = 'Otomatik Eğitimi Başlat';
+                displayResult('autoTrainingResult', { 
+                    success: false, 
+                    error: error.message 
+                }, 'error');
+            }
+        }
+
+        async function generateTestMessages() {
+            if (!activeModelId) {
+                displayResult('testMessagesResult', { 
+                    success: false, 
+                    error: 'Önce aktif modeli kontrol edin!' 
+                }, 'error');
+                return;
+            }
+
+            const testMessages = [
+                { message: "Merhaba, nasılsınız?" },
+                { message: "İş arayan mısınız?" },
+                { message: "Hangi alanda çalışıyorsunuz?" },
+                { message: "Maaş beklentiniz nedir?" },
+                { message: "Deneyiminiz var mı?" }
+            ];
+
+            let results = [];
+            for (let i = 0; i < testMessages.length; i++) {
+                try {
+                    const result = await makeRequest('/ai/generate-response', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            userId: 'test-user',
+                            message: testMessages[i].message
+                        })
+                    });
+                    
+                    results.push({
+                        input: testMessages[i].message,
+                        output: result.success ? result.data.response : 'Hata: ' + result.error
+                    });
+
+                    // Progress göster
+                    const progress = ((i + 1) / testMessages.length) * 100;
+                    document.getElementById('progressBarFill').style.width = progress + '%';
+                } catch (error) {
+                    results.push({
+                        input: testMessages[i].message,
+                        output: 'Hata: ' + error.message
+                    });
+                }
+            }
+
+            displayResult('testMessagesResult', { 
+                success: true, 
+                data: { 
+                    message: 'Test mesajları oluşturuldu',
+                    results: results
+                }
+            }, 'success');
+        }
+
+        // Sayfa yüklendiğinde otomatik olarak aktif modeli kontrol et
+        window.onload = function() {
+            getActiveModel();
+        };
+    </script>
+</body>
+</html> 

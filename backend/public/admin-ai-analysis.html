@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin AI Analiz Paneli</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tab {
+            padding: 15px 25px;
+            background-color: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            flex: 1;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            background-color: #667eea;
+            color: white;
+        }
+        .tab:hover {
+            background-color: #5a6fd8;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .user-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .user-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+        .ai-score {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .analysis-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        .analysis-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .analysis-item {
+            margin-bottom: 8px;
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .recommendations {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .recommendation-item {
+            margin-bottom: 8px;
+            padding-left: 15px;
+            position: relative;
+        }
+        .recommendation-item:before {
+            content: "💡";
+            position: absolute;
+            left: 0;
+        }
+        button {
+            background-color: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #5a6fd8;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .filter-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        select, input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 150px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 AI Kullanıcı Analiz Paneli</h1>
+        <p>Kullanıcı davranışları, mesajlaşma analizleri ve AI puanlamaları</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number" id="totalUsers">-</div>
+            <div class="stat-label">Toplam Kullanıcı</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="activeUsers">-</div>
+            <div class="stat-label">Aktif Kullanıcı</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="avgAiScore">-</div>
+            <div class="stat-label">Ortalama AI Puanı</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="totalMessages">-</div>
+            <div class="stat-label">Toplam Mesaj</div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="showTab('analysis')">Kullanıcı Analizleri</button>
+        <button class="tab" onclick="showTab('charts')">Grafikler</button>
+        <button class="tab" onclick="showTab('ai-training')">AI Eğitimi</button>
+        <button class="tab" onclick="showTab('auto-messages')">Otomatik Mesajlar</button>
+    </div>
+
+    <!-- Kullanıcı Analizleri -->
+    <div id="analysis" class="tab-content active">
+        <div class="filter-section">
+            <h3>🔍 Filtreler</h3>
+            <div class="filter-group">
+                <label>Kullanıcı Tipi:</label>
+                <select id="userTypeFilter">
+                    <option value="">Tümü</option>
+                    <option value="employer">İşveren</option>
+                    <option value="worker">İşçi</option>
+                </select>
+                <label>AI Puanı:</label>
+                <select id="aiScoreFilter">
+                    <option value="">Tümü</option>
+                    <option value="high">Yüksek (80+)</option>
+                    <option value="medium">Orta (50-80)</option>
+                    <option value="low">Düşük (0-50)</option>
+                </select>
+                <button onclick="applyFilters()">Filtrele</button>
+                <button onclick="clearFilters()">Temizle</button>
+            </div>
+        </div>
+
+        <div class="container">
+            <h3>📊 Kullanıcı Analizleri</h3>
+            <button onclick="generateAllUserAnalysis()">Tüm Kullanıcıları Analiz Et</button>
+            <button onclick="refreshAnalysis()">Yenile</button>
+            <div id="analysisResponse"></div>
+        </div>
+    </div>
+
+    <!-- Grafikler -->
+    <div id="charts" class="tab-content">
+        <div class="container">
+            <h3>📈 Analiz Grafikleri</h3>
+            <div class="chart-container">
+                <h4>AI Puanı Dağılımı</h4>
+                <canvas id="aiScoreChart" width="400" height="200"></canvas>
+            </div>
+            <div class="chart-container">
+                <h4>Kullanıcı Aktivite Saatleri</h4>
+                <canvas id="activityChart" width="400" height="200"></canvas>
+            </div>
+            <div class="chart-container">
+                <h4>İletişim Tarzı Dağılımı</h4>
+                <canvas id="communicationChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Eğitimi -->
+    <div id="ai-training" class="tab-content">
+        <div class="container">
+            <h3>🎓 AI Eğitimi</h3>
+            <div class="filter-group">
+                <label>Model ID:</label>
+                <input type="text" id="trainingModelId" placeholder="UUID">
+                <button onclick="getAllModels()">Modelleri Listele</button>
+            </div>
+            <button onclick="trainModelForAllUsers()">Tüm Kullanıcılar için Eğit</button>
+            <button onclick="generateUserTypeTraining()">Kullanıcı Tipine Göre Eğit</button>
+            <div id="trainingResponse"></div>
+        </div>
+    </div>
+
+    <!-- Otomatik Mesajlar -->
+    <div id="auto-messages" class="tab-content">
+        <div class="container">
+            <h3>💬 Otomatik Mesajlar</h3>
+            <div class="filter-group">
+                <label>Kullanıcı ID:</label>
+                <input type="text" id="messageUserId" placeholder="UUID">
+                <label>Kullanıcı Tipi:</label>
+                <select id="messageUserType">
+                    <option value="employer">İşveren</option>
+                    <option value="worker">İşçi</option>
+                </select>
+                <button onclick="generateWelcomeMessage()">Karşılama Mesajı Oluştur</button>
+            </div>
+            <div class="filter-group">
+                <label>İş ID:</label>
+                <input type="text" id="jobId" placeholder="UUID">
+                <button onclick="generateJobDetailsMessage()">İş Detayları Mesajı Oluştur</button>
+            </div>
+            <div id="messageResponse"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000';
+        let token = localStorage.getItem('token');
+        let allAnalyses = [];
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function showResponse(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            element.className = isError ? 'error' : 'success';
+        }
+
+        async function makeRequest(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token ? `Bearer ${token}` : '',
+                        ...options.headers
+                    },
+                    ...options
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Bir hata oluştu');
+                }
+
+                return data;
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        async function generateAllUserAnalysis() {
+            try {
+                document.getElementById('analysisResponse').innerHTML = '<div class="loading">Analiz oluşturuluyor...</div>';
+                
+                const result = await makeRequest(`${API_BASE}/ai/user-analysis`);
+                allAnalyses = result.analyses;
+                
+                updateStats(result);
+                displayAnalyses(allAnalyses);
+                
+                showResponse('analysisResponse', result);
+            } catch (error) {
+                showResponse('analysisResponse', { error: error.message }, true);
+            }
+        }
+
+        function updateStats(data) {
+            const totalUsers = data.totalUsers;
+            const analyzedUsers = data.analyzedUsers;
+            const avgAiScore = data.analyses.length > 0 ? 
+                Math.round(data.analyses.reduce((sum, a) => sum + a.aiScore, 0) / data.analyses.length) : 0;
+            const totalMessages = data.analyses.reduce((sum, a) => sum + a.messageAnalysis.totalMessages, 0);
+
+            document.getElementById('totalUsers').textContent = totalUsers;
+            document.getElementById('activeUsers').textContent = analyzedUsers;
+            document.getElementById('avgAiScore').textContent = avgAiScore;
+            document.getElementById('totalMessages').textContent = totalMessages;
+        }
+
+        function displayAnalyses(analyses) {
+            const container = document.getElementById('analysisResponse');
+            let html = '<div class="analysis-grid">';
+
+            analyses.forEach(analysis => {
+                html += `
+                    <div class="user-card">
+                        <div class="user-header">
+                            <div class="user-name">${analysis.userProfile.userType === 'employer' ? '🏢' : '👷'} Kullanıcı ${analysis.userId.slice(0, 8)}</div>
+                            <div class="ai-score">${analysis.aiScore}/100</div>
+                        </div>
+                        
+                        <div class="analysis-section">
+                            <div class="analysis-title">📊 Mesaj Analizi</div>
+                            <div class="analysis-item">Toplam Mesaj: ${analysis.messageAnalysis.totalMessages}</div>
+                            <div class="analysis-item">Gönderilen: ${analysis.messageAnalysis.sentMessages}</div>
+                            <div class="analysis-item">Alınan: ${analysis.messageAnalysis.receivedMessages}</div>
+                            <div class="analysis-item">Ortalama Yanıt Süresi: ${analysis.messageAnalysis.averageResponseTime.toFixed(1)} dakika</div>
+                            <div class="analysis-item">İletişim Tarzı: ${analysis.messageAnalysis.communicationStyle}</div>
+                        </div>
+
+                        <div class="analysis-section">
+                            <div class="analysis-title">💼 İş Analizi</div>
+                            <div class="analysis-item">Toplam İş: ${analysis.jobAnalysis.totalJobs}</div>
+                            <div class="analysis-item">Kategoriler: ${analysis.jobAnalysis.jobCategories.join(', ') || 'Yok'}</div>
+                            <div class="analysis-item">Ortalama Maaş: ${analysis.jobAnalysis.averageSalary.toFixed(0)} TL</div>
+                        </div>
+
+                        <div class="recommendations">
+                            <div class="analysis-title">💡 Öneriler</div>
+                            ${analysis.recommendations.map(rec => `<div class="recommendation-item">${rec}</div>`).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function applyFilters() {
+            const userTypeFilter = document.getElementById('userTypeFilter').value;
+            const aiScoreFilter = document.getElementById('aiScoreFilter').value;
+
+            let filteredAnalyses = allAnalyses;
+
+            if (userTypeFilter) {
+                filteredAnalyses = filteredAnalyses.filter(a => a.userProfile.userType === userTypeFilter);
+            }
+
+            if (aiScoreFilter) {
+                switch (aiScoreFilter) {
+                    case 'high':
+                        filteredAnalyses = filteredAnalyses.filter(a => a.aiScore >= 80);
+                        break;
+                    case 'medium':
+                        filteredAnalyses = filteredAnalyses.filter(a => a.aiScore >= 50 && a.aiScore < 80);
+                        break;
+                    case 'low':
+                        filteredAnalyses = filteredAnalyses.filter(a => a.aiScore < 50);
+                        break;
+                }
+            }
+
+            displayAnalyses(filteredAnalyses);
+        }
+
+        function clearFilters() {
+            document.getElementById('userTypeFilter').value = '';
+            document.getElementById('aiScoreFilter').value = '';
+            displayAnalyses(allAnalyses);
+        }
+
+        async function getAllModels() {
+            try {
+                const result = await makeRequest(`${API_BASE}/ai/models`);
+                showResponse('trainingResponse', result);
+            } catch (error) {
+                showResponse('trainingResponse', { error: error.message }, true);
+            }
+        }
+
+        async function trainModelForAllUsers() {
+            try {
+                const modelId = document.getElementById('trainingModelId').value;
+                if (!modelId) {
+                    throw new Error('Model ID gerekli');
+                }
+
+                const result = await makeRequest(`${API_BASE}/ai/models/${modelId}/train/all-users`, {
+                    method: 'POST'
+                });
+
+                showResponse('trainingResponse', result);
+            } catch (error) {
+                showResponse('trainingResponse', { error: error.message }, true);
+            }
+        }
+
+        async function generateUserTypeTraining() {
+            try {
+                const modelId = document.getElementById('trainingModelId').value;
+                const userType = document.getElementById('messageUserType').value;
+                const userId = document.getElementById('messageUserId').value;
+
+                if (!modelId || !userId) {
+                    throw new Error('Model ID ve Kullanıcı ID gerekli');
+                }
+
+                const result = await makeRequest(`${API_BASE}/ai/models/${modelId}/user-type-training/${userId}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ userType })
+                });
+
+                showResponse('trainingResponse', result);
+            } catch (error) {
+                showResponse('trainingResponse', { error: error.message }, true);
+            }
+        }
+
+        async function generateWelcomeMessage() {
+            try {
+                const userId = document.getElementById('messageUserId').value;
+                const userType = document.getElementById('messageUserType').value;
+
+                if (!userId) {
+                    throw new Error('Kullanıcı ID gerekli');
+                }
+
+                const result = await makeRequest(`${API_BASE}/ai/welcome-message/${userId}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ userType })
+                });
+
+                showResponse('messageResponse', result);
+            } catch (error) {
+                showResponse('messageResponse', { error: error.message }, true);
+            }
+        }
+
+        async function generateJobDetailsMessage() {
+            try {
+                const jobId = document.getElementById('jobId').value;
+                const userId = document.getElementById('messageUserId').value;
+
+                if (!jobId || !userId) {
+                    throw new Error('İş ID ve Kullanıcı ID gerekli');
+                }
+
+                const result = await makeRequest(`${API_BASE}/ai/job-details-message/${jobId}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ userId })
+                });
+
+                showResponse('messageResponse', result);
+            } catch (error) {
+                showResponse('messageResponse', { error: error.message }, true);
+            }
+        }
+
+        function refreshAnalysis() {
+            if (allAnalyses.length > 0) {
+                displayAnalyses(allAnalyses);
+            }
+        }
+
+        // Token kontrolü
+        if (!token) {
+            alert('Token bulunamadı! Lütfen önce admin girişi yapın.');
+        }
+
+        // Sayfa yüklendiğinde otomatik analiz
+        window.onload = function() {
+            generateAllUserAnalysis();
+        };
+    </script>
+</body>
+</html> 
