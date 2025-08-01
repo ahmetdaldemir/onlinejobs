@@ -32,8 +32,8 @@ let MessagesService = class MessagesService {
         if (!receiverId) {
             throw new Error('receiverId gerekli');
         }
-        if (!content) {
-            throw new Error('content gerekli');
+        if (!content || content.trim() === '') {
+            throw new Error('content gerekli ve boş olamaz');
         }
         console.log('MessagesService.sendMessage çağrıldı:', { senderId, receiverId, content, type });
         const message = this.messageRepository.create({
