@@ -14,6 +14,7 @@ import { SeedsModule } from './seeds/seeds.module';
 import { AdminModule } from './admin/admin.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { UploadModule } from './upload/upload.module';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { UploadModule } from './upload/upload.module';
     AdminModule,
     NotificationsModule,
     UploadModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

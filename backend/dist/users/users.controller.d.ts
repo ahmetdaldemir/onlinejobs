@@ -29,4 +29,17 @@ export declare class UsersController {
     updateProfileImage(req: any, body: {
         imageUrl: string;
     }): Promise<import("./entities/user.entity").User>;
+    getProfileImage(userId: string): Promise<{
+        profileImage: string;
+    }>;
+    getOnlineUsers(): Promise<import("./entities/user.entity").User[]>;
+    getOnlineWorkers(latitude?: number, longitude?: number, radius?: number, categoryId?: string): Promise<any[]>;
+    getOnlineEmployers(latitude?: number, longitude?: number, radius?: number, categoryId?: string): Promise<any[]>;
+    getUserStatus(userId: string): Promise<{
+        userId: string;
+        isOnline: boolean;
+        lastSeen: Date;
+        firstName: string;
+        lastName: string;
+    }>;
 }

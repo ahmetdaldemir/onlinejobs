@@ -117,6 +117,10 @@ __decorate([
     (0, typeorm_1.OneToMany)('JobApplication', 'job'),
     __metadata("design:type", Array)
 ], Job.prototype, "applications", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)('Comment', 'job'),
+    __metadata("design:type", Array)
+], Job.prototype, "comments", void 0);
 exports.Job = Job = __decorate([
     (0, typeorm_1.Entity)('jobs'),
     (0, typeorm_1.Index)(['status']),

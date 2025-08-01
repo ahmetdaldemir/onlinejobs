@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsBoolean, IsDateString } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, IsDateString, IsUUID } from 'class-validator';
  
 export class CreateJobDto {
   @ApiProperty()
@@ -32,11 +32,11 @@ export class CreateJobDto {
 
   @ApiProperty({ required: false })
   @IsOptional()
-  @IsString()
+  @IsUUID('4', { message: 'categoryId geçerli bir UUID formatında olmalıdır' })
   categoryId?: string;
 
   @ApiProperty({ required: false, description: 'İş ilanının konum bilgilerini içeren UserInfo ID' })
   @IsOptional()
-  @IsString()
+  @IsUUID('4', { message: 'userInfoId geçerli bir UUID formatında olmalıdır' })
   userInfoId?: string;
 } 

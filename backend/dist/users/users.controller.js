@@ -86,6 +86,29 @@ let UsersController = class UsersController {
         const userId = req.user.sub;
         return this.usersService.updateProfileImage(userId, body.imageUrl);
     }
+    async getProfileImage(userId) {
+        const user = await this.usersService.findById(userId);
+        return { profileImage: user.profileImage };
+    }
+    async getOnlineUsers() {
+        return this.usersService.findOnlineUsers();
+    }
+    async getOnlineWorkers(latitude, longitude, radius, categoryId) {
+        return this.usersService.findOnlineWorkers(latitude, longitude, radius, categoryId);
+    }
+    async getOnlineEmployers(latitude, longitude, radius, categoryId) {
+        return this.usersService.findOnlineEmployers(latitude, longitude, radius, categoryId);
+    }
+    async getUserStatus(userId) {
+        const user = await this.usersService.findById(userId);
+        return {
+            userId: user.id,
+            isOnline: user.isOnline,
+            lastSeen: user.lastSeen,
+            firstName: user.firstName,
+            lastName: user.lastName
+        };
+    }
 };
 exports.UsersController = UsersController;
 __decorate([
@@ -198,8 +221,8 @@ __decorate([
     (0, common_1.Get)('user-info'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcının kendi bilgilerini getir' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı bilgileri' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcının tüm adres bilgilerini getir' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcının tüm adres bilgileri' }),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -209,8 +232,8 @@ __decorate([
     (0, common_1.Get)('user-infos'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcının kendi bilgilerini getir (alias)' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı bilgileri' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcının tüm adres bilgilerini getir (alias)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcının tüm adres bilgileri' }),
     __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -338,6 +361,56 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateProfileImage", null);
+__decorate([
+    (0, common_1.Get)('profile-image/:userId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı profil fotoğrafını getir' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Profil fotoğrafı URL\'i' }),
+    __param(0, (0, common_1.Param)('userId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getProfileImage", null);
+__decorate([
+    (0, common_1.Get)('online-users'),
+    (0, swagger_1.ApiOperation)({ summary: 'Online kullanıcıları listele' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Online kullanıcılar listelendi' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getOnlineUsers", null);
+__decorate([
+    (0, common_1.Get)('online-workers'),
+    (0, swagger_1.ApiOperation)({ summary: 'Online işçileri listele' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Online işçiler listelendi' }),
+    __param(0, (0, common_1.Query)('latitude')),
+    __param(1, (0, common_1.Query)('longitude')),
+    __param(2, (0, common_1.Query)('radius')),
+    __param(3, (0, common_1.Query)('categoryId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number, Number, String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getOnlineWorkers", null);
+__decorate([
+    (0, common_1.Get)('online-employers'),
+    (0, swagger_1.ApiOperation)({ summary: 'Online işverenleri listele' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Online işverenler listelendi' }),
+    __param(0, (0, common_1.Query)('latitude')),
+    __param(1, (0, common_1.Query)('longitude')),
+    __param(2, (0, common_1.Query)('radius')),
+    __param(3, (0, common_1.Query)('categoryId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number, Number, String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getOnlineEmployers", null);
+__decorate([
+    (0, common_1.Get)('user-status/:userId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcının online durumunu getir' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı durumu' }),
+    __param(0, (0, common_1.Param)('userId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getUserStatus", null);
 exports.UsersController = UsersController = __decorate([
     (0, swagger_1.ApiTags)('Users'),
     (0, common_1.Controller)('users'),

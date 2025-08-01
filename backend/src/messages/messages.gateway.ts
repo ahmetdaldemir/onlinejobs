@@ -96,6 +96,9 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
         this.connectedUsers.set(userId, client);
         client.data.userId = userId;
         
+        // Online durumu değişikliğini yayınla
+        await this.broadcastUserStatusChange(userId, true);
+        
         console.log('✅ Connection successful for user:', userId);
         console.log('Connected users count:', this.connectedUsers.size);
         
@@ -111,14 +114,18 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
     }
   }
 
-  handleDisconnect(client: Socket) {
+  async handleDisconnect(client: Socket) {
     const userId = client.data.userId;
     if (userId) {
-      this.usersService.setUserOffline(userId).catch(error => {
+      try {
+        await this.usersService.setUserOffline(userId);
+        // Offline durumu değişikliğini yayınla
+        await this.broadcastUserStatusChange(userId, false);
+        this.connectedUsers.delete(userId);
+        console.log(`User ${userId} disconnected`);
+      } catch (error) {
         console.error('Error setting user offline:', error);
-      });
-      this.connectedUsers.delete(userId);
-      console.log(`User ${userId} disconnected`);
+      }
     }
   }
 
@@ -340,5 +347,99 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
     if (userSocket) {
       userSocket.emit(event, data);
     }
+  }
+
+  // Online durumu takibi için yeni event'ler
+  @SubscribeMessage('get_online_users')
+  async handleGetOnlineUsers(@ConnectedSocket() client: Socket) {
+    try {
+      const onlineUsers = await this.usersService.findOnlineUsers();
+      client.emit('online_users_list', {
+        users: onlineUsers.map(user => ({
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          isOnline: user.isOnline,
+          lastSeen: user.lastSeen,
+          userType: user.userType
+        }))
+      });
+    } catch (error) {
+      console.error('Get online users error:', error);
+      client.emit('online_users_error', { error: error.message });
+    }
+  }
+
+  @SubscribeMessage('get_user_status')
+  async handleGetUserStatus(
+    @MessageBody() data: { userId: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    try {
+      const user = await this.usersService.findById(data.userId);
+      client.emit('user_status', {
+        userId: user.id,
+        isOnline: user.isOnline,
+        lastSeen: user.lastSeen,
+        firstName: user.firstName,
+        lastName: user.lastName
+      });
+    } catch (error) {
+      console.error('Get user status error:', error);
+      client.emit('user_status_error', { error: error.message });
+    }
+  }
+
+  @SubscribeMessage('subscribe_user_status')
+  async handleSubscribeUserStatus(
+    @MessageBody() data: { userId: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    try {
+      const roomName = `user_status_${data.userId}`;
+      client.join(roomName);
+      console.log(`User ${client.data.userId} subscribed to status of user ${data.userId}`);
+      
+      // Mevcut durumu hemen gönder
+      const user = await this.usersService.findById(data.userId);
+      client.emit('user_status_update', {
+        userId: user.id,
+        isOnline: user.isOnline,
+        lastSeen: user.lastSeen
+      });
+    } catch (error) {
+      console.error('Subscribe user status error:', error);
+      client.emit('subscribe_status_error', { error: error.message });
+    }
+  }
+
+  @SubscribeMessage('unsubscribe_user_status')
+  async handleUnsubscribeUserStatus(
+    @MessageBody() data: { userId: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    try {
+      const roomName = `user_status_${data.userId}`;
+      client.leave(roomName);
+      console.log(`User ${client.data.userId} unsubscribed from status of user ${data.userId}`);
+    } catch (error) {
+      console.error('Unsubscribe user status error:', error);
+    }
+  }
+
+  // Kullanıcı durumu değiştiğinde tüm abonelere bildir
+  async broadcastUserStatusChange(userId: string, isOnline: boolean) {
+    const roomName = `user_status_${userId}`;
+    const user = await this.usersService.findById(userId);
+    
+    this.server.to(roomName).emit('user_status_update', {
+      userId: user.id,
+      isOnline: user.isOnline,
+      lastSeen: user.lastSeen,
+      firstName: user.firstName,
+      lastName: user.lastName
+    });
+    
+    console.log(`📡 User status broadcasted: ${userId} is now ${isOnline ? 'online' : 'offline'}`);
   }
 } 

@@ -27,4 +27,6 @@ export declare class User {
     categoryIds: string[];
     categories: any[];
     userInfos: UserInfo[];
+    commentsGiven: any[];
+    commentsReceived: any[];
 }

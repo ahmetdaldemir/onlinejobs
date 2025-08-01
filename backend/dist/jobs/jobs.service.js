@@ -30,6 +30,9 @@ let JobsService = class JobsService {
         this.notificationsService = notificationsService;
     }
     async create(createJobDto, employerId) {
+        if (createJobDto.userInfoId === '') {
+            createJobDto.userInfoId = null;
+        }
         if (createJobDto.userInfoId) {
             const userInfo = await this.userInfoRepository.findOne({
                 where: { id: createJobDto.userInfoId }

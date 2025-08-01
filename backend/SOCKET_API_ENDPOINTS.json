@@ -1,0 +1,293 @@
+{
+  "socket_api_endpoints": {
+    "connection": {
+      "description": "Socket.IO bağlantısı kurma",
+      "url": "ws://localhost:3000",
+      "authentication": {
+        "method": "JWT Token",
+        "location": "auth.token veya headers.authorization veya query.token",
+        "format": "Bearer <JWT_TOKEN>"
+      },
+      "cors": {
+        "origins": [
+          "http://localhost:3000",
+          "http://localhost:3001", 
+          "http://localhost:8080",
+          "http://localhost:5173",
+          "https://onlinejobs.onrender.com",
+          "https://*.onrender.com",
+          "*"
+        ],
+        "credentials": true,
+        "methods": ["GET", "POST"]
+      },
+      "transports": ["websocket", "polling"]
+    },
+    "events": {
+      "send_message": {
+        "description": "Mesaj gönderme",
+        "event": "send_message",
+        "data": {
+          "receiverId": "string (alıcı kullanıcı ID)",
+          "content": "string (mesaj içeriği)",
+          "type": "string (opsiyonel: TEXT, IMAGE, LOCATION)"
+        },
+        "response_events": {
+          "message_sent": {
+            "description": "Mesaj başarıyla gönderildi",
+            "data": {
+              "id": "string (mesaj ID)",
+              "content": "string (mesaj içeriği)",
+              "receiverId": "string (alıcı ID)"
+            }
+          },
+          "new_message": {
+            "description": "Yeni mesaj alındı (alıcıya)",
+            "data": {
+              "id": "string (mesaj ID)",
+              "senderId": "string (gönderici ID)",
+              "content": "string (mesaj içeriği)",
+              "type": "string (mesaj tipi)",
+              "createdAt": "Date (oluşturulma tarihi)",
+              "isAiResponse": "boolean (AI yanıtı mı?)"
+            }
+          },
+          "message_error": {
+            "description": "Mesaj gönderme hatası",
+            "data": {
+              "error": "string (hata mesajı)"
+            }
+          }
+        }
+      },
+      "join_conversation": {
+        "description": "Konuşma odasına katılma",
+        "event": "join_conversation",
+        "data": {
+          "otherUserId": "string (diğer kullanıcı ID)"
+        },
+        "room_name": "conversation_<sorted_user_id1>_<sorted_user_id2>"
+      },
+      "leave_conversation": {
+        "description": "Konuşma odasından ayrılma",
+        "event": "leave_conversation",
+        "data": {
+          "otherUserId": "string (diğer kullanıcı ID)"
+        }
+      },
+      "typing": {
+        "description": "Yazıyor durumu gönderme",
+        "event": "typing",
+        "data": {
+          "receiverId": "string (alıcı ID)",
+          "isTyping": "boolean (yazıyor mu?)"
+        },
+        "response_event": {
+          "user_typing": {
+            "description": "Kullanıcı yazıyor bildirimi",
+            "data": {
+              "userId": "string (yazan kullanıcı ID)",
+              "isTyping": "boolean (yazıyor mu?)"
+            }
+          }
+        }
+      },
+      "read_messages": {
+        "description": "Mesajları okundu olarak işaretleme",
+        "event": "read_messages",
+        "data": {
+          "senderId": "string (gönderici ID)"
+        },
+        "response_event": {
+          "messages_read": {
+            "description": "Mesajlar okundu bildirimi",
+            "data": {
+              "readerId": "string (okuyan kullanıcı ID)",
+              "timestamp": "Date (okuma zamanı)"
+            }
+          }
+        }
+      },
+      "mark_message_read": {
+        "description": "Belirli mesajı okundu olarak işaretleme",
+        "event": "mark_message_read",
+        "data": {
+          "messageId": "string (mesaj ID)"
+        },
+        "response_event": {
+          "message_read": {
+            "description": "Mesaj okundu bildirimi",
+            "data": {
+              "messageId": "string (mesaj ID)",
+              "readerId": "string (okuyan kullanıcı ID)",
+              "timestamp": "Date (okuma zamanı)"
+            }
+          }
+        }
+      },
+      "get_online_users": {
+        "description": "Online kullanıcıları listele",
+        "event": "get_online_users",
+        "data": {},
+        "response_event": {
+          "online_users_list": {
+            "description": "Online kullanıcılar listesi",
+            "data": {
+              "users": [
+                {
+                  "id": "string (kullanıcı ID)",
+                  "firstName": "string (ad)",
+                  "lastName": "string (soyad)",
+                  "isOnline": "boolean (online durumu)",
+                  "lastSeen": "Date (son görülme)",
+                  "userType": "string (kullanıcı tipi)"
+                }
+              ]
+            }
+          },
+          "online_users_error": {
+            "description": "Online kullanıcılar hatası",
+            "data": {
+              "error": "string (hata mesajı)"
+            }
+          }
+        }
+      },
+      "get_user_status": {
+        "description": "Belirli kullanıcının durumunu getir",
+        "event": "get_user_status",
+        "data": {
+          "userId": "string (kullanıcı ID)"
+        },
+        "response_event": {
+          "user_status": {
+            "description": "Kullanıcı durumu",
+            "data": {
+              "userId": "string (kullanıcı ID)",
+              "isOnline": "boolean (online durumu)",
+              "lastSeen": "Date (son görülme)",
+              "firstName": "string (ad)",
+              "lastName": "string (soyad)"
+            }
+          },
+          "user_status_error": {
+            "description": "Kullanıcı durumu hatası",
+            "data": {
+              "error": "string (hata mesajı)"
+            }
+          }
+        }
+      },
+      "subscribe_user_status": {
+        "description": "Kullanıcı durumu değişikliklerini takip et",
+        "event": "subscribe_user_status",
+        "data": {
+          "userId": "string (kullanıcı ID)"
+        },
+        "response_event": {
+          "user_status_update": {
+            "description": "Kullanıcı durumu güncellemesi",
+            "data": {
+              "userId": "string (kullanıcı ID)",
+              "isOnline": "boolean (online durumu)",
+              "lastSeen": "Date (son görülme)",
+              "firstName": "string (ad)",
+              "lastName": "string (soyad)"
+            }
+          },
+          "subscribe_status_error": {
+            "description": "Takip hatası",
+            "data": {
+              "error": "string (hata mesajı)"
+            }
+          }
+        }
+      },
+      "unsubscribe_user_status": {
+        "description": "Kullanıcı durumu takibini durdur",
+        "event": "unsubscribe_user_status",
+        "data": {
+          "userId": "string (kullanıcı ID)"
+        }
+      }
+    },
+    "connection_events": {
+      "connect": {
+        "description": "Bağlantı kuruldu",
+        "data": "Otomatik bağlantı bilgileri"
+      },
+      "disconnect": {
+        "description": "Bağlantı kesildi",
+        "data": "Otomatik bağlantı bilgileri"
+      }
+    },
+    "online_status_tracking": {
+      "description": "Gerçek zamanlı online durumu takibi",
+      "features": {
+        "automatic_tracking": "Kullanıcı bağlandığında otomatik online, ayrıldığında offline",
+        "real_time_updates": "Durum değişikliklerini anlık olarak yayınlama",
+        "subscription_system": "Belirli kullanıcıların durumunu takip etme",
+        "last_seen_tracking": "Son görülme zamanını kaydetme"
+      },
+      "api_endpoints": {
+        "GET /users/online-users": "Tüm online kullanıcıları listele",
+        "GET /users/online-workers": "Online işçileri listele",
+        "GET /users/online-employers": "Online işverenleri listele",
+        "GET /users/user-status/:userId": "Belirli kullanıcının durumunu getir"
+      }
+    },
+    "debug_information": {
+      "connection_debug": {
+        "client_id": "Socket.IO client ID",
+        "auth_object": "client.handshake.auth",
+        "headers": "client.handshake.headers",
+        "query": "client.handshake.query",
+        "token_extraction": "auth.token || headers.authorization || query.token",
+        "jwt_verification": "JWT payload kontrolü",
+        "user_validation": "Veritabanında kullanıcı kontrolü",
+        "online_status": "Kullanıcı online durumu"
+      },
+      "message_debug": {
+        "sender_id": "Gönderici kullanıcı ID",
+        "receiver_id": "Alıcı kullanıcı ID",
+        "message_content": "Mesaj içeriği",
+        "connected_users": "Bağlı kullanıcılar listesi",
+        "receiver_online": "Alıcı online durumu",
+        "ai_response": "AI yanıtı oluşturma"
+      }
+    },
+    "ai_integration": {
+      "description": "AI servisi entegrasyonu",
+      "auto_response": {
+        "trigger": "Mesaj gönderildiğinde",
+        "service": "AiService.generateResponse()",
+        "response_type": "MessageType.TEXT",
+        "sender": "Alıcı kullanıcı",
+        "receiver": "Orijinal gönderici"
+      }
+    },
+    "error_handling": {
+      "connection_errors": {
+        "no_token": "Token bulunamadı",
+        "invalid_jwt": "JWT doğrulama hatası",
+        "user_not_found": "Kullanıcı veritabanında bulunamadı"
+      },
+      "message_errors": {
+        "sender_id_missing": "Gönderici ID bulunamadı",
+        "receiver_id_missing": "Alıcı ID gerekli",
+        "receiver_offline": "Alıcı bağlı değil",
+        "database_error": "Veritabanı hatası"
+      }
+    },
+    "client_example": {
+      "javascript": {
+        "connection": "const socket = io('http://localhost:3000', { auth: { token: 'Bearer YOUR_JWT_TOKEN' } });",
+        "send_message": "socket.emit('send_message', { receiverId: 'user-id', content: 'Merhaba!', type: 'TEXT' });",
+        "typing": "socket.emit('typing', { receiverId: 'user-id', isTyping: true });",
+        "conversation": "socket.emit('join_conversation', { otherUserId: 'user-id' });",
+        "read_messages": "socket.emit('read_messages', { senderId: 'user-id' });",
+        "online_status": "socket.emit('get_online_users'); socket.emit('subscribe_user_status', { userId: 'user-id' });"
+      }
+    }
+  }
+} 

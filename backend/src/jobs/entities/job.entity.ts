@@ -103,4 +103,7 @@ export class Job {
 
   @OneToMany('JobApplication', 'job')
   applications: any[];
+
+  @OneToMany('Comment', 'job')
+  comments: any[]; // İşe ait yorumlar
 } 

@@ -21,4 +21,5 @@ export declare class MessagesController {
         readAt?: Date;
     }>;
     getSentMessagesStatus(req: any): Promise<import("./entities/message.entity").Message[]>;
+    createSampleMessages(req: any): Promise<import("./entities/message.entity").Message[]>;
 }

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Durumu Takibi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .result {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 3px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .online-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .online {
+            background: #28a745;
+        }
+        .offline {
+            background: #dc3545;
+        }
+        .user-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .user-card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            background: white;
+        }
+        .status-update {
+            background: #e7f3ff;
+            border-left: 4px solid #007bff;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🟢 Online Durumu Takibi</h1>
+    
+    <div class="test-section">
+        <h3>1. Socket.IO Bağlantısı</h3>
+        <input type="text" id="jwtToken" placeholder="JWT Token girin">
+        <button onclick="connectSocket()">Bağlan</button>
+        <button onclick="disconnectSocket()">Bağlantıyı Kes</button>
+        <div id="connectionStatus" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. Online Kullanıcıları Listele</h3>
+        <button onclick="getOnlineUsers()">Online Kullanıcıları Getir</button>
+        <button onclick="getOnlineWorkers()">Online İşçileri Getir</button>
+        <button onclick="getOnlineEmployers()">Online İşverenleri Getir</button>
+        <div id="onlineUsersResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. Kullanıcı Durumu Takibi</h3>
+        <input type="text" id="targetUserId" placeholder="Takip edilecek kullanıcı ID">
+        <button onclick="getUserStatus()">Kullanıcı Durumunu Getir</button>
+        <button onclick="subscribeUserStatus()">Durumu Takip Et</button>
+        <button onclick="unsubscribeUserStatus()">Takibi Durdur</button>
+        <div id="userStatusResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>4. Gerçek Zamanlı Durum Güncellemeleri</h3>
+        <div id="statusUpdates" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>5. Online Kullanıcı Listesi (Gerçek Zamanlı)</h3>
+        <div id="onlineUsersList" class="user-list"></div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        const API_BASE = 'http://localhost:3000';
+        let socket = null;
+        let currentUserId = null;
+
+        function connectSocket() {
+            const token = document.getElementById('jwtToken').value;
+            if (!token) {
+                alert('Lütfen JWT token girin');
+                return;
+            }
+
+            socket = io(API_BASE, {
+                auth: { token: `Bearer ${token}` }
+            });
+
+            socket.on('connect', () => {
+                document.getElementById('connectionStatus').textContent = '✅ Bağlandı';
+                console.log('Socket connected');
+            });
+
+            socket.on('disconnect', () => {
+                document.getElementById('connectionStatus').textContent = '❌ Bağlantı kesildi';
+                console.log('Socket disconnected');
+            });
+
+            // Online kullanıcı listesi
+            socket.on('online_users_list', (data) => {
+                displayOnlineUsers(data.users);
+                document.getElementById('onlineUsersResult').textContent = 
+                    `Online kullanıcılar:\n${JSON.stringify(data, null, 2)}`;
+            });
+
+            // Kullanıcı durumu
+            socket.on('user_status', (data) => {
+                document.getElementById('userStatusResult').textContent = 
+                    `Kullanıcı durumu:\n${JSON.stringify(data, null, 2)}`;
+            });
+
+            // Kullanıcı durumu güncellemesi
+            socket.on('user_status_update', (data) => {
+                addStatusUpdate(`🔄 ${data.firstName} ${data.lastName} ${data.isOnline ? 'online' : 'offline'} oldu`);
+                updateUserInList(data);
+            });
+
+            // Hata durumları
+            socket.on('online_users_error', (data) => {
+                document.getElementById('onlineUsersResult').textContent = 
+                    `Hata: ${data.error}`;
+            });
+
+            socket.on('user_status_error', (data) => {
+                document.getElementById('userStatusResult').textContent = 
+                    `Hata: ${data.error}`;
+            });
+        }
+
+        function disconnectSocket() {
+            if (socket) {
+                socket.disconnect();
+                socket = null;
+            }
+        }
+
+        function getOnlineUsers() {
+            if (socket) {
+                socket.emit('get_online_users');
+            }
+        }
+
+        function getOnlineWorkers() {
+            fetch(`${API_BASE}/users/online-workers`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('onlineUsersResult').textContent = 
+                        `Online işçiler:\n${JSON.stringify(data, null, 2)}`;
+                })
+                .catch(error => {
+                    document.getElementById('onlineUsersResult').textContent = 
+                        `Hata: ${error.message}`;
+                });
+        }
+
+        function getOnlineEmployers() {
+            fetch(`${API_BASE}/users/online-employers`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('onlineUsersResult').textContent = 
+                        `Online işverenler:\n${JSON.stringify(data, null, 2)}`;
+                })
+                .catch(error => {
+                    document.getElementById('onlineUsersResult').textContent = 
+                        `Hata: ${error.message}`;
+                });
+        }
+
+        function getUserStatus() {
+            const userId = document.getElementById('targetUserId').value;
+            if (!userId) {
+                alert('Lütfen kullanıcı ID girin');
+                return;
+            }
+
+            if (socket) {
+                socket.emit('get_user_status', { userId });
+            }
+        }
+
+        function subscribeUserStatus() {
+            const userId = document.getElementById('targetUserId').value;
+            if (!userId) {
+                alert('Lütfen kullanıcı ID girin');
+                return;
+            }
+
+            if (socket) {
+                socket.emit('subscribe_user_status', { userId });
+                addStatusUpdate(`📡 ${userId} kullanıcısının durumu takip ediliyor`);
+            }
+        }
+
+        function unsubscribeUserStatus() {
+            const userId = document.getElementById('targetUserId').value;
+            if (!userId) {
+                alert('Lütfen kullanıcı ID girin');
+                return;
+            }
+
+            if (socket) {
+                socket.emit('unsubscribe_user_status', { userId });
+                addStatusUpdate(`📡 ${userId} kullanıcısının durumu takibi durduruldu`);
+            }
+        }
+
+        function displayOnlineUsers(users) {
+            const container = document.getElementById('onlineUsersList');
+            container.innerHTML = '';
+
+            users.forEach(user => {
+                const userCard = document.createElement('div');
+                userCard.className = 'user-card';
+                userCard.innerHTML = `
+                    <div class="online-indicator ${user.isOnline ? 'online' : 'offline'}"></div>
+                    <strong>${user.firstName} ${user.lastName}</strong><br>
+                    <small>${user.userType} • ${user.isOnline ? 'Online' : 'Offline'}</small><br>
+                    <small>Son görülme: ${new Date(user.lastSeen).toLocaleString()}</small>
+                `;
+                container.appendChild(userCard);
+            });
+        }
+
+        function updateUserInList(userData) {
+            // Bu fonksiyon gerçek zamanlı güncellemeler için kullanılabilir
+            console.log('User status updated:', userData);
+        }
+
+        function addStatusUpdate(message) {
+            const container = document.getElementById('statusUpdates');
+            const updateDiv = document.createElement('div');
+            updateDiv.className = 'status-update';
+            updateDiv.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            container.appendChild(updateDiv);
+            
+            // En fazla 10 güncelleme göster
+            if (container.children.length > 10) {
+                container.removeChild(container.firstChild);
+            }
+        }
+
+        // Sayfa yüklendiğinde otomatik olarak online kullanıcıları getir
+        window.addEventListener('load', () => {
+            // Her 30 saniyede bir online kullanıcıları güncelle
+            setInterval(() => {
+                if (socket && socket.connected) {
+                    getOnlineUsers();
+                }
+            }, 30000);
+        });
+    </script>
+</body>
+</html> 

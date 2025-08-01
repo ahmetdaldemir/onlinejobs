@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .response {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            background-color: #e9ecef;
+            border: none;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .tab.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Comment API Test</h1>
+    
+    <div class="tabs">
+        <button class="tab active" onclick="showTab('create')">Yorum Oluştur</button>
+        <button class="tab" onclick="showTab('list')">Yorumları Listele</button>
+        <button class="tab" onclick="showTab('user')">Kullanıcı Yorumları</button>
+        <button class="tab" onclick="showTab('my')">Yorumlarım</button>
+        <button class="tab" onclick="showTab('job')">İş Yorumları</button>
+        <button class="tab" onclick="showTab('update')">Yorum Güncelle</button>
+        <button class="tab" onclick="showTab('delete')">Yorum Sil</button>
+    </div>
+
+    <!-- Yorum Oluştur -->
+    <div id="create" class="tab-content active">
+        <div class="container">
+            <h2>Yorum Oluştur</h2>
+            <div class="form-group">
+                <label for="commentedUserId">Yorum Yapılacak Kullanıcı ID:</label>
+                <input type="text" id="commentedUserId" placeholder="UUID">
+            </div>
+            <div class="form-group">
+                <label for="description">Yorum:</label>
+                <textarea id="description" rows="4" placeholder="Yorum metni"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="rating">Rating (1-5):</label>
+                <select id="rating">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5" selected>5</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="jobId">İş ID (Opsiyonel):</label>
+                <input type="text" id="jobId" placeholder="UUID">
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="showName" checked> İsmi Göster
+                </label>
+            </div>
+            <button onclick="createComment()">Yorum Oluştur</button>
+            <div id="createResponse" class="response"></div>
+        </div>
+    </div>
+
+    <!-- Yorumları Listele -->
+    <div id="list" class="tab-content">
+        <div class="container">
+            <h2>Yorumları Listele</h2>
+            <div class="form-group">
+                <label for="filterCommentedUserId">Yorum Yapılan Kullanıcı ID:</label>
+                <input type="text" id="filterCommentedUserId" placeholder="UUID">
+            </div>
+            <div class="form-group">
+                <label for="filterCommenterId">Yorum Yapan Kullanıcı ID:</label>
+                <input type="text" id="filterCommenterId" placeholder="UUID">
+            </div>
+            <div class="form-group">
+                <label for="filterJobId">İş ID:</label>
+                <input type="text" id="filterJobId" placeholder="UUID">
+            </div>
+            <div class="form-group">
+                <label for="filterRating">Rating:</label>
+                <select id="filterRating">
+                    <option value="">Tümü</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+            <button onclick="listComments()">Yorumları Listele</button>
+            <div id="listResponse" class="response"></div>
+        </div>
+    </div>
+
+    <!-- Kullanıcı Yorumları -->
+    <div id="user" class="tab-content">
+        <div class="container">
+            <h2>Kullanıcının Aldığı Yorumlar</h2>
+            <div class="form-group">
+                <label for="userId">Kullanıcı ID:</label>
+                <input type="text" id="userId" placeholder="UUID">
+            </div>
+            <button onclick="getUserComments()">Yorumları Getir</button>
+            <div id="userResponse" class="response"></div>
+        </div>
+    </div>
+
+    <!-- Yorumlarım -->
+    <div id="my" class="tab-content">
+        <div class="container">
+            <h2>Yaptığım Yorumlar</h2>
+            <button onclick="getMyComments()">Yorumlarımı Getir</button>
+            <div id="myResponse" class="response"></div>
+        </div>
+    </div>
+
+    <!-- İş Yorumları -->
+    <div id="job" class="tab-content">
+        <div class="container">
+            <h2>İşe Ait Yorumlar</h2>
+            <div class="form-group">
+                <label for="jobCommentsId">İş ID:</label>
+                <input type="text" id="jobCommentsId" placeholder="UUID">
+            </div>
+            <button onclick="getJobComments()">İş Yorumlarını Getir</button>
+            <div id="jobResponse" class="response"></div>
+        </div>
+    </div>
+
+    <!-- Yorum Güncelle -->
+    <div id="update" class="tab-content">
+        <div class="container">
+            <h2>Yorum Güncelle</h2>
+            <div class="form-group">
+                <label for="updateCommentId">Yorum ID:</label>
+                <input type="text" id="updateCommentId" placeholder="UUID">
+            </div>
+            <div class="form-group">
+                <label for="updateDescription">Yeni Yorum:</label>
+                <textarea id="updateDescription" rows="4" placeholder="Yeni yorum metni"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="updateRating">Yeni Rating (1-5):</label>
+                <select id="updateRating">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="updateShowName"> İsmi Göster
+                </label>
+            </div>
+            <button onclick="updateComment()">Yorumu Güncelle</button>
+            <div id="updateResponse" class="response"></div>
+        </div>
+    </div>
+
+    <!-- Yorum Sil -->
+    <div id="delete" class="tab-content">
+        <div class="container">
+            <h2>Yorum Sil</h2>
+            <div class="form-group">
+                <label for="deleteCommentId">Yorum ID:</label>
+                <input type="text" id="deleteCommentId" placeholder="UUID">
+            </div>
+            <button onclick="deleteComment()">Yorumu Sil</button>
+            <div id="deleteResponse" class="response"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000';
+        let token = localStorage.getItem('token');
+
+        function showTab(tabName) {
+            // Tüm tab içeriklerini gizle
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Tüm tab butonlarını pasif yap
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Seçilen tab'ı göster
+            document.getElementById(tabName).classList.add('active');
+            
+            // Seçilen tab butonunu aktif yap
+            event.target.classList.add('active');
+        }
+
+        function showResponse(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = JSON.stringify(data, null, 2);
+            element.className = 'response ' + (isError ? 'error' : 'success');
+        }
+
+        async function makeRequest(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token ? `Bearer ${token}` : '',
+                        ...options.headers
+                    },
+                    ...options
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Bir hata oluştu');
+                }
+
+                return data;
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        async function createComment() {
+            try {
+                const jobIdValue = document.getElementById('jobId').value;
+                const data = {
+                    commentedUserId: document.getElementById('commentedUserId').value,
+                    description: document.getElementById('description').value,
+                    rating: parseInt(document.getElementById('rating').value),
+                    jobId: jobIdValue === '' ? undefined : jobIdValue,
+                    showName: document.getElementById('showName').checked
+                };
+
+                const result = await makeRequest(`${API_BASE}/comments`, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+
+                showResponse('createResponse', result);
+            } catch (error) {
+                showResponse('createResponse', { error: error.message }, true);
+            }
+        }
+
+        async function listComments() {
+            try {
+                const params = new URLSearchParams();
+                const commentedUserId = document.getElementById('filterCommentedUserId').value;
+                const commenterId = document.getElementById('filterCommenterId').value;
+                const jobId = document.getElementById('filterJobId').value;
+                const rating = document.getElementById('filterRating').value;
+
+                if (commentedUserId) params.append('commentedUserId', commentedUserId);
+                if (commenterId) params.append('commenterId', commenterId);
+                if (jobId && jobId !== '') params.append('jobId', jobId);
+                if (rating) params.append('rating', rating);
+
+                const result = await makeRequest(`${API_BASE}/comments?${params}`);
+                showResponse('listResponse', result);
+            } catch (error) {
+                showResponse('listResponse', { error: error.message }, true);
+            }
+        }
+
+        async function getUserComments() {
+            try {
+                const userId = document.getElementById('userId').value;
+                const result = await makeRequest(`${API_BASE}/comments/user/${userId}`);
+                showResponse('userResponse', result);
+            } catch (error) {
+                showResponse('userResponse', { error: error.message }, true);
+            }
+        }
+
+        async function getMyComments() {
+            try {
+                const result = await makeRequest(`${API_BASE}/comments/my`);
+                showResponse('myResponse', result);
+            } catch (error) {
+                showResponse('myResponse', { error: error.message }, true);
+            }
+        }
+
+        async function getJobComments() {
+            try {
+                const jobId = document.getElementById('jobCommentsId').value;
+                const result = await makeRequest(`${API_BASE}/comments/job/${jobId}`);
+                showResponse('jobResponse', result);
+            } catch (error) {
+                showResponse('jobResponse', { error: error.message }, true);
+            }
+        }
+
+        async function updateComment() {
+            try {
+                const commentId = document.getElementById('updateCommentId').value;
+                const data = {
+                    description: document.getElementById('updateDescription').value,
+                    rating: parseInt(document.getElementById('updateRating').value),
+                    showName: document.getElementById('updateShowName').checked
+                };
+
+                const result = await makeRequest(`${API_BASE}/comments/${commentId}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(data)
+                });
+
+                showResponse('updateResponse', result);
+            } catch (error) {
+                showResponse('updateResponse', { error: error.message }, true);
+            }
+        }
+
+        async function deleteComment() {
+            try {
+                const commentId = document.getElementById('deleteCommentId').value;
+                const result = await makeRequest(`${API_BASE}/comments/${commentId}`, {
+                    method: 'DELETE'
+                });
+
+                showResponse('deleteResponse', result);
+            } catch (error) {
+                showResponse('deleteResponse', { error: error.message }, true);
+            }
+        }
+
+        // Token kontrolü
+        if (!token) {
+            alert('Token bulunamadı! Lütfen önce giriş yapın.');
+        }
+    </script>
+</body>
+</html> 

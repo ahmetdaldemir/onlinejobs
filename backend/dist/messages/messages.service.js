@@ -42,7 +42,8 @@ let MessagesService = class MessagesService {
         return this.messageRepository.save(message);
     }
     async getConversation(userId1, userId2) {
-        return this.messageRepository.find({
+        console.log('🔍 getConversation çağrıldı:', { userId1, userId2 });
+        const messages = await this.messageRepository.find({
             where: [
                 { senderId: userId1, receiverId: userId2 },
                 { senderId: userId2, receiverId: userId1 },
@@ -50,6 +51,15 @@ let MessagesService = class MessagesService {
             order: { createdAt: 'ASC' },
             relations: ['sender', 'receiver'],
         });
+        console.log('📨 Bulunan mesajlar:', messages.length);
+        console.log('📋 Mesaj detayları:', messages.map(m => ({
+            id: m.id,
+            senderId: m.senderId,
+            receiverId: m.receiverId,
+            content: m.content,
+            createdAt: m.createdAt
+        })));
+        return messages;
     }
     async getMyConversations(userId) {
         const conversations = await this.messageRepository
@@ -121,9 +131,48 @@ let MessagesService = class MessagesService {
     async getSentMessagesStatus(userId) {
         return this.messageRepository.find({
             where: { senderId: userId },
-            select: ['id', 'isRead', 'readAt', 'createdAt'],
             order: { createdAt: 'DESC' },
+            relations: ['receiver'],
         });
+    }
+    async createSampleMessages(userId) {
+        console.log('🧪 Test mesajları oluşturuluyor için kullanıcı:', userId);
+        const testReceiverId = '4b27001b-759d-47e3-9a49-67d3445e26e8';
+        const sampleMessages = [
+            {
+                senderId: userId,
+                receiverId: testReceiverId,
+                content: 'Merhaba! Test mesajı 1',
+                type: message_entity_1.MessageType.TEXT,
+            },
+            {
+                senderId: testReceiverId,
+                receiverId: userId,
+                content: 'Merhaba! Ben de test mesajı gönderiyorum.',
+                type: message_entity_1.MessageType.TEXT,
+            },
+            {
+                senderId: userId,
+                receiverId: testReceiverId,
+                content: 'Nasılsın? İşler nasıl gidiyor?',
+                type: message_entity_1.MessageType.TEXT,
+            },
+            {
+                senderId: testReceiverId,
+                receiverId: userId,
+                content: 'İyiyim, teşekkürler! Sen nasılsın?',
+                type: message_entity_1.MessageType.TEXT,
+            },
+        ];
+        const createdMessages = [];
+        for (const messageData of sampleMessages) {
+            const message = this.messageRepository.create(messageData);
+            const savedMessage = await this.messageRepository.save(message);
+            createdMessages.push(savedMessage);
+            console.log('✅ Test mesajı oluşturuldu:', savedMessage.id);
+        }
+        console.log('🎉 Toplam', createdMessages.length, 'test mesajı oluşturuldu');
+        return createdMessages;
     }
 };
 exports.MessagesService = MessagesService;

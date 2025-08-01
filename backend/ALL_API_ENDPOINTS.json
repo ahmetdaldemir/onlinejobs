@@ -79,26 +79,46 @@
         "get_user_info": {
           "method": "GET",
           "url": "/users/user-info",
-          "description": "Kullanıcının kendi bilgilerini getir",
+          "description": "Kullanıcının tüm adres bilgilerini getir",
           "headers": {
             "Authorization": "Bearer YOUR_JWT_TOKEN"
           },
-          "response": {
-            "id": "user-id",
-            "firstName": "John",
-            "lastName": "Doe",
-            "email": "user@example.com",
-            "userType": "worker",
-            "userInfos": [
-              {
-                "id": "userinfo-id",
-                "name": "Ev Adresi",
-                "latitude": 41.0082,
-                "longitude": 28.9784,
-                "address": "İstanbul, Türkiye"
+          "response": [
+            {
+              "id": "userinfo-id-1",
+              "name": "Ev Adresi",
+              "latitude": 41.0082,
+              "longitude": 28.9784,
+              "address": "İstanbul, Türkiye",
+              "neighborhood": "Kadıköy",
+              "buildingNo": "123",
+              "floor": "3",
+              "apartmentNo": "A",
+              "description": "Ana giriş, asansör var",
+              "user": {
+                "id": "user-id",
+                "firstName": "John",
+                "lastName": "Doe"
               }
-            ]
-          }
+            },
+            {
+              "id": "userinfo-id-2",
+              "name": "İş Adresi",
+              "latitude": 40.9909,
+              "longitude": 29.0303,
+              "address": "İstanbul, Türkiye",
+              "neighborhood": "Beşiktaş",
+              "buildingNo": "456",
+              "floor": "5",
+              "apartmentNo": "B",
+              "description": "Şirket binası",
+              "user": {
+                "id": "user-id",
+                "firstName": "John",
+                "lastName": "Doe"
+              }
+            }
+          ]
         },
         "update_user_info": {
           "method": "PUT",

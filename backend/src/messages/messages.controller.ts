@@ -75,4 +75,11 @@ export class MessagesController {
   async getSentMessagesStatus(@Request() req) {
     return this.messagesService.getSentMessagesStatus(req.user.sub);
   }
+
+  @Post('test/create-sample')
+  @ApiOperation({ summary: 'Test için örnek mesajlar oluştur' })
+  @ApiResponse({ status: 201, description: 'Test mesajları oluşturuldu' })
+  async createSampleMessages(@Request() req) {
+    return this.messagesService.createSampleMessages(req.user.sub);
+  }
 } 

@@ -24,4 +24,5 @@ export declare class Job {
     category: any;
     categoryId: string;
     applications: any[];
+    comments: any[];
 }

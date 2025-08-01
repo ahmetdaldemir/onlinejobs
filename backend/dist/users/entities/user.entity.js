@@ -145,6 +145,14 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => user_info_entity_1.UserInfo, 'user'),
     __metadata("design:type", Array)
 ], User.prototype, "userInfos", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)('Comment', 'commenter'),
+    __metadata("design:type", Array)
+], User.prototype, "commentsGiven", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)('Comment', 'commentedUser'),
+    __metadata("design:type", Array)
+], User.prototype, "commentsReceived", void 0);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)('users')
 ], User);

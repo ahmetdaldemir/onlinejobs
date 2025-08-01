@@ -22,6 +22,7 @@ const seeds_module_1 = require("./seeds/seeds.module");
 const admin_module_1 = require("./admin/admin.module");
 const notifications_module_1 = require("./notifications/notifications.module");
 const upload_module_1 = require("./upload/upload.module");
+const comments_module_1 = require("./comments/comments.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -58,6 +59,7 @@ exports.AppModule = AppModule = __decorate([
             admin_module_1.AdminModule,
             notifications_module_1.NotificationsModule,
             upload_module_1.UploadModule,
+            comments_module_1.CommentsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

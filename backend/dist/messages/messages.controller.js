@@ -46,6 +46,9 @@ let MessagesController = class MessagesController {
     async getSentMessagesStatus(req) {
         return this.messagesService.getSentMessagesStatus(req.user.sub);
     }
+    async createSampleMessages(req) {
+        return this.messagesService.createSampleMessages(req.user.sub);
+    }
 };
 exports.MessagesController = MessagesController;
 __decorate([
@@ -124,6 +127,15 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], MessagesController.prototype, "getSentMessagesStatus", null);
+__decorate([
+    (0, common_1.Post)('test/create-sample'),
+    (0, swagger_1.ApiOperation)({ summary: 'Test için örnek mesajlar oluştur' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Test mesajları oluşturuldu' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], MessagesController.prototype, "createSampleMessages", null);
 exports.MessagesController = MessagesController = __decorate([
     (0, swagger_1.ApiTags)('Messages'),
     (0, common_1.Controller)('messages'),

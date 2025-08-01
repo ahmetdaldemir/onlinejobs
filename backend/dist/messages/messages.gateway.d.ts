@@ -13,7 +13,7 @@ export declare class MessagesGateway implements OnGatewayConnection, OnGatewayDi
     private connectedUsers;
     constructor(messagesService: MessagesService, usersService: UsersService, aiService: AiService, jwtService: JwtService);
     handleConnection(client: Socket): Promise<void>;
-    handleDisconnect(client: Socket): void;
+    handleDisconnect(client: Socket): Promise<void>;
     handleSendMessage(data: {
         receiverId: string;
         content: string;
@@ -37,4 +37,15 @@ export declare class MessagesGateway implements OnGatewayConnection, OnGatewayDi
     }, client: Socket): Promise<void>;
     private getConversationRoomName;
     sendMessageToUser(userId: string, event: string, data: any): void;
+    handleGetOnlineUsers(client: Socket): Promise<void>;
+    handleGetUserStatus(data: {
+        userId: string;
+    }, client: Socket): Promise<void>;
+    handleSubscribeUserStatus(data: {
+        userId: string;
+    }, client: Socket): Promise<void>;
+    handleUnsubscribeUserStatus(data: {
+        userId: string;
+    }, client: Socket): Promise<void>;
+    broadcastUserStatusChange(userId: string, isOnline: boolean): Promise<void>;
 }

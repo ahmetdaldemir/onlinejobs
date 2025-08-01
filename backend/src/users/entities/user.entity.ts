@@ -123,4 +123,11 @@ export class User {
 
   @OneToMany(() => UserInfo, 'user')
   userInfos: UserInfo[];
+
+  // Comment ilişkileri
+  @OneToMany('Comment', 'commenter')
+  commentsGiven: any[]; // Yaptığı yorumlar
+
+  @OneToMany('Comment', 'commentedUser')
+  commentsReceived: any[]; // Aldığı yorumlar
 }

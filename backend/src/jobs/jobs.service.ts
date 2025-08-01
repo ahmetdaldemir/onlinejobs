@@ -22,6 +22,11 @@ export class JobsService {
   ) {}
 
   async create(createJobDto: any, employerId: string): Promise<Job> {
+    // userInfoId boş string ise null yap
+    if (createJobDto.userInfoId === '') {
+      createJobDto.userInfoId = null;
+    }
+
     // Eğer userInfoId verilmişse, konum bilgilerini de ekle
     if (createJobDto.userInfoId) {
       // UserInfo'dan konum bilgilerini al

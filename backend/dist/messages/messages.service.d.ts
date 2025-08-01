@@ -15,4 +15,5 @@ export declare class MessagesService {
         readAt?: Date;
     }>;
     getSentMessagesStatus(userId: string): Promise<Message[]>;
+    createSampleMessages(userId: string): Promise<Message[]>;
 }

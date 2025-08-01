@@ -114,8 +114,8 @@ export class UsersController {
   @Get('user-info')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcının kendi bilgilerini getir' })
-  @ApiResponse({ status: 200, description: 'Kullanıcı bilgileri' })
+  @ApiOperation({ summary: 'Kullanıcının tüm adres bilgilerini getir' })
+  @ApiResponse({ status: 200, description: 'Kullanıcının tüm adres bilgileri' })
   async getUserInfo(@Request() req) {
     return this.usersService.getUserInfo(req.user.sub);
   }
@@ -123,8 +123,8 @@ export class UsersController {
   @Get('user-infos')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcının kendi bilgilerini getir (alias)' })
-  @ApiResponse({ status: 200, description: 'Kullanıcı bilgileri' })
+  @ApiOperation({ summary: 'Kullanıcının tüm adres bilgilerini getir (alias)' })
+  @ApiResponse({ status: 200, description: 'Kullanıcının tüm adres bilgileri' })
   async getUserInfos(@Request() req) {
     return this.usersService.getUserInfo(req.user.sub);
   }
@@ -257,5 +257,58 @@ export class UsersController {
   ) {
     const userId = req.user.sub;
     return this.usersService.updateProfileImage(userId, body.imageUrl);
+  }
+
+  @Get('profile-image/:userId')
+  @ApiOperation({ summary: 'Kullanıcı profil fotoğrafını getir' })
+  @ApiResponse({ status: 200, description: 'Profil fotoğrafı URL\'i' })
+  async getProfileImage(@Param('userId') userId: string) {
+    const user = await this.usersService.findById(userId);
+    return { profileImage: user.profileImage };
+  }
+
+  @Get('online-users')
+  @ApiOperation({ summary: 'Online kullanıcıları listele' })
+  @ApiResponse({ status: 200, description: 'Online kullanıcılar listelendi' })
+  async getOnlineUsers() {
+    return this.usersService.findOnlineUsers();
+  }
+
+  @Get('online-workers')
+  @ApiOperation({ summary: 'Online işçileri listele' })
+  @ApiResponse({ status: 200, description: 'Online işçiler listelendi' })
+  async getOnlineWorkers(
+    @Query('latitude') latitude?: number,
+    @Query('longitude') longitude?: number,
+    @Query('radius') radius?: number,
+    @Query('categoryId') categoryId?: string,
+  ) {
+    return this.usersService.findOnlineWorkers(latitude, longitude, radius, categoryId);
+  }
+
+  @Get('online-employers')
+  @ApiOperation({ summary: 'Online işverenleri listele' })
+  @ApiResponse({ status: 200, description: 'Online işverenler listelendi' })
+  async getOnlineEmployers(
+    @Query('latitude') latitude?: number,
+    @Query('longitude') longitude?: number,
+    @Query('radius') radius?: number,
+    @Query('categoryId') categoryId?: string,
+  ) {
+    return this.usersService.findOnlineEmployers(latitude, longitude, radius, categoryId);
+  }
+
+  @Get('user-status/:userId')
+  @ApiOperation({ summary: 'Kullanıcının online durumunu getir' })
+  @ApiResponse({ status: 200, description: 'Kullanıcı durumu' })
+  async getUserStatus(@Param('userId') userId: string) {
+    const user = await this.usersService.findById(userId);
+    return {
+      userId: user.id,
+      isOnline: user.isOnline,
+      lastSeen: user.lastSeen,
+      firstName: user.firstName,
+      lastName: user.lastName
+    };
   }
 } 
