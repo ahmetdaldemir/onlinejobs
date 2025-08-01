@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Otomatik Mesajlaşma Testi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .chat-container {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #f9f9f9;
+            height: 400px;
+            overflow-y: auto;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 70%;
+        }
+        .message.sent {
+            background: #007bff;
+            color: white;
+            margin-left: auto;
+        }
+        .message.received {
+            background: #e9ecef;
+            color: black;
+        }
+        .message.ai {
+            background: #28a745;
+            color: white;
+            border-left: 4px solid #20c997;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        input, select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            flex: 1;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.online {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 AI Otomatik Mesajlaşma Testi</h1>
+        
+        <div class="info">
+            <h3>📋 Test Senaryosu:</h3>
+            <p>1. Fatma kullanıcısından Yusuf kullanıcısına mesaj gönder</p>
+            <p>2. Yusuf online değilse AI otomatik yanıt verecek</p>
+            <p>3. Yusuf online ise normal mesajlaşma devam edecek</p>
+        </div>
+
+        <div class="container">
+            <h3>👥 Kullanıcı Bilgileri</h3>
+            <div class="input-group">
+                <label>Gönderen (Fatma):</label>
+                <input type="text" id="senderId" value="fatma-user-id" placeholder="Gönderen ID">
+            </div>
+            <div class="input-group">
+                <label>Alıcı (Yusuf):</label>
+                <input type="text" id="receiverId" value="yusuf-user-id" placeholder="Alıcı ID">
+            </div>
+            <div class="input-group">
+                <label>Yusuf Online Durumu:</label>
+                <select id="yusufOnline">
+                    <option value="false">Offline (AI Yanıt Verecek)</option>
+                    <option value="true">Online (Normal Mesajlaşma)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="container">
+            <h3>💬 Mesajlaşma</h3>
+            <div id="chatContainer" class="chat-container"></div>
+            <div class="input-group">
+                <input type="text" id="messageInput" placeholder="Mesajınızı yazın...">
+                <button onclick="sendMessage()">Gönder</button>
+            </div>
+            <button onclick="clearChat()">Sohbeti Temizle</button>
+        </div>
+
+        <div class="container">
+            <h3>📊 Test Sonuçları</h3>
+            <div id="testResults"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000';
+        let messageCount = 0;
+
+        // Test mesajları
+        const testMessages = [
+            "Merhaba Yusuf, nasılsın?",
+            "İş arayan mısın?",
+            "Hangi alanda çalışıyorsun?",
+            "Maaş beklentin nedir?",
+            "Deneyimin var mı?"
+        ];
+
+        async function sendMessage() {
+            const senderId = document.getElementById('senderId').value;
+            const receiverId = document.getElementById('receiverId').value;
+            const message = document.getElementById('messageInput').value;
+            const yusufOnline = document.getElementById('yusufOnline').value === 'true';
+
+            if (!message.trim()) {
+                alert('Lütfen bir mesaj yazın!');
+                return;
+            }
+
+            // Gönderilen mesajı göster
+            addMessageToChat('sent', message, 'Fatma');
+
+            // Yusuf'un online durumunu simüle et
+            if (!yusufOnline) {
+                // AI yanıtı simüle et
+                setTimeout(() => {
+                    const aiResponse = generateAIResponse(message);
+                    addMessageToChat('ai', aiResponse, 'AI (Yusuf adına)');
+                    updateTestResults('AI yanıtı oluşturuldu', 'success');
+                }, 1000);
+            } else {
+                // Normal yanıt simüle et
+                setTimeout(() => {
+                    const normalResponse = generateNormalResponse(message);
+                    addMessageToChat('received', normalResponse, 'Yusuf');
+                    updateTestResults('Normal mesajlaşma', 'info');
+                }, 1000);
+            }
+
+            // Mesajı temizle
+            document.getElementById('messageInput').value = '';
+
+                     // API'ye mesaj gönder
+         try {
+             const response = await fetch(`${API_BASE}/messages`, {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json',
+                 },
+                 body: JSON.stringify({
+                     senderId: senderId,
+                     receiverId: receiverId,
+                     content: message
+                 })
+             });
+
+             if (response.ok) {
+                 const data = await response.json();
+                 console.log('Mesaj gönderildi:', data);
+                 updateTestResults('Mesaj başarıyla gönderildi', 'success');
+             } else {
+                 const errorText = await response.text();
+                 console.error('Mesaj gönderilemedi:', errorText);
+                 updateTestResults('Mesaj gönderilemedi: ' + errorText, 'error');
+             }
+         } catch (error) {
+             console.error('API hatası:', error);
+             updateTestResults('API hatası: ' + error.message, 'error');
+         }
+        }
+
+        function addMessageToChat(type, content, sender) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.innerHTML = `
+                <strong>${sender}:</strong><br>
+                ${content}
+            `;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function generateAIResponse(message) {
+            const responses = {
+                "merhaba": "Merhaba! Ben Yusuf'un AI asistanıyım. Yusuf şu anda online değil ama size yardımcı olabilirim. Hangi konuda yardıma ihtiyacınız var?",
+                "iş": "İş konusunda size yardımcı olabilirim. Hangi alanda çalışmak istiyorsunuz? Deneyim seviyeniz nedir?",
+                "maaş": "Maaş konusunda size bilgi verebilirim. İş türüne ve deneyime göre değişir. Hangi kategoride iş arıyorsunuz?",
+                "deneyim": "Deneyim konusunda endişelenmeyin. Deneyimsiz işçiler için de iş ilanları var. Profilinizi güncelleyin ve başvurmaya başlayın.",
+                "güvenli": "Tüm kullanıcılar doğrulanmıştır ve yorum sistemi ile güvenilirlik kontrol edilir. İlk görüşmeyi güvenli bir yerde yapın."
+            };
+
+            const lowerMessage = message.toLowerCase();
+            for (const [key, response] of Object.entries(responses)) {
+                if (lowerMessage.includes(key)) {
+                    return response;
+                }
+            }
+
+            return "Teşekkürler! Mesajınızı Yusuf'a ileteceğim. Döndüğünde size yanıt verecektir. Başka bir konuda yardıma ihtiyacınız var mı?";
+        }
+
+        function generateNormalResponse(message) {
+            const responses = [
+                "Merhaba! İyiyim, teşekkürler. Sen nasılsın?",
+                "Evet, iş arıyorum. Hangi konuda yardımcı olabilirsin?",
+                "Temizlik ve bakım alanında çalışıyorum. Sen hangi alanda işçi arıyorsun?",
+                "Maaş konusunda esnek olabilirim. İş detaylarına göre konuşabiliriz.",
+                "5 yıl deneyimim var. Referanslarımı da paylaşabilirim."
+            ];
+
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+
+        function clearChat() {
+            document.getElementById('chatContainer').innerHTML = '';
+            document.getElementById('testResults').innerHTML = '';
+        }
+
+        function updateTestResults(message, type) {
+            const resultsDiv = document.getElementById('testResults');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `status ${type}`;
+            resultDiv.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            resultsDiv.appendChild(resultDiv);
+        }
+
+        // Otomatik test mesajları
+        function sendTestMessages() {
+            let index = 0;
+            const interval = setInterval(() => {
+                if (index < testMessages.length) {
+                    document.getElementById('messageInput').value = testMessages[index];
+                    sendMessage();
+                    index++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 2000);
+        }
+
+        // Enter tuşu ile mesaj gönder
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Sayfa yüklendiğinde test bilgilerini göster
+        window.onload = function() {
+            updateTestResults('Test sayfası hazır. Yusuf offline seçiliyse AI yanıt verecek.', 'info');
+        };
+    </script>
+</body>
+</html> 

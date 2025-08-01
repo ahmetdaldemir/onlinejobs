@@ -21,6 +21,9 @@ const users_service_1 = require("../users/users.service");
 const ai_service_1 = require("../ai/ai.service");
 const jwt_1 = require("@nestjs/jwt");
 let MessagesGateway = class MessagesGateway {
+    isUserOnline(userId) {
+        return this.connectedUsers.has(userId);
+    }
     constructor(messagesService, usersService, aiService, jwtService) {
         this.messagesService = messagesService;
         this.usersService = usersService;
@@ -154,30 +157,33 @@ let MessagesGateway = class MessagesGateway {
                     type: message.type,
                     createdAt: message.createdAt,
                 });
-                try {
-                    const aiResponse = await this.aiService.generateResponse(data.receiverId, data.content);
-                    if (aiResponse) {
-                        const aiMessage = await this.messagesService.sendMessage(data.receiverId, senderId, aiResponse, message_entity_1.MessageType.TEXT);
-                        client.emit('new_message', {
-                            id: aiMessage.id,
-                            senderId: data.receiverId,
-                            content: aiResponse,
-                            type: message_entity_1.MessageType.TEXT,
-                            createdAt: aiMessage.createdAt,
-                            isAiResponse: true,
-                        });
-                        receiverSocket.emit('new_message', {
-                            id: aiMessage.id,
-                            senderId: data.receiverId,
-                            content: aiResponse,
-                            type: message_entity_1.MessageType.TEXT,
-                            createdAt: aiMessage.createdAt,
-                            isAiResponse: true,
-                        });
+                if (!receiverSocket || !receiverSocket.connected) {
+                    console.log('🤖 Alıcı online değil, AI yanıtı oluşturuluyor...');
+                    try {
+                        const aiResponse = await this.aiService.generateResponse(data.receiverId, data.content);
+                        if (aiResponse) {
+                            console.log('✅ AI yanıtı oluşturuldu:', aiResponse);
+                            const aiMessage = await this.messagesService.sendMessage(data.receiverId, senderId, aiResponse, message_entity_1.MessageType.TEXT);
+                            client.emit('new_message', {
+                                id: aiMessage.id,
+                                senderId: data.receiverId,
+                                content: aiResponse,
+                                type: message_entity_1.MessageType.TEXT,
+                                createdAt: aiMessage.createdAt,
+                                isAiResponse: true,
+                            });
+                            console.log('💬 AI yanıtı mesaj olarak kaydedildi ve gönderildi');
+                        }
+                        else {
+                            console.log('❌ AI yanıtı oluşturulamadı');
+                        }
+                    }
+                    catch (aiError) {
+                        console.error('AI response error:', aiError);
                     }
                 }
-                catch (aiError) {
-                    console.error('AI response error:', aiError);
+                else {
+                    console.log('👤 Alıcı online, AI yanıtı oluşturulmayacak');
                 }
             }
             else {

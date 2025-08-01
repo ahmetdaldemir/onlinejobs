@@ -4,10 +4,11 @@ export declare class MessagesController {
     private readonly messagesService;
     constructor(messagesService: MessagesService);
     sendMessage(sendMessageDto: {
+        senderId: string;
         receiverId: string;
         content: string;
         type?: MessageType;
-    }, req: any): Promise<import("./entities/message.entity").Message>;
+    }): Promise<import("./entities/message.entity").Message>;
     getMyConversations(req: any): Promise<any[]>;
     getConversation(otherUserId: string, req: any): Promise<import("./entities/message.entity").Message[]>;
     markAsRead(messageId: string, req: any): Promise<import("./entities/message.entity").Message>;

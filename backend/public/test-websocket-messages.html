@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Mesajlaşma Testi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .connected {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .disconnected {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .messages {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .message.sent {
+            background-color: #007bff;
+            color: white;
+            margin-left: 20%;
+        }
+        .message.received {
+            background-color: #e9ecef;
+            color: #212529;
+            margin-right: 20%;
+        }
+        .message.ai {
+            background-color: #28a745;
+            color: white;
+            margin-right: 20%;
+        }
+        .message-info {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        .online-users {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .user-item {
+            padding: 5px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+        .user-online {
+            background-color: #d4edda;
+        }
+        .user-offline {
+            background-color: #f8d7da;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WebSocket Mesajlaşma Testi</h1>
+        <p>Bu sayfa WebSocket üzerinden mesajlaşma ve AI yanıtlarını test etmek için kullanılır.</p>
+        
+        <div class="form-group">
+            <label for="accessToken">Access Token:</label>
+            <input type="text" id="accessToken" placeholder="JWT access token girin">
+        </div>
+        
+        <div class="form-group">
+            <label for="senderId">Gönderici ID:</label>
+            <input type="text" id="senderId" placeholder="Gönderici kullanıcı ID'si">
+        </div>
+        
+        <div class="form-group">
+            <label for="receiverId">Alıcı ID:</label>
+            <input type="text" id="receiverId" placeholder="Alıcı kullanıcı ID'si">
+        </div>
+        
+        <button onclick="connect()">Bağlan</button>
+        <button onclick="disconnect()" id="disconnectBtn" disabled>Bağlantıyı Kes</button>
+        <button onclick="getOnlineUsers()" id="onlineUsersBtn" disabled>Online Kullanıcıları Getir</button>
+        
+        <div id="status" class="status disconnected">Bağlantı yok</div>
+    </div>
+
+    <div class="container">
+        <h2>Mesaj Gönder</h2>
+        <div class="form-group">
+            <label for="messageContent">Mesaj:</label>
+            <textarea id="messageContent" rows="3" placeholder="Mesajınızı yazın..."></textarea>
+        </div>
+        <button onclick="sendMessage()" id="sendBtn" disabled>Mesaj Gönder</button>
+        <button onclick="clearMessages()">Mesajları Temizle</button>
+        
+        <h3>Mesajlar</h3>
+        <div id="messages" class="messages"></div>
+    </div>
+
+    <div class="container">
+        <h2>Online Kullanıcılar</h2>
+        <button onclick="getOnlineUsers()" id="refreshUsersBtn" disabled>Yenile</button>
+        <div id="onlineUsers" class="online-users"></div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        let socket = null;
+        let isConnected = false;
+
+        function updateStatus(message, isConnected) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${isConnected ? 'connected' : 'disconnected'}`;
+        }
+
+        function updateButtons() {
+            document.getElementById('disconnectBtn').disabled = !isConnected;
+            document.getElementById('sendBtn').disabled = !isConnected;
+            document.getElementById('onlineUsersBtn').disabled = !isConnected;
+            document.getElementById('refreshUsersBtn').disabled = !isConnected;
+        }
+
+        function connect() {
+            const accessToken = document.getElementById('accessToken').value.trim();
+            const senderId = document.getElementById('senderId').value.trim();
+            
+            if (!accessToken) {
+                alert('Access token gerekli!');
+                return;
+            }
+            
+            if (!senderId) {
+                alert('Gönderici ID gerekli!');
+                return;
+            }
+
+            try {
+                socket = io('http://localhost:3000', {
+                    auth: {
+                        token: accessToken
+                    },
+                    transports: ['websocket', 'polling']
+                });
+
+                socket.on('connect', () => {
+                    console.log('✅ WebSocket bağlantısı kuruldu');
+                    isConnected = true;
+                    updateStatus('Bağlandı', true);
+                    updateButtons();
+                });
+
+                socket.on('disconnect', () => {
+                    console.log('❌ WebSocket bağlantısı kesildi');
+                    isConnected = false;
+                    updateStatus('Bağlantı kesildi', false);
+                    updateButtons();
+                });
+
+                socket.on('connect_error', (error) => {
+                    console.error('❌ Bağlantı hatası:', error);
+                    updateStatus(`Bağlantı hatası: ${error.message}`, false);
+                    isConnected = false;
+                    updateButtons();
+                });
+
+                socket.on('new_message', (data) => {
+                    console.log('📨 Yeni mesaj alındı:', data);
+                    addMessage(data, 'received');
+                });
+
+                socket.on('message_sent', (data) => {
+                    console.log('✅ Mesaj gönderildi:', data);
+                    addMessage(data, 'sent');
+                });
+
+                socket.on('message_error', (data) => {
+                    console.error('❌ Mesaj hatası:', data);
+                    addMessage({ content: `Hata: ${data.error}`, senderId: 'system' }, 'error');
+                });
+
+                socket.on('online_users_list', (data) => {
+                    console.log('👥 Online kullanıcılar:', data);
+                    displayOnlineUsers(data.users);
+                });
+
+                socket.on('user_status_update', (data) => {
+                    console.log('👤 Kullanıcı durumu güncellendi:', data);
+                    // Online kullanıcıları yenile
+                    getOnlineUsers();
+                });
+
+            } catch (error) {
+                console.error('❌ Bağlantı hatası:', error);
+                updateStatus(`Bağlantı hatası: ${error.message}`, false);
+            }
+        }
+
+        function disconnect() {
+            if (socket) {
+                socket.disconnect();
+                socket = null;
+            }
+        }
+
+        function sendMessage() {
+            if (!socket || !isConnected) {
+                alert('Önce bağlantı kurun!');
+                return;
+            }
+
+            const receiverId = document.getElementById('receiverId').value.trim();
+            const content = document.getElementById('messageContent').value.trim();
+            
+            if (!receiverId) {
+                alert('Alıcı ID gerekli!');
+                return;
+            }
+            
+            if (!content) {
+                alert('Mesaj içeriği gerekli!');
+                return;
+            }
+
+            console.log('📤 Mesaj gönderiliyor:', { receiverId, content });
+            
+            socket.emit('send_message', {
+                receiverId: receiverId,
+                content: content,
+                type: 'TEXT'
+            });
+
+            document.getElementById('messageContent').value = '';
+        }
+
+        function getOnlineUsers() {
+            if (!socket || !isConnected) {
+                alert('Önce bağlantı kurun!');
+                return;
+            }
+
+            socket.emit('get_online_users');
+        }
+
+        function addMessage(data, type) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'message-info';
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.textContent = data.content;
+            
+            if (type === 'sent') {
+                infoDiv.textContent = `Sen → ${data.receiverId || 'Alıcı'} - ${new Date().toLocaleTimeString()}`;
+            } else if (type === 'received') {
+                const senderName = data.isAiResponse ? 'AI Asistan' : data.senderId;
+                infoDiv.textContent = `${senderName} → Sen - ${new Date().toLocaleTimeString()}`;
+                if (data.isAiResponse) {
+                    messageDiv.className = 'message ai';
+                }
+            }
+            
+            messageDiv.appendChild(infoDiv);
+            messageDiv.appendChild(contentDiv);
+            messagesDiv.appendChild(messageDiv);
+            
+            // Otomatik scroll
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function displayOnlineUsers(users) {
+            const usersDiv = document.getElementById('onlineUsers');
+            usersDiv.innerHTML = '';
+            
+            if (users.length === 0) {
+                usersDiv.innerHTML = '<p>Online kullanıcı yok</p>';
+                return;
+            }
+            
+            users.forEach(user => {
+                const userDiv = document.createElement('div');
+                userDiv.className = `user-item ${user.isOnline ? 'user-online' : 'user-offline'}`;
+                userDiv.innerHTML = `
+                    <strong>${user.firstName} ${user.lastName}</strong> (${user.id})
+                    <br>
+                    <small>${user.isOnline ? '🟢 Online' : '🔴 Offline'} - ${user.userType}</small>
+                `;
+                usersDiv.appendChild(userDiv);
+            });
+        }
+
+        function clearMessages() {
+            document.getElementById('messages').innerHTML = '';
+        }
+
+        // Enter tuşu ile mesaj gönderme
+        document.getElementById('messageContent').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html> 

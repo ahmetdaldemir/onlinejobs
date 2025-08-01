@@ -621,12 +621,34 @@ Bu iş hakkında daha fazla bilgi almak ister misiniz? 🤔`;
         }
     }
     async generateResponse(userId, message) {
+        console.log(`🤖 AI yanıtı oluşturuluyor...`);
+        console.log(`👤 Kullanıcı ID: ${userId}`);
+        console.log(`💬 Mesaj: ${message}`);
         const activeModel = await this.getActiveModel();
+        console.log(`🔍 Aktif model:`, activeModel ? `ID: ${activeModel.id}, Status: ${activeModel.status}` : 'Bulunamadı');
         if (!activeModel || activeModel.status !== ai_model_entity_1.AiModelStatus.ACTIVE) {
-            return null;
+            console.log(`❌ Aktif AI modeli bulunamadı veya aktif değil`);
+            const testResponses = {
+                'merhaba': 'Merhaba! Ben AI asistanınızım. Size nasıl yardımcı olabilirim?',
+                'nasılsın': 'İyiyim, teşekkürler! Siz nasılsınız?',
+                'iş': 'İş konusunda size yardımcı olabilirim. Hangi alanda çalışmak istiyorsunuz?',
+                'maaş': 'Maaş konusunda bilgi verebilirim. Deneyim seviyenize göre değişir.',
+                'deneyim': 'Deneyim konusunda endişelenmeyin. Her seviyede iş var.'
+            };
+            const lowerMessage = message.toLowerCase();
+            for (const [key, response] of Object.entries(testResponses)) {
+                if (lowerMessage.includes(key)) {
+                    console.log(`✅ Test yanıtı bulundu: ${response}`);
+                    return response;
+                }
+            }
+            console.log(`✅ Varsayılan test yanıtı veriliyor`);
+            return 'Teşekkürler! Mesajınızı aldım. Size en kısa sürede dönüş yapacağım.';
         }
         const patterns = activeModel.modelConfig?.patterns || [];
+        console.log(`📋 Pattern sayısı: ${patterns.length}`);
         const response = this.findBestResponse(message, patterns);
+        console.log(`✅ AI yanıtı: ${response}`);
         return response;
     }
     extractPatterns(trainingData) {

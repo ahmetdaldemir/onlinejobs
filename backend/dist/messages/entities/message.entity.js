@@ -51,6 +51,11 @@ __decorate([
     __metadata("design:type", Date)
 ], Message.prototype, "readAt", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", Boolean)
+], Message.prototype, "isAIGenerated", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)(),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", Date)

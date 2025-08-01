@@ -21,8 +21,8 @@ let MessagesController = class MessagesController {
     constructor(messagesService) {
         this.messagesService = messagesService;
     }
-    async sendMessage(sendMessageDto, req) {
-        return this.messagesService.sendMessage(req.user.sub, sendMessageDto.receiverId, sendMessageDto.content, sendMessageDto.type);
+    async sendMessage(sendMessageDto) {
+        return this.messagesService.sendMessage(sendMessageDto.senderId, sendMessageDto.receiverId, sendMessageDto.content, sendMessageDto.type);
     }
     async getMyConversations(req) {
         return this.messagesService.getMyConversations(req.user.sub);
@@ -56,13 +56,14 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Mesaj gönder' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'Mesaj gönderildi' }),
     __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], MessagesController.prototype, "sendMessage", null);
 __decorate([
     (0, common_1.Get)('conversations'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Konuşmalarımı listele' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Konuşmalar listelendi' }),
     __param(0, (0, common_1.Request)()),
@@ -72,6 +73,8 @@ __decorate([
 ], MessagesController.prototype, "getMyConversations", null);
 __decorate([
     (0, common_1.Get)('conversation/:userId'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Belirli kullanıcı ile konuşmayı getir' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Konuşma getirildi' }),
     __param(0, (0, common_1.Param)('userId')),
@@ -82,6 +85,8 @@ __decorate([
 ], MessagesController.prototype, "getConversation", null);
 __decorate([
     (0, common_1.Put)(':id/read'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Mesajı okundu olarak işaretle' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Mesaj okundu olarak işaretlendi' }),
     __param(0, (0, common_1.Param)('id')),
@@ -92,6 +97,8 @@ __decorate([
 ], MessagesController.prototype, "markAsRead", null);
 __decorate([
     (0, common_1.Put)('conversation/:userId/read'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Konuşmayı okundu olarak işaretle' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Konuşma okundu olarak işaretlendi' }),
     __param(0, (0, common_1.Param)('userId')),
@@ -102,6 +109,8 @@ __decorate([
 ], MessagesController.prototype, "markConversationAsRead", null);
 __decorate([
     (0, common_1.Get)('unread/count'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Okunmamış mesaj sayısı' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Okunmamış mesaj sayısı' }),
     __param(0, (0, common_1.Request)()),
@@ -120,6 +129,8 @@ __decorate([
 ], MessagesController.prototype, "getMessageStatus", null);
 __decorate([
     (0, common_1.Get)('sent/status'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Gönderilen mesajların okunma durumunu getir' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Gönderilen mesajların durumu' }),
     __param(0, (0, common_1.Request)()),
@@ -129,6 +140,8 @@ __decorate([
 ], MessagesController.prototype, "getSentMessagesStatus", null);
 __decorate([
     (0, common_1.Post)('test/create-sample'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Test için örnek mesajlar oluştur' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'Test mesajları oluşturuldu' }),
     __param(0, (0, common_1.Request)()),
@@ -139,8 +152,6 @@ __decorate([
 exports.MessagesController = MessagesController = __decorate([
     (0, swagger_1.ApiTags)('Messages'),
     (0, common_1.Controller)('messages'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, swagger_1.ApiBearerAuth)(),
     __metadata("design:paramtypes", [messages_service_1.MessagesService])
 ], MessagesController);
 //# sourceMappingURL=messages.controller.js.map

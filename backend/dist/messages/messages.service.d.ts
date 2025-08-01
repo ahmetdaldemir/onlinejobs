@@ -1,9 +1,13 @@
 import { Repository } from 'typeorm';
 import { Message, MessageType } from './entities/message.entity';
+import { AiService } from '../ai/ai.service';
 export declare class MessagesService {
     private messageRepository;
-    constructor(messageRepository: Repository<Message>);
+    private aiService;
+    constructor(messageRepository: Repository<Message>, aiService: AiService);
     sendMessage(senderId: string, receiverId: string, content: string, type?: MessageType): Promise<Message>;
+    private checkAndGenerateAIResponse;
+    private isUserOnline;
     getConversation(userId1: string, userId2: string): Promise<Message[]>;
     getMyConversations(userId: string): Promise<any[]>;
     markAsRead(messageId: string, userId: string): Promise<Message>;

@@ -10,6 +10,7 @@ export declare class JobsController {
     create(createJobDto: CreateJobDto, req: any): Promise<import("./entities/job.entity").Job>;
     findAll(filters: any): Promise<import("./entities/job.entity").Job[]>;
     getMyApplications(req: any): Promise<import("./entities/job-application.entity").JobApplication[]>;
+    getMyJobs(req: any): Promise<import("./entities/job.entity").Job[]>;
     getMyJobsApplications(req: any): Promise<import("./entities/job-application.entity").JobApplication[]>;
     findById(id: string): Promise<import("./entities/job.entity").Job>;
     update(id: string, updateJobDto: any, req: any): Promise<import("./entities/job.entity").Job>;

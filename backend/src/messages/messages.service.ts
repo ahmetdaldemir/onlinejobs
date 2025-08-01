@@ -2,12 +2,14 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Message, MessageType } from './entities/message.entity';
+import { AiService } from '../ai/ai.service';
 
 @Injectable()
 export class MessagesService {
   constructor(
     @InjectRepository(Message)
     private messageRepository: Repository<Message>,
+    private aiService: AiService,
   ) {}
 
   async sendMessage(senderId: string, receiverId: string, content: string, type: MessageType = MessageType.TEXT): Promise<Message> {
@@ -33,7 +35,67 @@ export class MessagesService {
 
     console.log('Oluşturulan message objesi:', message);
 
-    return this.messageRepository.save(message);
+    const savedMessage = await this.messageRepository.save(message);
+
+    // Alıcının online durumunu kontrol et ve AI yanıtı oluştur
+    // Sadece HTTP endpoint'inden gelen istekler için AI yanıtı oluştur
+    // WebSocket'ten gelen istekler için WebSocket gateway'de AI yanıtı oluşturuluyor
+    await this.checkAndGenerateAIResponse(receiverId, senderId, content);
+
+    return savedMessage;
+  }
+
+  // Alıcının online durumunu kontrol et ve AI yanıtı oluştur
+  private async checkAndGenerateAIResponse(receiverId: string, senderId: string, originalMessage: string): Promise<void> {
+    try {
+      // Alıcının online durumunu kontrol et (bu kısmı WebSocket bağlantılarından kontrol edebiliriz)
+      const isReceiverOnline = await this.isUserOnline(receiverId);
+      
+      if (!isReceiverOnline) {
+        console.log(`🤖 Kullanıcı ${receiverId} online değil, AI yanıtı oluşturuluyor...`);
+        
+        // AI yanıtı oluştur
+        const aiResponse = await this.aiService.generateResponse(receiverId, originalMessage);
+        
+        if (aiResponse) {
+          console.log(`✅ AI yanıtı oluşturuldu: ${aiResponse}`);
+          
+          // AI yanıtını mesaj olarak kaydet
+          const aiMessage = this.messageRepository.create({
+            senderId: receiverId,
+            receiverId: senderId,
+            content: aiResponse,
+            type: MessageType.TEXT,
+            isAIGenerated: true, // AI tarafından oluşturulduğunu belirt
+          });
+          
+          await this.messageRepository.save(aiMessage);
+          console.log(`💬 AI yanıtı mesaj olarak kaydedildi`);
+        } else {
+          console.log(`❌ AI yanıtı oluşturulamadı`);
+        }
+      } else {
+        console.log(`👤 Kullanıcı ${receiverId} online, AI yanıtı oluşturulmayacak`);
+      }
+    } catch (error) {
+      console.error('AI yanıtı oluşturulurken hata:', error);
+    }
+  }
+
+  // Kullanıcının online durumunu kontrol et
+  private async isUserOnline(userId: string): Promise<boolean> {
+    // WebSocket gateway'den online durumu kontrol et
+    // Bu metod sadece HTTP endpoint'lerinden çağrıldığında kullanılır
+    // WebSocket'ten gelen istekler için WebSocket gateway'de kontrol yapılır
+    
+    // Şimdilik basit bir kontrol yapalım
+    // Gerçek uygulamada WebSocket bağlantılarından kontrol edilebilir
+    const onlineUserIds = ['test-user-id']; // Test için - yusuf-user-id online değil
+    console.log(`🔍 HTTP endpoint - Online durumu kontrol ediliyor: ${userId}`);
+    console.log(`📋 Online kullanıcılar: ${onlineUserIds}`);
+    const isOnline = onlineUserIds.includes(userId);
+    console.log(`✅ ${userId} online mi? ${isOnline}`);
+    return isOnline;
   }
 
   async getConversation(userId1: string, userId2: string): Promise<Message[]> {

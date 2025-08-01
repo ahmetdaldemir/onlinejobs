@@ -143,6 +143,12 @@ let JobsService = class JobsService {
             relations: ['job', 'job.employer', 'job.category'],
         });
     }
+    async getMyJobs(employerId) {
+        return this.jobRepository.find({
+            where: { employerId },
+            relations: ['employer', 'category', 'applications'],
+        });
+    }
     async getMyJobsApplications(employerId) {
         return this.applicationRepository.find({
             where: { job: { employerId } },

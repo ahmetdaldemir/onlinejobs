@@ -43,6 +43,10 @@ export class Message {
   @ApiProperty()
   readAt: Date;
 
+  @Column({ default: false })
+  @ApiProperty()
+  isAIGenerated: boolean;
+
   @CreateDateColumn()
   @ApiProperty()
   createdAt: Date;

@@ -9,6 +9,7 @@ export declare class Message {
     type: MessageType;
     isRead: boolean;
     readAt: Date;
+    isAIGenerated: boolean;
     createdAt: Date;
     updatedAt: Date;
     sender: any;
