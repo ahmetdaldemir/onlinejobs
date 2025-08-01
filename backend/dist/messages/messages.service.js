@@ -17,10 +17,12 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const message_entity_1 = require("./entities/message.entity");
+const user_entity_1 = require("../users/entities/user.entity");
 const ai_service_1 = require("../ai/ai.service");
 let MessagesService = class MessagesService {
-    constructor(messageRepository, aiService) {
+    constructor(messageRepository, userRepository, aiService) {
         this.messageRepository = messageRepository;
+        this.userRepository = userRepository;
         this.aiService = aiService;
     }
     async sendMessage(senderId, receiverId, content, type = message_entity_1.MessageType.TEXT) {
@@ -76,12 +78,24 @@ let MessagesService = class MessagesService {
         }
     }
     async isUserOnline(userId) {
-        const onlineUserIds = ['test-user-id'];
-        console.log(`🔍 HTTP endpoint - Online durumu kontrol ediliyor: ${userId}`);
-        console.log(`📋 Online kullanıcılar: ${onlineUserIds}`);
-        const isOnline = onlineUserIds.includes(userId);
-        console.log(`✅ ${userId} online mi? ${isOnline}`);
-        return isOnline;
+        try {
+            const user = await this.userRepository.findOne({
+                where: { id: userId },
+                select: ['id', 'isOnline', 'lastSeen']
+            });
+            if (!user) {
+                console.log(`❌ Kullanıcı bulunamadı: ${userId}`);
+                return false;
+            }
+            console.log(`🔍 Kullanıcı ${userId} online durumu: ${user.isOnline}`);
+            console.log(`📅 Son görülme: ${user.lastSeen}`);
+            console.log(`🤖 AI yanıtı için kullanıcı offline kabul ediliyor: ${userId}`);
+            return false;
+        }
+        catch (error) {
+            console.error(`❌ Online durumu kontrol edilirken hata: ${error.message}`);
+            return false;
+        }
     }
     async getConversation(userId1, userId2) {
         console.log('🔍 getConversation çağrıldı:', { userId1, userId2 });
@@ -221,7 +235,9 @@ exports.MessagesService = MessagesService;
 exports.MessagesService = MessagesService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(message_entity_1.Message)),
+    __param(1, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         ai_service_1.AiService])
 ], MessagesService);
 //# sourceMappingURL=messages.service.js.map

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kullanıcı Online Durumu Testi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .user-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #f9f9f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .user-card.online {
+            border-left: 4px solid #28a745;
+            background: #d4edda;
+        }
+        .user-card.offline {
+            border-left: 4px solid #dc3545;
+            background: #f8d7da;
+        }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-online {
+            background: #28a745;
+            color: white;
+        }
+        .status-offline {
+            background: #dc3545;
+            color: white;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button.online {
+            background: #28a745;
+        }
+        button.offline {
+            background: #dc3545;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>👥 Kullanıcı Online Durumu Testi</h1>
+        
+        <div class="info">
+            <h3>📋 Test Senaryosu:</h3>
+            <p>1. Test kullanıcılarını listele</p>
+            <p>2. Kullanıcıları online/offline yap</p>
+            <p>3. Mesaj gönder ve AI yanıtını test et</p>
+        </div>
+
+        <div class="container">
+            <h3>🔍 Test Kullanıcıları</h3>
+            <button onclick="loadTestUsers()">Test Kullanıcılarını Yükle</button>
+            <div id="testUsersResult" class="result"></div>
+        </div>
+
+        <div class="container">
+            <h3>🌐 Online Kullanıcılar</h3>
+            <button onclick="loadOnlineUsers()">Online Kullanıcıları Yükle</button>
+            <div id="onlineUsersResult" class="result"></div>
+        </div>
+
+        <div class="container">
+            <h3>💬 Mesaj Testi</h3>
+            <div class="input-group">
+                <label>Gönderen ID:</label>
+                <input type="text" id="senderId" value="fatma-user-id" placeholder="Gönderen ID">
+            </div>
+            <div class="input-group">
+                <label>Alıcı ID:</label>
+                <input type="text" id="receiverId" value="yusuf-user-id" placeholder="Alıcı ID">
+            </div>
+            <div class="input-group">
+                <label>Mesaj:</label>
+                <input type="text" id="messageInput" value="Merhaba, nasılsın?" placeholder="Mesaj">
+            </div>
+            <button onclick="sendTestMessage()">Test Mesajı Gönder</button>
+            <div id="messageResult" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000';
+
+        async function loadTestUsers() {
+            try {
+                const response = await fetch(`${API_BASE}/users/test`);
+                if (response.ok) {
+                    const users = await response.json();
+                    displayUsers(users, 'testUsersResult', 'Test Kullanıcıları');
+                } else {
+                    document.getElementById('testUsersResult').innerHTML = 
+                        `<div class="error">Test kullanıcıları yüklenemedi: ${response.status}</div>`;
+                }
+            } catch (error) {
+                document.getElementById('testUsersResult').innerHTML = 
+                    `<div class="error">Hata: ${error.message}</div>`;
+            }
+        }
+
+        async function loadOnlineUsers() {
+            try {
+                const response = await fetch(`${API_BASE}/users/online`);
+                if (response.ok) {
+                    const users = await response.json();
+                    displayUsers(users, 'onlineUsersResult', 'Online Kullanıcılar');
+                } else {
+                    document.getElementById('onlineUsersResult').innerHTML = 
+                        `<div class="error">Online kullanıcılar yüklenemedi: ${response.status}</div>`;
+                }
+            } catch (error) {
+                document.getElementById('onlineUsersResult').innerHTML = 
+                    `<div class="error">Hata: ${error.message}</div>`;
+            }
+        }
+
+        function displayUsers(users, elementId, title) {
+            const container = document.getElementById(elementId);
+            if (users.length === 0) {
+                container.innerHTML = `<div class="info">${title}: Kullanıcı bulunamadı</div>`;
+                return;
+            }
+
+            let html = `<h4>${title} (${users.length} kullanıcı):</h4>`;
+            users.forEach(user => {
+                const statusClass = user.isOnline ? 'online' : 'offline';
+                const statusText = user.isOnline ? 'ONLINE' : 'OFFLINE';
+                const statusBadgeClass = user.isOnline ? 'status-online' : 'status-offline';
+                
+                html += `
+                    <div class="user-card ${statusClass}">
+                        <div>
+                            <strong>${user.firstName} ${user.lastName}</strong><br>
+                            <small>ID: ${user.id}</small><br>
+                            <small>Telefon: ${user.phone}</small><br>
+                            <small>Tip: ${user.userType}</small>
+                        </div>
+                        <div>
+                            <span class="status-badge ${statusBadgeClass}">${statusText}</span><br>
+                            <button onclick="setUserOnline('${user.id}')" class="online">Online Yap</button>
+                            <button onclick="setUserOffline('${user.id}')" class="offline">Offline Yap</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        async function setUserOnline(userId) {
+            try {
+                const response = await fetch(`${API_BASE}/users/${userId}/online`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ isOnline: true })
+                });
+                
+                if (response.ok) {
+                    alert(`Kullanıcı ${userId} online yapıldı!`);
+                    loadTestUsers();
+                    loadOnlineUsers();
+                } else {
+                    alert(`Hata: ${response.status}`);
+                }
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+            }
+        }
+
+        async function setUserOffline(userId) {
+            try {
+                const response = await fetch(`${API_BASE}/users/${userId}/online`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ isOnline: false })
+                });
+                
+                if (response.ok) {
+                    alert(`Kullanıcı ${userId} offline yapıldı!`);
+                    loadTestUsers();
+                    loadOnlineUsers();
+                } else {
+                    alert(`Hata: ${response.status}`);
+                }
+            } catch (error) {
+                alert(`Hata: ${error.message}`);
+            }
+        }
+
+        async function sendTestMessage() {
+            const senderId = document.getElementById('senderId').value;
+            const receiverId = document.getElementById('receiverId').value;
+            const message = document.getElementById('messageInput').value;
+
+            if (!senderId || !receiverId || !message) {
+                alert('Lütfen tüm alanları doldurun!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/messages`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        senderId: senderId,
+                        receiverId: receiverId,
+                        content: message
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('messageResult').innerHTML = 
+                        `<div class="success">✅ Mesaj başarıyla gönderildi!<br>Mesaj ID: ${data.id}</div>`;
+                } else {
+                    const errorText = await response.text();
+                    document.getElementById('messageResult').innerHTML = 
+                        `<div class="error">❌ Mesaj gönderilemedi: ${errorText}</div>`;
+                }
+            } catch (error) {
+                document.getElementById('messageResult').innerHTML = 
+                    `<div class="error">❌ Hata: ${error.message}</div>`;
+            }
+        }
+
+        // Sayfa yüklendiğinde test kullanıcılarını yükle
+        window.onload = function() {
+            loadTestUsers();
+            loadOnlineUsers();
+        };
+    </script>
+</body>
+</html> 

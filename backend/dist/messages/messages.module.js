@@ -13,6 +13,7 @@ const messages_controller_1 = require("./messages.controller");
 const messages_service_1 = require("./messages.service");
 const messages_gateway_1 = require("./messages.gateway");
 const message_entity_1 = require("./entities/message.entity");
+const user_entity_1 = require("../users/entities/user.entity");
 const users_module_1 = require("../users/users.module");
 const ai_module_1 = require("../ai/ai.module");
 const jwt_1 = require("@nestjs/jwt");
@@ -23,7 +24,7 @@ exports.MessagesModule = MessagesModule;
 exports.MessagesModule = MessagesModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([message_entity_1.Message]),
+            typeorm_1.TypeOrmModule.forFeature([message_entity_1.Message, user_entity_1.User]),
             users_module_1.UsersModule,
             ai_module_1.AiModule,
             jwt_1.JwtModule.registerAsync({

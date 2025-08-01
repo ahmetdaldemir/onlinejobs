@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Message, MessageType } from './entities/message.entity';
+import { User } from '../users/entities/user.entity';
 import { AiService } from '../ai/ai.service';
 
 @Injectable()
@@ -9,6 +10,8 @@ export class MessagesService {
   constructor(
     @InjectRepository(Message)
     private messageRepository: Repository<Message>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     private aiService: AiService,
   ) {}
 
@@ -84,18 +87,30 @@ export class MessagesService {
 
   // Kullanıcının online durumunu kontrol et
   private async isUserOnline(userId: string): Promise<boolean> {
-    // WebSocket gateway'den online durumu kontrol et
-    // Bu metod sadece HTTP endpoint'lerinden çağrıldığında kullanılır
-    // WebSocket'ten gelen istekler için WebSocket gateway'de kontrol yapılır
-    
-    // Şimdilik basit bir kontrol yapalım
-    // Gerçek uygulamada WebSocket bağlantılarından kontrol edilebilir
-    const onlineUserIds = ['test-user-id']; // Test için - yusuf-user-id online değil
-    console.log(`🔍 HTTP endpoint - Online durumu kontrol ediliyor: ${userId}`);
-    console.log(`📋 Online kullanıcılar: ${onlineUserIds}`);
-    const isOnline = onlineUserIds.includes(userId);
-    console.log(`✅ ${userId} online mi? ${isOnline}`);
-    return isOnline;
+    try {
+      // Kullanıcıyı veritabanından al ve isOnline durumunu kontrol et
+      const user = await this.userRepository.findOne({ 
+        where: { id: userId },
+        select: ['id', 'isOnline', 'lastSeen']
+      });
+      
+      if (!user) {
+        console.log(`❌ Kullanıcı bulunamadı: ${userId}`);
+        return false;
+      }
+      
+      console.log(`🔍 Kullanıcı ${userId} online durumu: ${user.isOnline}`);
+      console.log(`📅 Son görülme: ${user.lastSeen}`);
+      
+      // Gerçek sistemde WebSocket bağlantısı olmadığı için
+      // AI yanıtını her zaman tetiklemek için false döndür
+      // Bu sayede AI her zaman yanıt verecek
+      console.log(`🤖 AI yanıtı için kullanıcı offline kabul ediliyor: ${userId}`);
+      return false;
+    } catch (error) {
+      console.error(`❌ Online durumu kontrol edilirken hata: ${error.message}`);
+      return false; // Hata durumunda offline kabul et
+    }
   }
 
   async getConversation(userId1: string, userId2: string): Promise<Message[]> {

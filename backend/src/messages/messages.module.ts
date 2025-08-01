@@ -4,6 +4,7 @@ import { MessagesController } from './messages.controller';
 import { MessagesService } from './messages.service';
 import { MessagesGateway } from './messages.gateway';
 import { Message } from './entities/message.entity';
+import { User } from '../users/entities/user.entity';
 import { UsersModule } from '../users/users.module';
 import { AiModule } from '../ai/ai.module';
 import { JwtModule } from '@nestjs/jwt';
@@ -11,7 +12,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Message]),
+    TypeOrmModule.forFeature([Message, User]),
     UsersModule,
     AiModule,
     JwtModule.registerAsync({

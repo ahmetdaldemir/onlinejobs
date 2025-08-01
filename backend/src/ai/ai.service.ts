@@ -821,11 +821,34 @@ Bu iş hakkında daha fazla bilgi almak ister misiniz? 🤔`;
       return 'Teşekkürler! Mesajınızı aldım. Size en kısa sürede dönüş yapacağım.';
     }
 
-    // Basit pattern matching ile yanıt oluştur
-    const patterns = activeModel.modelConfig?.patterns || [];
-    console.log(`📋 Pattern sayısı: ${patterns.length}`);
-    const response = this.findBestResponse(message, patterns);
+    // Model aktif ama patterns yoksa, training data'dan patterns oluştur
+    let patterns = activeModel.modelConfig?.patterns || [];
+    console.log(`📋 Mevcut pattern sayısı: ${patterns.length}`);
     
+    if (patterns.length === 0) {
+      console.log(`🔄 Training data'dan patterns oluşturuluyor...`);
+      
+      // Bu model için training data'yı al
+      const trainingData = await this.trainingDataRepository.find({
+        where: { aiModelId: activeModel.id }
+      });
+      
+      console.log(`📊 Training data sayısı: ${trainingData.length}`);
+      
+      if (trainingData.length > 0) {
+        patterns = this.extractPatterns(trainingData);
+        console.log(`✅ ${patterns.length} pattern oluşturuldu`);
+        
+        // Model config'i güncelle
+        await this.aiModelRepository.update(activeModel.id, {
+          modelConfig: { ...activeModel.modelConfig, patterns }
+        });
+      } else {
+        console.log(`❌ Training data bulunamadı`);
+      }
+    }
+    
+    const response = this.findBestResponse(message, patterns);
     console.log(`✅ AI yanıtı: ${response}`);
     return response;
   }
@@ -855,19 +878,29 @@ Bu iş hakkında daha fazla bilgi almak ister misiniz? 🤔`;
     let bestMatch = null;
     let bestScore = 0;
 
-    patterns.forEach(pattern => {
+    console.log(`🔍 "${message}" için en iyi yanıt aranıyor...`);
+    console.log(`📝 Mesaj kelimeleri: ${messageWords.join(', ')}`);
+
+    patterns.forEach((pattern, index) => {
       const score = this.calculateSimilarity(messageWords, pattern.keywords);
+      console.log(`📊 Pattern ${index + 1}: "${pattern.keywords.join(' ')}" -> Score: ${score.toFixed(3)}`);
+      
       if (score > bestScore) {
         bestScore = score;
         bestMatch = pattern;
       }
     });
 
-    // Eşik değeri (0.3) üzerindeyse yanıt ver
-    if (bestScore > 0.3 && bestMatch) {
+    console.log(`🏆 En iyi skor: ${bestScore.toFixed(3)}`);
+    console.log(`🎯 En iyi eşleşme: ${bestMatch ? bestMatch.response.substring(0, 50) + '...' : 'Yok'}`);
+
+    // Eşik değerini düşürelim (0.1)
+    if (bestScore > 0.1 && bestMatch) {
+      console.log(`✅ Eşik değeri geçildi (${bestScore.toFixed(3)} > 0.1), yanıt veriliyor`);
       return bestMatch.response;
     }
 
+    console.log(`❌ Eşik değeri geçilemedi (${bestScore.toFixed(3)} <= 0.1), yanıt verilmiyor`);
     return null;
   }
 
