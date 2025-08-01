@@ -128,7 +128,7 @@ __decorate([
     __metadata("design:type", Array)
 ], User.prototype, "receivedMessages", void 0);
 __decorate([
-    (0, typeorm_1.Column)('simple-array', { nullable: true }),
+    (0, typeorm_1.Column)('text', { array: true, nullable: true }),
     (0, swagger_1.ApiProperty)({ type: [String], description: 'Kullanıcının seçtiği kategori ID\'leri' }),
     __metadata("design:type", Array)
 ], User.prototype, "categoryIds", void 0);

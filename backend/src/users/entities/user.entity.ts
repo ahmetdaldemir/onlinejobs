@@ -109,7 +109,7 @@ export class User {
   @OneToMany('Message', 'receiver')
   receivedMessages: any[];
 
-  @Column('simple-array', { nullable: true })
+  @Column('text', { array: true, nullable: true })
   @ApiProperty({ type: [String], description: 'Kullanıcının seçtiği kategori ID\'leri' })
   categoryIds: string[];
 
