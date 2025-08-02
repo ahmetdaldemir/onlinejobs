@@ -50,14 +50,13 @@ let NotificationsService = class NotificationsService {
                 error: 'Konum bilgisi eksik'
             };
         }
-        const workers = await this.userRepository.find({
-            where: {
-                userType: 'worker',
-                status: user_entity_1.UserStatus.ACTIVE,
-                categoryIds: (0, typeorm_2.Like)(`%${job.categoryId}%`)
-            },
-            relations: ['userInfos']
-        });
+        const workers = await this.userRepository
+            .createQueryBuilder('user')
+            .leftJoinAndSelect('user.userInfos', 'userInfos')
+            .where('user.userType = :userType', { userType: 'worker' })
+            .andWhere('user.status = :status', { status: user_entity_1.UserStatus.ACTIVE })
+            .andWhere(':categoryId = ANY(user.categoryIds)', { categoryId: job.categoryId })
+            .getMany();
         console.log(`👥 Kategoriye uygun ${workers.length} worker bulundu`);
         const nearbyWorkers = workers.filter(worker => {
             if (!worker.userInfos || worker.userInfos.length === 0) {

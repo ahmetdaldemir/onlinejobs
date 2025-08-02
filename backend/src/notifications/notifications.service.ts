@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Notification, NotificationType, NotificationStatus } from './entities/notification.entity';
 import { User, UserStatus } from '../users/entities/user.entity';
 import { Job } from '../jobs/entities/job.entity';
@@ -47,14 +47,13 @@ export class NotificationsService {
     }
 
     // Kategoriye bağlı worker'ları bul
-    const workers = await this.userRepository.find({
-      where: {
-        userType: 'worker',
-        status: UserStatus.ACTIVE,
-        categoryIds: Like(`%${job.categoryId}%`)
-      },
-      relations: ['userInfos']
-    });
+    const workers = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.userInfos', 'userInfos')
+      .where('user.userType = :userType', { userType: 'worker' })
+      .andWhere('user.status = :status', { status: UserStatus.ACTIVE })
+      .andWhere(':categoryId = ANY(user.categoryIds)', { categoryId: job.categoryId })
+      .getMany();
 
     console.log(`👥 Kategoriye uygun ${workers.length} worker bulundu`);
 
