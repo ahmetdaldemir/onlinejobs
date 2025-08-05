@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -15,12 +16,14 @@ import { AdminModule } from './admin/admin.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { UploadModule } from './upload/upload.module';
 import { CommentsModule } from './comments/comments.module';
+import { CronModule } from './cron/cron.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       ...(process.env.DATABASE_URL ? {
@@ -49,6 +52,7 @@ import { CommentsModule } from './comments/comments.module';
     NotificationsModule,
     UploadModule,
     CommentsModule,
+    CronModule,
   ],
   controllers: [AppController],
   providers: [AppService],

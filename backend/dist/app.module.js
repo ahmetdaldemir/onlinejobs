@@ -10,6 +10,7 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
+const schedule_1 = require("@nestjs/schedule");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const auth_module_1 = require("./auth/auth.module");
@@ -23,6 +24,7 @@ const admin_module_1 = require("./admin/admin.module");
 const notifications_module_1 = require("./notifications/notifications.module");
 const upload_module_1 = require("./upload/upload.module");
 const comments_module_1 = require("./comments/comments.module");
+const cron_module_1 = require("./cron/cron.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -32,6 +34,7 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
             }),
+            schedule_1.ScheduleModule.forRoot(),
             typeorm_1.TypeOrmModule.forRoot({
                 type: 'postgres',
                 ...(process.env.DATABASE_URL ? {
@@ -60,6 +63,7 @@ exports.AppModule = AppModule = __decorate([
             notifications_module_1.NotificationsModule,
             upload_module_1.UploadModule,
             comments_module_1.CommentsModule,
+            cron_module_1.CronModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

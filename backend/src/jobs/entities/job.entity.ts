@@ -12,8 +12,6 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export enum JobStatus {
   OPEN = 'open',
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed',
   CANCELLED = 'cancelled',
 }
 
@@ -77,6 +75,22 @@ export class Job {
   @Column({ default: 0 })
   @ApiProperty()
   applicationCount: number;
+
+  @Column({ default: false })
+  @ApiProperty({ description: 'Admin tarafından manuel olarak öne çıkarılan işler' })
+  isFeatured: boolean;
+
+  @Column({ default: 0 })
+  @ApiProperty({ description: 'Sistem tarafından hesaplanan öne çıkarma skoru' })
+  featuredScore: number;
+
+  @Column({ type: 'timestamp', nullable: true })
+  @ApiProperty({ description: 'Öne çıkarılma tarihi' })
+  featuredAt: Date;
+
+  @Column({ type: 'text', nullable: true })
+  @ApiProperty({ description: 'Öne çıkarılma sebebi' })
+  featuredReason: string;
 
   @CreateDateColumn()
   @ApiProperty()

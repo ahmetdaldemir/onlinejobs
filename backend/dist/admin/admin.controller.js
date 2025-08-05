@@ -102,6 +102,27 @@ let AdminController = class AdminController {
     async updateUserProfileImage(id, body) {
         return this.adminService.updateUserProfileImage(id, body.imageUrl);
     }
+    async getFeaturedJobs() {
+        return this.adminService.getFeaturedJobs();
+    }
+    async getHighScoreJobs() {
+        return this.adminService.getHighScoreJobs();
+    }
+    async setJobFeatured(jobId, body) {
+        return this.adminService.setJobFeatured(jobId, body.isFeatured, body.reason);
+    }
+    async updateAllJobScores() {
+        return this.adminService.updateAllJobScores();
+    }
+    async toggleJobStatus(jobId, body) {
+        return this.adminService.toggleJobStatus(jobId, body.status);
+    }
+    async closeExpiredJobs() {
+        return this.adminService.closeExpiredJobs();
+    }
+    async getAllJobs() {
+        return this.adminService.getAllJobs();
+    }
 };
 exports.AdminController = AdminController;
 __decorate([
@@ -351,6 +372,66 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "updateUserProfileImage", null);
+__decorate([
+    (0, common_1.Get)('jobs/featured'),
+    (0, swagger_1.ApiOperation)({ summary: 'Öne çıkan işleri listele' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Öne çıkan işler listesi' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "getFeaturedJobs", null);
+__decorate([
+    (0, common_1.Get)('jobs/high-score'),
+    (0, swagger_1.ApiOperation)({ summary: 'Yüksek skorlu işleri listele' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Yüksek skorlu işler listesi' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "getHighScoreJobs", null);
+__decorate([
+    (0, common_1.Post)('jobs/:id/featured'),
+    (0, swagger_1.ApiOperation)({ summary: 'İşi öne çıkar/çıkar' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'İş öne çıkarma durumu güncellendi' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "setJobFeatured", null);
+__decorate([
+    (0, common_1.Post)('jobs/update-scores'),
+    (0, swagger_1.ApiOperation)({ summary: 'Tüm işlerin skorlarını güncelle' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'İş skorları güncellendi' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "updateAllJobScores", null);
+__decorate([
+    (0, common_1.Put)('jobs/:id/status'),
+    (0, swagger_1.ApiOperation)({ summary: 'İş durumunu değiştir' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'İş durumu güncellendi' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "toggleJobStatus", null);
+__decorate([
+    (0, common_1.Post)('jobs/close-expired'),
+    (0, swagger_1.ApiOperation)({ summary: 'Tarihi geçen işleri otomatik kapat' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Süresi dolmuş işler kapatıldı' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "closeExpiredJobs", null);
+__decorate([
+    (0, common_1.Get)('jobs/all'),
+    (0, swagger_1.ApiOperation)({ summary: 'Tüm işleri listele' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Tüm işler listesi' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "getAllJobs", null);
 exports.AdminController = AdminController = __decorate([
     (0, swagger_1.ApiTags)('Admin Dashboard'),
     (0, common_1.Controller)('admin'),

@@ -15,8 +15,6 @@ const swagger_1 = require("@nestjs/swagger");
 var JobStatus;
 (function (JobStatus) {
     JobStatus["OPEN"] = "open";
-    JobStatus["IN_PROGRESS"] = "in_progress";
-    JobStatus["COMPLETED"] = "completed";
     JobStatus["CANCELLED"] = "cancelled";
 })(JobStatus || (exports.JobStatus = JobStatus = {}));
 let Job = class Job {
@@ -85,6 +83,26 @@ __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", Number)
 ], Job.prototype, "applicationCount", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: false }),
+    (0, swagger_1.ApiProperty)({ description: 'Admin tarafından manuel olarak öne çıkarılan işler' }),
+    __metadata("design:type", Boolean)
+], Job.prototype, "isFeatured", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ default: 0 }),
+    (0, swagger_1.ApiProperty)({ description: 'Sistem tarafından hesaplanan öne çıkarma skoru' }),
+    __metadata("design:type", Number)
+], Job.prototype, "featuredScore", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'timestamp', nullable: true }),
+    (0, swagger_1.ApiProperty)({ description: 'Öne çıkarılma tarihi' }),
+    __metadata("design:type", Date)
+], Job.prototype, "featuredAt", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    (0, swagger_1.ApiProperty)({ description: 'Öne çıkarılma sebebi' }),
+    __metadata("design:type", String)
+], Job.prototype, "featuredReason", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     (0, swagger_1.ApiProperty)(),

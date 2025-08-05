@@ -204,4 +204,101 @@ export class JobsService {
       relations: ['applicant'],
     });
   }
+
+  // Öne çıkan işleri getir
+  async getFeaturedJobs(limit: number = 10): Promise<Job[]> {
+    return this.jobRepository.find({
+      where: { isFeatured: true, status: JobStatus.OPEN },
+      relations: ['employer', 'category'],
+      order: { featuredAt: 'DESC' },
+      take: limit,
+    });
+  }
+
+  // Yüksek skorlu işleri getir (sistem otomatik seçimi)
+  async getHighScoreJobs(limit: number = 10): Promise<Job[]> {
+    return this.jobRepository.find({
+      where: { status: JobStatus.OPEN },
+      relations: ['employer', 'category'],
+      order: { featuredScore: 'DESC' },
+      take: limit,
+    });
+  }
+
+  // Admin tarafından öne çıkar
+  async setFeatured(jobId: string, isFeatured: boolean, reason?: string): Promise<Job> {
+    const job = await this.jobRepository.findOne({ where: { id: jobId } });
+    
+    if (!job) {
+      throw new NotFoundException('İş bulunamadı');
+    }
+
+    job.isFeatured = isFeatured;
+    job.featuredAt = isFeatured ? new Date() : null;
+    job.featuredReason = reason || null;
+
+    return this.jobRepository.save(job);
+  }
+
+  // Öne çıkarma skorunu hesapla ve güncelle
+  async calculateFeaturedScore(jobId: string): Promise<Job> {
+    const job = await this.jobRepository.findOne({ 
+      where: { id: jobId },
+      relations: ['applications']
+    });
+    
+    if (!job) {
+      throw new NotFoundException('İş bulunamadı');
+    }
+
+    // Skor hesaplama algoritması
+    let score = 0;
+    
+    // Görüntülenme sayısı (ağırlık: 0.3)
+    score += job.viewCount * 0.3;
+    
+    // Başvuru sayısı (ağırlık: 0.4)
+    score += job.applicationCount * 0.4;
+    
+    // Aciliyet (ağırlık: 0.2)
+    if (job.isUrgent) {
+      score += 50 * 0.2;
+    }
+    
+    // Yeni işler için bonus (ağırlık: 0.1)
+    const daysSinceCreation = (Date.now() - job.createdAt.getTime()) / (1000 * 60 * 60 * 24);
+    if (daysSinceCreation <= 7) {
+      score += 30 * 0.1;
+    }
+    
+    // Bütçe bonusu (yüksek bütçeli işler)
+    if (job.budget) {
+      const budget = parseInt(job.budget);
+      if (budget > 1000) {
+        score += 20;
+      }
+    }
+
+    job.featuredScore = Math.round(score);
+    return this.jobRepository.save(job);
+  }
+
+  // Tüm işlerin skorlarını güncelle (cron job için)
+  async updateAllFeaturedScores(): Promise<void> {
+    const jobs = await this.jobRepository.find({
+      where: { status: JobStatus.OPEN }
+    });
+
+    for (const job of jobs) {
+      await this.calculateFeaturedScore(job.id);
+    }
+  }
+
+  // İş görüntülendiğinde skor güncelle
+  async incrementViewCount(jobId: string): Promise<void> {
+    await this.jobRepository.increment({ id: jobId }, 'viewCount', 1);
+    
+    // Skoru da güncelle
+    await this.calculateFeaturedScore(jobId);
+  }
 } 

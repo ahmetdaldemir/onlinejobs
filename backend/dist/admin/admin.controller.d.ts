@@ -1,6 +1,7 @@
 import { AdminService } from './admin.service';
 import { CreateCategoryDto } from '../categories/dto/create-category.dto';
 import { UpdateCategoryDto } from '../categories/dto/update-category.dto';
+import { JobStatus } from '../jobs/entities/job.entity';
 export declare class AdminController {
     private readonly adminService;
     constructor(adminService: AdminService);
@@ -20,8 +21,6 @@ export declare class AdminController {
             completed: number;
             statuses: {
                 open: number;
-                inProgress: number;
-                completed: number;
                 cancelled: number;
             };
         };
@@ -51,8 +50,8 @@ export declare class AdminController {
     getJobStats(): Promise<{
         total: number;
         open: number;
-        inProgress: number;
-        completed: number;
+        cancelled: number;
+        featured: number;
         completionRate: string | number;
     }>;
     getMessageStats(): Promise<{
@@ -158,4 +157,38 @@ export declare class AdminController {
         message: string;
         profileImage: string;
     }>;
+    getFeaturedJobs(): Promise<import("../jobs/entities/job.entity").Job[]>;
+    getHighScoreJobs(): Promise<import("../jobs/entities/job.entity").Job[]>;
+    setJobFeatured(jobId: string, body: {
+        isFeatured: boolean;
+        reason?: string;
+    }): Promise<{
+        message: string;
+        job: {
+            id: string;
+            title: string;
+            isFeatured: boolean;
+            featuredAt: Date;
+            featuredReason: string;
+        };
+    }>;
+    updateAllJobScores(): Promise<{
+        message: string;
+        updatedCount: number;
+    }>;
+    toggleJobStatus(jobId: string, body: {
+        status: string;
+    }): Promise<{
+        message: string;
+        job: {
+            id: string;
+            title: string;
+            status: JobStatus;
+        };
+    }>;
+    closeExpiredJobs(): Promise<{
+        message: string;
+        closedCount: number;
+    }>;
+    getAllJobs(): Promise<import("../jobs/entities/job.entity").Job[]>;
 }

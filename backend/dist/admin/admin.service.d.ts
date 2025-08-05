@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 import { User, UserStatus } from '../users/entities/user.entity';
 import { UserInfo } from '../users/entities/user-info.entity';
-import { Job } from '../jobs/entities/job.entity';
+import { Job, JobStatus } from '../jobs/entities/job.entity';
 import { Message } from '../messages/entities/message.entity';
 import { Category } from '../categories/entities/category.entity';
 import { CreateUserDto } from '../users/dto/create-user.dto';
@@ -35,8 +35,6 @@ export declare class AdminService {
             completed: number;
             statuses: {
                 open: number;
-                inProgress: number;
-                completed: number;
                 cancelled: number;
             };
         };
@@ -66,8 +64,8 @@ export declare class AdminService {
     getJobStats(): Promise<{
         total: number;
         open: number;
-        inProgress: number;
-        completed: number;
+        cancelled: number;
+        featured: number;
         completionRate: string | number;
     }>;
     getMessageStats(): Promise<{
@@ -165,4 +163,33 @@ export declare class AdminService {
         message: string;
         profileImage: string;
     }>;
+    getFeaturedJobs(): Promise<Job[]>;
+    getHighScoreJobs(limit?: number): Promise<Job[]>;
+    setJobFeatured(jobId: string, isFeatured: boolean, reason?: string): Promise<{
+        message: string;
+        job: {
+            id: string;
+            title: string;
+            isFeatured: boolean;
+            featuredAt: Date;
+            featuredReason: string;
+        };
+    }>;
+    updateAllJobScores(): Promise<{
+        message: string;
+        updatedCount: number;
+    }>;
+    toggleJobStatus(jobId: string, status: JobStatus): Promise<{
+        message: string;
+        job: {
+            id: string;
+            title: string;
+            status: JobStatus;
+        };
+    }>;
+    closeExpiredJobs(): Promise<{
+        message: string;
+        closedCount: number;
+    }>;
+    getAllJobs(): Promise<Job[]>;
 }

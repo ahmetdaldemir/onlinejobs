@@ -24,5 +24,6 @@ import { UploadModule } from '../upload/upload.module';
   ],
   controllers: [AdminController],
   providers: [AdminService],
+  exports: [AdminService],
 })
 export class AdminModule {} 

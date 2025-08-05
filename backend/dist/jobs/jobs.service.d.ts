@@ -22,4 +22,10 @@ export declare class JobsService {
     getMyJobs(employerId: string): Promise<Job[]>;
     getMyJobsApplications(employerId: string): Promise<JobApplication[]>;
     getJobApplications(jobId: string, employerId: string): Promise<JobApplication[]>;
+    getFeaturedJobs(limit?: number): Promise<Job[]>;
+    getHighScoreJobs(limit?: number): Promise<Job[]>;
+    setFeatured(jobId: string, isFeatured: boolean, reason?: string): Promise<Job>;
+    calculateFeaturedScore(jobId: string): Promise<Job>;
+    updateAllFeaturedScores(): Promise<void>;
+    incrementViewCount(jobId: string): Promise<void>;
 }

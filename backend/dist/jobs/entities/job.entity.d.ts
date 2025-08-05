@@ -1,7 +1,5 @@
 export declare enum JobStatus {
     OPEN = "open",
-    IN_PROGRESS = "in_progress",
-    COMPLETED = "completed",
     CANCELLED = "cancelled"
 }
 export declare class Job {
@@ -17,6 +15,10 @@ export declare class Job {
     isUrgent: boolean;
     viewCount: number;
     applicationCount: number;
+    isFeatured: boolean;
+    featuredScore: number;
+    featuredAt: Date;
+    featuredReason: string;
     createdAt: Date;
     updatedAt: Date;
     employer: any;

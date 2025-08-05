@@ -71,6 +71,48 @@ export class JobsController {
     return this.jobsService.getMyJobsApplications(req.user.sub);
   }
 
+  @Get('featured')
+  @ApiOperation({ summary: 'Öne çıkan işleri getir (Admin tarafından seçilen)' })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Kaç adet iş getirileceği' })
+  @ApiResponse({ status: 200, description: 'Öne çıkan işler listelendi' })
+  async getFeaturedJobs(@Query('limit') limit: number = 10) {
+    return this.jobsService.getFeaturedJobs(limit);
+  }
+
+  @Get('high-score')
+  @ApiOperation({ summary: 'Yüksek skorlu işleri getir (Sistem otomatik seçimi)' })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Kaç adet iş getirileceği' })
+  @ApiResponse({ status: 200, description: 'Yüksek skorlu işler listelendi' })
+  async getHighScoreJobs(@Query('limit') limit: number = 10) {
+    return this.jobsService.getHighScoreJobs(limit);
+  }
+
+  @Post(':id/featured')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'İşi öne çıkar/çıkar (Admin yetkisi gerekli)' })
+  @ApiResponse({ status: 200, description: 'İş öne çıkarma durumu güncellendi' })
+  async setFeatured(
+    @Param('id') jobId: string,
+    @Body() data: { isFeatured: boolean; reason?: string },
+    @Request() req
+  ) {
+    // Admin kontrolü (basit implementasyon)
+    const user = await this.usersService.findById(req.user.sub);
+    if (user.userType !== 'admin') {
+      throw new ForbiddenException('Bu işlem için admin yetkisi gerekli');
+    }
+
+    return this.jobsService.setFeatured(jobId, data.isFeatured, data.reason);
+  }
+
+  @Post(':id/view')
+  @ApiOperation({ summary: 'İş görüntülenme sayısını artır' })
+  @ApiResponse({ status: 200, description: 'Görüntülenme sayısı artırıldı' })
+  async incrementViewCount(@Param('id') jobId: string) {
+    return this.jobsService.incrementViewCount(jobId);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'İş ilanı detayı' })
   @ApiResponse({ status: 200, description: 'İş ilanı detayı' })

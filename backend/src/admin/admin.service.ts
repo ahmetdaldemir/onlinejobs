@@ -102,19 +102,19 @@ export class AdminService {
   }
 
   async getJobStats() {
-    const [totalJobs, openJobs, inProgressJobs, completedJobs] = await Promise.all([
+    const [totalJobs, openJobs, cancelledJobs, featuredJobs] = await Promise.all([
       this.jobRepository.count(),
       this.jobRepository.count({ where: { status: JobStatus.OPEN } }),
-      this.jobRepository.count({ where: { status: JobStatus.IN_PROGRESS } }),
-      this.jobRepository.count({ where: { status: JobStatus.COMPLETED } }),
+      this.jobRepository.count({ where: { status: JobStatus.CANCELLED } }),
+      this.jobRepository.count({ where: { isFeatured: true } }),
     ]);
 
     return {
       total: totalJobs,
       open: openJobs,
-      inProgress: inProgressJobs,
-      completed: completedJobs,
-      completionRate: totalJobs > 0 ? ((completedJobs / totalJobs) * 100).toFixed(2) : 0,
+      cancelled: cancelledJobs,
+      featured: featuredJobs,
+      completionRate: totalJobs > 0 ? ((totalJobs - openJobs) / totalJobs * 100).toFixed(2) : 0,
     };
   }
 
@@ -582,14 +582,10 @@ export class AdminService {
 
   private async getJobStatusStats() {
     const open = await this.jobRepository.count({ where: { status: JobStatus.OPEN } });
-    const inProgress = await this.jobRepository.count({ where: { status: JobStatus.IN_PROGRESS } });
-    const completed = await this.jobRepository.count({ where: { status: JobStatus.COMPLETED } });
     const cancelled = await this.jobRepository.count({ where: { status: JobStatus.CANCELLED } });
 
     return {
       open,
-      inProgress,
-      completed,
       cancelled,
     };
   }
@@ -607,5 +603,148 @@ export class AdminService {
       message: 'Profil fotoğrafı başarıyla güncellendi',
       profileImage: imageUrl
     };
+  }
+
+  // Öne çıkan işler yönetimi
+  async getFeaturedJobs() {
+    return this.jobRepository.find({
+      where: { isFeatured: true },
+      relations: ['employer', 'category'],
+      order: { featuredAt: 'DESC' },
+    });
+  }
+
+  async getHighScoreJobs(limit: number = 20) {
+    return this.jobRepository.find({
+      where: { status: JobStatus.OPEN },
+      relations: ['employer', 'category'],
+      order: { featuredScore: 'DESC' },
+      take: limit,
+    });
+  }
+
+  async setJobFeatured(jobId: string, isFeatured: boolean, reason?: string) {
+    const job = await this.jobRepository.findOne({ where: { id: jobId } });
+    if (!job) {
+      throw new NotFoundException('İş bulunamadı');
+    }
+
+    job.isFeatured = isFeatured;
+    job.featuredAt = isFeatured ? new Date() : null;
+    job.featuredReason = reason || null;
+
+    await this.jobRepository.save(job);
+    
+    return { 
+      message: `İş ${isFeatured ? 'öne çıkarıldı' : 'öne çıkarma kaldırıldı'}`,
+      job: {
+        id: job.id,
+        title: job.title,
+        isFeatured: job.isFeatured,
+        featuredAt: job.featuredAt,
+        featuredReason: job.featuredReason
+      }
+    };
+  }
+
+  async updateAllJobScores() {
+    const jobs = await this.jobRepository.find({
+      where: { status: JobStatus.OPEN }
+    });
+
+    let updatedCount = 0;
+    for (const job of jobs) {
+      // Skor hesaplama algoritması
+      let score = 0;
+      
+      // Görüntülenme sayısı (ağırlık: 0.3)
+      score += job.viewCount * 0.3;
+      
+      // Başvuru sayısı (ağırlık: 0.4)
+      score += job.applicationCount * 0.4;
+      
+      // Aciliyet (ağırlık: 0.2)
+      if (job.isUrgent) {
+        score += 50 * 0.2;
+      }
+      
+      // Yeni işler için bonus (ağırlık: 0.1)
+      const daysSinceCreation = (Date.now() - job.createdAt.getTime()) / (1000 * 60 * 60 * 24);
+      if (daysSinceCreation <= 7) {
+        score += 30 * 0.1;
+      }
+      
+      // Bütçe bonusu (yüksek bütçeli işler)
+      if (job.budget) {
+        const budget = parseInt(job.budget);
+        if (budget > 1000) {
+          score += 20;
+        }
+      }
+
+      job.featuredScore = Math.round(score);
+      await this.jobRepository.save(job);
+      updatedCount++;
+    }
+
+    return { 
+      message: `${updatedCount} işin skoru güncellendi`,
+      updatedCount
+    };
+  }
+
+  // İş durumu değiştirme
+  async toggleJobStatus(jobId: string, status: JobStatus) {
+    const job = await this.jobRepository.findOne({ where: { id: jobId } });
+    if (!job) {
+      throw new NotFoundException('İş bulunamadı');
+    }
+
+    job.status = status;
+    await this.jobRepository.save(job);
+    
+    return { 
+      message: `İş durumu ${status} olarak güncellendi`,
+      job: {
+        id: job.id,
+        title: job.title,
+        status: job.status
+      }
+    };
+  }
+
+  // Tarihi geçen işleri otomatik kapat
+  async closeExpiredJobs() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Bugünün başlangıcı
+
+    const expiredJobs = await this.jobRepository.find({
+      where: {
+        status: JobStatus.OPEN,
+        scheduledDate: Not(null)
+      }
+    });
+
+    let closedCount = 0;
+    for (const job of expiredJobs) {
+      if (job.scheduledDate && job.scheduledDate < today) {
+        job.status = JobStatus.CANCELLED;
+        await this.jobRepository.save(job);
+        closedCount++;
+      }
+    }
+
+    return { 
+      message: `${closedCount} adet süresi dolmuş iş kapatıldı`,
+      closedCount
+    };
+  }
+
+  // Tüm işleri getir (admin panel için)
+  async getAllJobs() {
+    return this.jobRepository.find({
+      relations: ['employer', 'category'],
+      order: { createdAt: 'DESC' },
+    });
   }
 } 

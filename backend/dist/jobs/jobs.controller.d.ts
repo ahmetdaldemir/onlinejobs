@@ -12,6 +12,13 @@ export declare class JobsController {
     getMyApplications(req: any): Promise<import("./entities/job-application.entity").JobApplication[]>;
     getMyJobs(req: any): Promise<import("./entities/job.entity").Job[]>;
     getMyJobsApplications(req: any): Promise<import("./entities/job-application.entity").JobApplication[]>;
+    getFeaturedJobs(limit?: number): Promise<import("./entities/job.entity").Job[]>;
+    getHighScoreJobs(limit?: number): Promise<import("./entities/job.entity").Job[]>;
+    setFeatured(jobId: string, data: {
+        isFeatured: boolean;
+        reason?: string;
+    }, req: any): Promise<import("./entities/job.entity").Job>;
+    incrementViewCount(jobId: string): Promise<void>;
     findById(id: string): Promise<import("./entities/job.entity").Job>;
     update(id: string, updateJobDto: any, req: any): Promise<import("./entities/job.entity").Job>;
     delete(id: string, req: any): Promise<void>;

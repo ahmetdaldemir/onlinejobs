@@ -7,6 +7,7 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UpdateUserDto } from '../users/dto/update-user.dto';
 import { CreateCategoryDto } from '../categories/dto/create-category.dto';
 import { UpdateCategoryDto } from '../categories/dto/update-category.dto';
+import { JobStatus } from '../jobs/entities/job.entity';
 
 @ApiTags('Admin Dashboard')
 @Controller('admin')
@@ -251,5 +252,61 @@ export class AdminController {
     @Body() body: { imageUrl: string },
   ) {
     return this.adminService.updateUserProfileImage(id, body.imageUrl);
+  }
+
+  // Öne çıkan işler yönetimi
+  @Get('jobs/featured')
+  @ApiOperation({ summary: 'Öne çıkan işleri listele' })
+  @ApiResponse({ status: 200, description: 'Öne çıkan işler listesi' })
+  async getFeaturedJobs() {
+    return this.adminService.getFeaturedJobs();
+  }
+
+  @Get('jobs/high-score')
+  @ApiOperation({ summary: 'Yüksek skorlu işleri listele' })
+  @ApiResponse({ status: 200, description: 'Yüksek skorlu işler listesi' })
+  async getHighScoreJobs() {
+    return this.adminService.getHighScoreJobs();
+  }
+
+  @Post('jobs/:id/featured')
+  @ApiOperation({ summary: 'İşi öne çıkar/çıkar' })
+  @ApiResponse({ status: 200, description: 'İş öne çıkarma durumu güncellendi' })
+  async setJobFeatured(
+    @Param('id') jobId: string,
+    @Body() body: { isFeatured: boolean; reason?: string }
+  ) {
+    return this.adminService.setJobFeatured(jobId, body.isFeatured, body.reason);
+  }
+
+  @Post('jobs/update-scores')
+  @ApiOperation({ summary: 'Tüm işlerin skorlarını güncelle' })
+  @ApiResponse({ status: 200, description: 'İş skorları güncellendi' })
+  async updateAllJobScores() {
+    return this.adminService.updateAllJobScores();
+  }
+
+  @Put('jobs/:id/status')
+  @ApiOperation({ summary: 'İş durumunu değiştir' })
+  @ApiResponse({ status: 200, description: 'İş durumu güncellendi' })
+  async toggleJobStatus(
+    @Param('id') jobId: string,
+    @Body() body: { status: string }
+  ) {
+    return this.adminService.toggleJobStatus(jobId, body.status as JobStatus);
+  }
+
+  @Post('jobs/close-expired')
+  @ApiOperation({ summary: 'Tarihi geçen işleri otomatik kapat' })
+  @ApiResponse({ status: 200, description: 'Süresi dolmuş işler kapatıldı' })
+  async closeExpiredJobs() {
+    return this.adminService.closeExpiredJobs();
+  }
+
+  @Get('jobs/all')
+  @ApiOperation({ summary: 'Tüm işleri listele' })
+  @ApiResponse({ status: 200, description: 'Tüm işler listesi' })
+  async getAllJobs() {
+    return this.adminService.getAllJobs();
   }
 } 

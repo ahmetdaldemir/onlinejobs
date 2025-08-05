@@ -165,6 +165,71 @@ let JobsService = class JobsService {
             relations: ['applicant'],
         });
     }
+    async getFeaturedJobs(limit = 10) {
+        return this.jobRepository.find({
+            where: { isFeatured: true, status: job_entity_1.JobStatus.OPEN },
+            relations: ['employer', 'category'],
+            order: { featuredAt: 'DESC' },
+            take: limit,
+        });
+    }
+    async getHighScoreJobs(limit = 10) {
+        return this.jobRepository.find({
+            where: { status: job_entity_1.JobStatus.OPEN },
+            relations: ['employer', 'category'],
+            order: { featuredScore: 'DESC' },
+            take: limit,
+        });
+    }
+    async setFeatured(jobId, isFeatured, reason) {
+        const job = await this.jobRepository.findOne({ where: { id: jobId } });
+        if (!job) {
+            throw new common_1.NotFoundException('İş bulunamadı');
+        }
+        job.isFeatured = isFeatured;
+        job.featuredAt = isFeatured ? new Date() : null;
+        job.featuredReason = reason || null;
+        return this.jobRepository.save(job);
+    }
+    async calculateFeaturedScore(jobId) {
+        const job = await this.jobRepository.findOne({
+            where: { id: jobId },
+            relations: ['applications']
+        });
+        if (!job) {
+            throw new common_1.NotFoundException('İş bulunamadı');
+        }
+        let score = 0;
+        score += job.viewCount * 0.3;
+        score += job.applicationCount * 0.4;
+        if (job.isUrgent) {
+            score += 50 * 0.2;
+        }
+        const daysSinceCreation = (Date.now() - job.createdAt.getTime()) / (1000 * 60 * 60 * 24);
+        if (daysSinceCreation <= 7) {
+            score += 30 * 0.1;
+        }
+        if (job.budget) {
+            const budget = parseInt(job.budget);
+            if (budget > 1000) {
+                score += 20;
+            }
+        }
+        job.featuredScore = Math.round(score);
+        return this.jobRepository.save(job);
+    }
+    async updateAllFeaturedScores() {
+        const jobs = await this.jobRepository.find({
+            where: { status: job_entity_1.JobStatus.OPEN }
+        });
+        for (const job of jobs) {
+            await this.calculateFeaturedScore(job.id);
+        }
+    }
+    async incrementViewCount(jobId) {
+        await this.jobRepository.increment({ id: jobId }, 'viewCount', 1);
+        await this.calculateFeaturedScore(jobId);
+    }
 };
 exports.JobsService = JobsService;
 exports.JobsService = JobsService = __decorate([

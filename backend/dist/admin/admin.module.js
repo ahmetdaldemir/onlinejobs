@@ -36,6 +36,7 @@ exports.AdminModule = AdminModule = __decorate([
         ],
         controllers: [admin_controller_1.AdminController],
         providers: [admin_service_1.AdminService],
+        exports: [admin_service_1.AdminService],
     })
 ], AdminModule);
 //# sourceMappingURL=admin.module.js.map

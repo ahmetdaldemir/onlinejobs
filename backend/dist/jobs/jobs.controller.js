@@ -46,6 +46,22 @@ let JobsController = class JobsController {
     async getMyJobsApplications(req) {
         return this.jobsService.getMyJobsApplications(req.user.sub);
     }
+    async getFeaturedJobs(limit = 10) {
+        return this.jobsService.getFeaturedJobs(limit);
+    }
+    async getHighScoreJobs(limit = 10) {
+        return this.jobsService.getHighScoreJobs(limit);
+    }
+    async setFeatured(jobId, data, req) {
+        const user = await this.usersService.findById(req.user.sub);
+        if (user.userType !== 'admin') {
+            throw new common_1.ForbiddenException('Bu işlem için admin yetkisi gerekli');
+        }
+        return this.jobsService.setFeatured(jobId, data.isFeatured, data.reason);
+    }
+    async incrementViewCount(jobId) {
+        return this.jobsService.incrementViewCount(jobId);
+    }
     async findById(id) {
         const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
         if (!uuidRegex.test(id)) {
@@ -130,6 +146,48 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], JobsController.prototype, "getMyJobsApplications", null);
+__decorate([
+    (0, common_1.Get)('featured'),
+    (0, swagger_1.ApiOperation)({ summary: 'Öne çıkan işleri getir (Admin tarafından seçilen)' }),
+    (0, swagger_1.ApiQuery)({ name: 'limit', required: false, type: Number, description: 'Kaç adet iş getirileceği' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Öne çıkan işler listelendi' }),
+    __param(0, (0, common_1.Query)('limit')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], JobsController.prototype, "getFeaturedJobs", null);
+__decorate([
+    (0, common_1.Get)('high-score'),
+    (0, swagger_1.ApiOperation)({ summary: 'Yüksek skorlu işleri getir (Sistem otomatik seçimi)' }),
+    (0, swagger_1.ApiQuery)({ name: 'limit', required: false, type: Number, description: 'Kaç adet iş getirileceği' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Yüksek skorlu işler listelendi' }),
+    __param(0, (0, common_1.Query)('limit')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], JobsController.prototype, "getHighScoreJobs", null);
+__decorate([
+    (0, common_1.Post)(':id/featured'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'İşi öne çıkar/çıkar (Admin yetkisi gerekli)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'İş öne çıkarma durumu güncellendi' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:returntype", Promise)
+], JobsController.prototype, "setFeatured", null);
+__decorate([
+    (0, common_1.Post)(':id/view'),
+    (0, swagger_1.ApiOperation)({ summary: 'İş görüntülenme sayısını artır' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Görüntülenme sayısı artırıldı' }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], JobsController.prototype, "incrementViewCount", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'İş ilanı detayı' }),
