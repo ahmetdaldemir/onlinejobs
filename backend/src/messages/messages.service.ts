@@ -40,53 +40,15 @@ export class MessagesService {
 
     const savedMessage = await this.messageRepository.save(message);
 
-    // Alıcının online durumunu kontrol et ve AI yanıtı oluştur
-    // Sadece HTTP endpoint'inden gelen istekler için AI yanıtı oluştur
-    // WebSocket'ten gelen istekler için WebSocket gateway'de AI yanıtı oluşturuluyor
-    await this.checkAndGenerateAIResponse(receiverId, senderId, content);
+    // AI yanıtı sadece WebSocket gateway'de oluşturulacak
+    // HTTP endpoint'inden gelen istekler için AI yanıtı oluşturulmayacak
+    console.log('✅ Mesaj kaydedildi, AI yanıtı WebSocket gateway tarafından yönetilecek');
 
     return savedMessage;
   }
 
-  // Alıcının online durumunu kontrol et ve AI yanıtı oluştur
-  private async checkAndGenerateAIResponse(receiverId: string, senderId: string, originalMessage: string): Promise<void> {
-    try {
-      // Alıcının online durumunu kontrol et (bu kısmı WebSocket bağlantılarından kontrol edebiliriz)
-      const isReceiverOnline = await this.isUserOnline(receiverId);
-      
-      if (!isReceiverOnline) {
-        console.log(`🤖 Kullanıcı ${receiverId} online değil, AI yanıtı oluşturuluyor...`);
-        
-        // AI yanıtı oluştur
-        const aiResponse = await this.aiService.generateResponse(receiverId, originalMessage);
-        
-        if (aiResponse) {
-          console.log(`✅ AI yanıtı oluşturuldu: ${aiResponse}`);
-          
-          // AI yanıtını mesaj olarak kaydet
-          const aiMessage = this.messageRepository.create({
-            senderId: receiverId,
-            receiverId: senderId,
-            content: aiResponse,
-            type: MessageType.TEXT,
-            isAIGenerated: true, // AI tarafından oluşturulduğunu belirt
-          });
-          
-          await this.messageRepository.save(aiMessage);
-          console.log(`💬 AI yanıtı mesaj olarak kaydedildi`);
-        } else {
-          console.log(`❌ AI yanıtı oluşturulamadı`);
-        }
-      } else {
-        console.log(`👤 Kullanıcı ${receiverId} online, AI yanıtı oluşturulmayacak`);
-      }
-    } catch (error) {
-      console.error('AI yanıtı oluşturulurken hata:', error);
-    }
-  }
-
   // Kullanıcının online durumunu kontrol et
-  private async isUserOnline(userId: string): Promise<boolean> {
+  public async isUserOnline(userId: string): Promise<boolean> {
     try {
       // Kullanıcıyı veritabanından al ve isOnline durumunu kontrol et
       const user = await this.userRepository.findOne({ 
@@ -102,11 +64,8 @@ export class MessagesService {
       console.log(`🔍 Kullanıcı ${userId} online durumu: ${user.isOnline}`);
       console.log(`📅 Son görülme: ${user.lastSeen}`);
       
-      // Gerçek sistemde WebSocket bağlantısı olmadığı için
-      // AI yanıtını her zaman tetiklemek için false döndür
-      // Bu sayede AI her zaman yanıt verecek
-      console.log(`🤖 AI yanıtı için kullanıcı offline kabul ediliyor: ${userId}`);
-      return false;
+      // Gerçek online durumunu döndür
+      return user.isOnline;
     } catch (error) {
       console.error(`❌ Online durumu kontrol edilirken hata: ${error.message}`);
       return false; // Hata durumunda offline kabul et
@@ -280,5 +239,18 @@ export class MessagesService {
     
     console.log('🎉 Toplam', createdMessages.length, 'test mesajı oluşturuldu');
     return createdMessages;
+  }
+
+  // AI yanıtı için özel metod (çift kayıt önlemek için)
+  async createAIResponse(senderId: string, receiverId: string, content: string): Promise<Message> {
+    const aiMessage = this.messageRepository.create({
+      senderId,
+      receiverId,
+      content,
+      type: MessageType.TEXT,
+      isAIGenerated: true,
+    });
+    
+    return this.messageRepository.save(aiMessage);
   }
 } 

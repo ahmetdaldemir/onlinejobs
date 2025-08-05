@@ -8,8 +8,7 @@ export declare class MessagesService {
     private aiService;
     constructor(messageRepository: Repository<Message>, userRepository: Repository<User>, aiService: AiService);
     sendMessage(senderId: string, receiverId: string, content: string, type?: MessageType): Promise<Message>;
-    private checkAndGenerateAIResponse;
-    private isUserOnline;
+    isUserOnline(userId: string): Promise<boolean>;
     getConversation(userId1: string, userId2: string): Promise<Message[]>;
     getMyConversations(userId: string): Promise<any[]>;
     markAsRead(messageId: string, userId: string): Promise<Message>;
@@ -22,4 +21,5 @@ export declare class MessagesService {
     }>;
     getSentMessagesStatus(userId: string): Promise<Message[]>;
     createSampleMessages(userId: string): Promise<Message[]>;
+    createAIResponse(senderId: string, receiverId: string, content: string): Promise<Message>;
 }

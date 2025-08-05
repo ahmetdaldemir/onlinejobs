@@ -162,28 +162,34 @@ let MessagesGateway = class MessagesGateway {
             else {
                 console.log('Alıcı bağlı değil! Alıcı ID:', data.receiverId);
                 console.log('Bağlı kullanıcılar:', Array.from(this.connectedUsers.keys()));
-                console.log('🤖 Alıcı online değil, AI yanıtı oluşturuluyor...');
-                try {
-                    const aiResponse = await this.aiService.generateResponse(data.receiverId, data.content);
-                    if (aiResponse) {
-                        console.log('✅ AI yanıtı oluşturuldu:', aiResponse);
-                        const aiMessage = await this.messagesService.sendMessage(data.receiverId, senderId, aiResponse, message_entity_1.MessageType.TEXT);
-                        client.emit('new_message', {
-                            id: aiMessage.id,
-                            senderId: data.receiverId,
-                            content: aiResponse,
-                            type: message_entity_1.MessageType.TEXT,
-                            createdAt: aiMessage.createdAt,
-                            isAiResponse: true,
-                        });
-                        console.log('💬 AI yanıtı mesaj olarak kaydedildi ve gönderildi');
+                const isReceiverOnline = await this.messagesService.isUserOnline(data.receiverId);
+                if (!isReceiverOnline) {
+                    console.log('🤖 Alıcı gerçekten offline, AI yanıtı oluşturuluyor...');
+                    try {
+                        const aiResponse = await this.aiService.generateResponse(data.receiverId, data.content);
+                        if (aiResponse) {
+                            console.log('✅ AI yanıtı oluşturuldu:', aiResponse);
+                            const savedAiMessage = await this.messagesService.createAIResponse(data.receiverId, senderId, aiResponse);
+                            client.emit('new_message', {
+                                id: savedAiMessage.id,
+                                senderId: data.receiverId,
+                                content: aiResponse,
+                                type: message_entity_1.MessageType.TEXT,
+                                createdAt: savedAiMessage.createdAt,
+                                isAiResponse: true,
+                            });
+                            console.log('💬 AI yanıtı mesaj olarak kaydedildi ve gönderildi');
+                        }
+                        else {
+                            console.log('❌ AI yanıtı oluşturulamadı');
+                        }
                     }
-                    else {
-                        console.log('❌ AI yanıtı oluşturulamadı');
+                    catch (aiError) {
+                        console.error('AI response error:', aiError);
                     }
                 }
-                catch (aiError) {
-                    console.error('AI response error:', aiError);
+                else {
+                    console.log('👤 Alıcı online ama WebSocket bağlantısı yok, AI yanıtı oluşturulmayacak');
                 }
                 client.emit('message_error', {
                     error: `Alıcı (${data.receiverId}) bağlı değil. Mesaj kaydedildi ama iletilemedi.`

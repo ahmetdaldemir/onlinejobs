@@ -181,6 +181,7 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
         }
       }
       
+      // Mesajı sadece MessagesService üzerinden kaydet
       const message = await this.messagesService.sendMessage(
         senderId,
         data.receiverId,
@@ -218,36 +219,41 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayDisconnect
         console.log('Alıcı bağlı değil! Alıcı ID:', data.receiverId);
         console.log('Bağlı kullanıcılar:', Array.from(this.connectedUsers.keys()));
         
-        // Alıcı bağlı değilse AI yanıtı oluştur
-        console.log('🤖 Alıcı online değil, AI yanıtı oluşturuluyor...');
-        try {
-          const aiResponse = await this.aiService.generateResponse(data.receiverId, data.content);
-          if (aiResponse) {
-            console.log('✅ AI yanıtı oluşturuldu:', aiResponse);
-            
-            const aiMessage = await this.messagesService.sendMessage(
-              data.receiverId,
-              senderId,
-              aiResponse,
-              MessageType.TEXT,
-            );
+        // Alıcı gerçekten offline ise AI yanıtı oluştur
+        const isReceiverOnline = await this.messagesService.isUserOnline(data.receiverId);
+        if (!isReceiverOnline) {
+          console.log('🤖 Alıcı gerçekten offline, AI yanıtı oluşturuluyor...');
+          try {
+            const aiResponse = await this.aiService.generateResponse(data.receiverId, data.content);
+            if (aiResponse) {
+              console.log('✅ AI yanıtı oluşturuldu:', aiResponse);
+              
+              // AI yanıtını özel metod ile kaydet
+              const savedAiMessage = await this.messagesService.createAIResponse(
+                data.receiverId,
+                senderId,
+                aiResponse
+              );
 
-            // AI yanıtını göndericiye gönder
-            client.emit('new_message', {
-              id: aiMessage.id,
-              senderId: data.receiverId,
-              content: aiResponse,
-              type: MessageType.TEXT,
-              createdAt: aiMessage.createdAt,
-              isAiResponse: true,
-            });
+              // AI yanıtını göndericiye gönder
+              client.emit('new_message', {
+                id: savedAiMessage.id,
+                senderId: data.receiverId,
+                content: aiResponse,
+                type: MessageType.TEXT,
+                createdAt: savedAiMessage.createdAt,
+                isAiResponse: true,
+              });
 
-            console.log('💬 AI yanıtı mesaj olarak kaydedildi ve gönderildi');
-          } else {
-            console.log('❌ AI yanıtı oluşturulamadı');
+              console.log('💬 AI yanıtı mesaj olarak kaydedildi ve gönderildi');
+            } else {
+              console.log('❌ AI yanıtı oluşturulamadı');
+            }
+          } catch (aiError) {
+            console.error('AI response error:', aiError);
           }
-        } catch (aiError) {
-          console.error('AI response error:', aiError);
+        } else {
+          console.log('👤 Alıcı online ama WebSocket bağlantısı yok, AI yanıtı oluşturulmayacak');
         }
         
         client.emit('message_error', {
