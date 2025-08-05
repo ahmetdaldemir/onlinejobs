@@ -25,4 +25,16 @@ export declare class JobsController {
     applyForJob(jobId: string, applicationData: CreateJobApplicationDto, req: any): Promise<import("./entities/job-application.entity").JobApplication>;
     updateApplicationStatus(applicationId: string, status: ApplicationStatus, req: any): Promise<import("./entities/job-application.entity").JobApplication>;
     getJobApplications(jobId: string, req: any): Promise<import("./entities/job-application.entity").JobApplication[]>;
+    debugLocation(): Promise<{
+        totalJobs: number;
+        jobsWithLocation: number;
+        jobsWithLocationDetails: {
+            id: string;
+            title: string;
+            userInfoId: string;
+            latitude: any;
+            longitude: any;
+            address: any;
+        }[];
+    }>;
 }

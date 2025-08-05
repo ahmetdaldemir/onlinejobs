@@ -22,6 +22,7 @@ const create_job_dto_1 = require("./dto/create-job.dto");
 const create_job_application_dto_1 = require("./dto/create-job-application.dto");
 const users_service_1 = require("../users/users.service");
 const common_2 = require("@nestjs/common");
+const job_entity_1 = require("./entities/job.entity");
 let JobsController = class JobsController {
     constructor(jobsService, usersService) {
         this.jobsService = jobsService;
@@ -83,6 +84,27 @@ let JobsController = class JobsController {
     }
     async getJobApplications(jobId, req) {
         return this.jobsService.getJobApplications(jobId, req.user.sub);
+    }
+    async debugLocation() {
+        const allJobs = await this.jobsService.findAll({
+            relations: ['userInfo'],
+            where: { status: job_entity_1.JobStatus.OPEN }
+        });
+        const jobsWithLocation = allJobs.filter(job => job.userInfo &&
+            job.userInfo.latitude &&
+            job.userInfo.longitude);
+        return {
+            totalJobs: allJobs.length,
+            jobsWithLocation: jobsWithLocation.length,
+            jobsWithLocationDetails: jobsWithLocation.map(job => ({
+                id: job.id,
+                title: job.title,
+                userInfoId: job.userInfoId,
+                latitude: job.userInfo?.latitude,
+                longitude: job.userInfo?.longitude,
+                address: job.userInfo?.address
+            }))
+        };
     }
 };
 exports.JobsController = JobsController;
@@ -262,6 +284,12 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], JobsController.prototype, "getJobApplications", null);
+__decorate([
+    (0, common_1.Get)('debug/location'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], JobsController.prototype, "debugLocation", null);
 exports.JobsController = JobsController = __decorate([
     (0, swagger_1.ApiTags)('Jobs'),
     (0, common_1.Controller)('jobs'),

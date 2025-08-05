@@ -57,10 +57,10 @@ let JobsService = class JobsService {
         return savedJob;
     }
     async findAll(filters) {
-        const query = this.jobRepository
-            .createQueryBuilder('job')
+        const query = this.jobRepository.createQueryBuilder('job')
             .leftJoinAndSelect('job.employer', 'employer')
-            .leftJoinAndSelect('job.category', 'category');
+            .leftJoinAndSelect('job.category', 'category')
+            .leftJoinAndSelect('job.userInfo', 'userInfo');
         if (filters?.status) {
             query.andWhere('job.status = :status', { status: filters.status });
         }
@@ -71,22 +71,47 @@ let JobsService = class JobsService {
             query.andWhere('job.employerId = :employerId', { employerId: filters.employerId });
         }
         if (filters?.latitude && filters?.longitude && filters?.radius) {
+            console.log('🔍 Konum bazlı filtreleme başlatılıyor...');
+            console.log('📍 Koordinatlar:', { latitude: filters.latitude, longitude: filters.longitude, radius: filters.radius });
             query.andWhere(`
-        (6371 * acos(cos(radians(:latitude)) * cos(radians(job.latitude)) * 
-        cos(radians(job.longitude) - radians(:longitude)) + 
-        sin(radians(:latitude)) * sin(radians(job.latitude)))) <= :radius
+        (6371 * acos(cos(radians(:latitude)) * cos(radians(userInfo.latitude)) * 
+        cos(radians(userInfo.longitude) - radians(:longitude)) + 
+        sin(radians(:latitude)) * sin(radians(userInfo.latitude)))) <= :radius
       `, {
                 latitude: filters.latitude,
                 longitude: filters.longitude,
                 radius: filters.radius
             });
+            console.log('🔍 Konum filtresi eklendi, SQL sorgusu hazırlanıyor...');
         }
-        return query.getMany();
+        const results = await query.getMany();
+        console.log('📊 Sorgu sonucu:', results.length, 'iş ilanı bulundu');
+        if (results.length === 0) {
+            console.log('⚠️ Hiç iş ilanı bulunamadı. Olası nedenler:');
+            console.log('   - Job kayıtlarında userInfoId null');
+            console.log('   - UserInfo kayıtlarında latitude/longitude null');
+            console.log('   - Belirtilen koordinatlarda 50km yarıçapında iş yok');
+            const allJobs = await this.jobRepository.find({
+                where: { status: job_entity_1.JobStatus.OPEN },
+                relations: ['userInfo']
+            });
+            console.log('🔍 Konum filtresi olmadan toplam job sayısı:', allJobs.length);
+            const jobsWithLocation = allJobs.filter(job => job.userInfo && job.userInfo.latitude && job.userInfo.longitude);
+            console.log('📍 Konum bilgisi olan job sayısı:', jobsWithLocation.length);
+            if (jobsWithLocation.length > 0) {
+                console.log('📍 Konum bilgisi olan job örnekleri:');
+                jobsWithLocation.slice(0, 3).forEach(job => {
+                    console.log(`   - Job ID: ${job.id}, Title: ${job.title}`);
+                    console.log(`     Lat: ${job.userInfo.latitude}, Lng: ${job.userInfo.longitude}`);
+                });
+            }
+        }
+        return results;
     }
     async findById(id) {
         const job = await this.jobRepository.findOne({
             where: { id },
-            relations: ['employer', 'category', 'applications'],
+            relations: ['employer', 'category', 'applications', 'userInfo'],
         });
         if (!job) {
             throw new common_1.NotFoundException('İş ilanı bulunamadı');
@@ -146,7 +171,8 @@ let JobsService = class JobsService {
     async getMyJobs(employerId) {
         return this.jobRepository.find({
             where: { employerId },
-            relations: ['employer', 'category', 'applications'],
+            relations: ['employer', 'category', 'userInfo'],
+            order: { createdAt: 'DESC' },
         });
     }
     async getMyJobsApplications(employerId) {
@@ -168,7 +194,7 @@ let JobsService = class JobsService {
     async getFeaturedJobs(limit = 10) {
         return this.jobRepository.find({
             where: { isFeatured: true, status: job_entity_1.JobStatus.OPEN },
-            relations: ['employer', 'category'],
+            relations: ['employer', 'category', 'userInfo'],
             order: { featuredAt: 'DESC' },
             take: limit,
         });
@@ -176,7 +202,7 @@ let JobsService = class JobsService {
     async getHighScoreJobs(limit = 10) {
         return this.jobRepository.find({
             where: { status: job_entity_1.JobStatus.OPEN },
-            relations: ['employer', 'category'],
+            relations: ['employer', 'category', 'userInfo'],
             order: { featuredScore: 'DESC' },
             take: limit,
         });

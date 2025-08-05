@@ -7,6 +7,7 @@ import { CreateJobDto } from './dto/create-job.dto';
 import { CreateJobApplicationDto } from './dto/create-job-application.dto';
 import { UsersService } from '../users/users.service';
 import { BadRequestException } from '@nestjs/common';
+import { JobStatus } from './entities/job.entity';
 
 @ApiTags('Jobs')
 @Controller('jobs')
@@ -174,5 +175,34 @@ export class JobsController {
   @ApiResponse({ status: 200, description: 'Başvurular listelendi' })
   async getJobApplications(@Param('id') jobId: string, @Request() req) {
     return this.jobsService.getJobApplications(jobId, req.user.sub);
+  }
+
+  @Get('debug/location')
+  async debugLocation() {
+    // Tüm job'ları getir
+    const allJobs = await this.jobsService.findAll({
+      relations: ['userInfo'],
+      where: { status: JobStatus.OPEN }
+    });
+
+    // UserInfo'da konum bilgisi olan job'ları filtrele
+    const jobsWithLocation = allJobs.filter(job => 
+      job.userInfo && 
+      job.userInfo.latitude && 
+      job.userInfo.longitude
+    );
+
+    return {
+      totalJobs: allJobs.length,
+      jobsWithLocation: jobsWithLocation.length,
+      jobsWithLocationDetails: jobsWithLocation.map(job => ({
+        id: job.id,
+        title: job.title,
+        userInfoId: job.userInfoId,
+        latitude: job.userInfo?.latitude,
+        longitude: job.userInfo?.longitude,
+        address: job.userInfo?.address
+      }))
+    };
   }
 } 
