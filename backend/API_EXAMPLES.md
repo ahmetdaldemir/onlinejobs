@@ -12,71 +12,50 @@ Authorization: Bearer YOUR_JWT_TOKEN
 
 ## 📝 Register Endpoint
 
-### 1. Worker Kaydı (Email Opsiyonel)
+### 1. Kullanıcı Kaydı (Email Koşullu)
 
 **Endpoint:** `POST /auth/register`
 
-**Açıklama:** Worker kullanıcısı kaydı - email zorunlu değil
+**Açıklama:** Yeni kullanıcı kaydı oluşturur. Worker kullanıcıları için email opsiyonel, employer kullanıcıları için zorunludur.
 
 **Request Body:**
 ```json
 {
   "firstName": "Ahmet",
   "lastName": "Yılmaz",
+  "email": "ahmet@example.com",  // Worker için opsiyonel, Employer için zorunlu
   "phone": "+905551234567",
-  "password": "password123",
-  "userType": "worker",
-  "categoryId": "550e8400-e29b-41d4-a716-446655440000"
+  "password": "123456",
+  "userType": "worker",  // "worker" veya "employer"
+  "categoryId": "category-id-123"  // Worker için opsiyonel - kategori seçimi
 }
 ```
 
-**Örnek:**
-```bash
-curl -X POST http://localhost:3000/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "firstName": "Ahmet",
-    "lastName": "Yılmaz",
-    "phone": "+905551234567",
-    "password": "password123",
-    "userType": "worker",
-    "categoryId": "550e8400-e29b-41d4-a716-446655440000"
-  }'
-```
-
-### 2. Employer Kaydı (Email Zorunlu)
-
-**Endpoint:** `POST /auth/register`
-
-**Açıklama:** Employer kullanıcısı kaydı - email zorunlu
-
-**Request Body:**
+**Worker Kaydı (Email olmadan):**
 ```json
 {
   "firstName": "Mehmet",
   "lastName": "Demir",
-  "email": "mehmet@example.com",
-  "phone": "+905559876543",
-  "password": "password123",
+  "phone": "+905551234568",
+  "password": "123456",
+  "userType": "worker",
+  "categoryId": "category-id-123"
+}
+```
+
+**Employer Kaydı (Email zorunlu):**
+```json
+{
+  "firstName": "Ayşe",
+  "lastName": "Kaya",
+  "email": "ayse@example.com",
+  "phone": "+905551234569",
+  "password": "123456",
   "userType": "employer"
 }
 ```
 
-**Örnek:**
-```bash
-curl -X POST http://localhost:3000/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "firstName": "Mehmet",
-    "lastName": "Demir",
-    "email": "mehmet@example.com",
-    "phone": "+905559876543",
-    "password": "password123",
-    "userType": "employer"
-  }'
-```
-
-**Response (Her iki durum için):**
+**Response:**
 ```json
 {
   "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -84,7 +63,7 @@ curl -X POST http://localhost:3000/auth/register \
     "id": "user-id",
     "firstName": "Ahmet",
     "lastName": "Yılmaz",
-    "email": null,
+    "email": "ahmet@example.com",
     "phone": "+905551234567",
     "userType": "worker",
     "status": "active",
@@ -94,7 +73,12 @@ curl -X POST http://localhost:3000/auth/register \
     "totalReviews": 0,
     "profileImage": null,
     "bio": null,
-    "categories": []
+    "categories": [
+      {
+        "id": "category-id-123",
+        "name": "Elektrik"
+      }
+    ]
   },
   "message": "Kullanıcı başarıyla kayıt oldu",
   "status": "success",
@@ -104,22 +88,7 @@ curl -X POST http://localhost:3000/auth/register \
 
 **Hata Durumları:**
 
-**Worker için Email Gönderilirse:**
-```json
-{
-  "message": "Validation failed",
-  "error": "Bad Request",
-  "statusCode": 400,
-  "details": [
-    {
-      "field": "email",
-      "message": "Geçerli bir email adresi giriniz"
-    }
-  ]
-}
-```
-
-**Employer için Email Gönderilmezse:**
+**Worker için Email Hatası:**
 ```json
 {
   "message": "Validation failed",
@@ -134,6 +103,21 @@ curl -X POST http://localhost:3000/auth/register \
 }
 ```
 
+**Employer için Email Hatası:**
+```json
+{
+  "message": "Validation failed",
+  "error": "Bad Request",
+  "statusCode": 400,
+  "details": [
+    {
+      "field": "email",
+      "message": "email must be an email"
+    }
+  ]
+}
+```
+
 **Telefon Numarası Zaten Kullanımda:**
 ```json
 {
@@ -143,7 +127,7 @@ curl -X POST http://localhost:3000/auth/register \
 }
 ```
 
-**Employer için Email Zaten Kullanımda:**
+**Email Zaten Kullanımda (Employer):**
 ```json
 {
   "message": "Email veya telefon numarası zaten kullanımda",

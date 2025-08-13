@@ -15,7 +15,7 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
-    const { email, phone, password, userType, ...rest } = registerDto;
+    const { email, phone, password, userType, categoryId, ...rest } = registerDto;
 
     // Email ve telefon kontrolü - userType'a göre
     let existingUser;
@@ -58,6 +58,30 @@ export class AuthService {
 
     const savedUser = await this.userRepository.save(user);
 
+    // Worker kullanıcısı için kategori ilişkisi kurma
+    if (userType === 'worker' && categoryId) {
+      console.log('👷 Worker kullanıcısı için kategori ilişkisi kuruluyor:', categoryId);
+      
+      // user_categories tablosuna ekleme
+      await this.userRepository
+        .createQueryBuilder()
+        .insert()
+        .into('user_categories')
+        .values({
+          userId: savedUser.id,
+          categoryId: categoryId
+        })
+        .execute();
+      
+      console.log('✅ Kategori ilişkisi başarıyla kuruldu');
+    }
+
+    // Kullanıcıyı kategorileri ile birlikte getir
+    const userWithCategories = await this.userRepository.findOne({
+      where: { id: savedUser.id },
+      relations: ['categories'],
+    });
+
     // JWT token oluşturma
     const payload = { sub: savedUser.id, email: savedUser.email };
     const accessToken = this.jwtService.sign(payload);
@@ -65,20 +89,20 @@ export class AuthService {
     return {
       accessToken,
       user: {
-        id: savedUser.id,
-        firstName: savedUser.firstName,
-        lastName: savedUser.lastName,
-        email: savedUser.email,
-        phone: savedUser.phone,
-        userType: savedUser.userType,
-        status: savedUser.status,
-        isVerified: savedUser.isVerified,
-        isOnline: savedUser.isOnline,
-        rating: savedUser.rating,
-        totalReviews: savedUser.totalReviews,
-        profileImage: savedUser.profileImage,
-        bio: savedUser.bio,
-        categories: savedUser.categories ? savedUser.categories.map(category => ({
+        id: userWithCategories.id,
+        firstName: userWithCategories.firstName,
+        lastName: userWithCategories.lastName,
+        email: userWithCategories.email,
+        phone: userWithCategories.phone,
+        userType: userWithCategories.userType,
+        status: userWithCategories.status,
+        isVerified: userWithCategories.isVerified,
+        isOnline: userWithCategories.isOnline,
+        rating: userWithCategories.rating,
+        totalReviews: userWithCategories.totalReviews,
+        profileImage: userWithCategories.profileImage,
+        bio: userWithCategories.bio,
+        categories: userWithCategories.categories ? userWithCategories.categories.map(category => ({
           id: category.id,
           name: category.name,
         })) : [],

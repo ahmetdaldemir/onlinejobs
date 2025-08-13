@@ -131,23 +131,21 @@
             </div>
 
             <div class="form-group">
-                <label for="userType">Kullanıcı Tipi *</label>
-                <select id="userType" name="userType" required onchange="toggleEmailField()">
-                    <option value="">Seçiniz</option>
-                    <option value="worker">Worker (İşçi)</option>
-                    <option value="employer">Employer (İşveren)</option>
+                <label for="userType">Kullanıcı Tipi</label>
+                <select id="userType" onchange="toggleEmailField()">
+                    <option value="worker">Worker</option>
+                    <option value="employer">Employer</option>
                 </select>
             </div>
 
             <div class="form-group" id="emailGroup">
-                <label for="email">Email <span id="emailRequired" style="color: red;">*</span></label>
-                <input type="email" id="email" name="email" placeholder="ornek@email.com">
-                <small id="emailHelp" style="color: #666;"></small>
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="ornek@email.com">
             </div>
 
-            <div class="form-group">
-                <label for="categoryId">Kategori (Opsiyonel)</label>
-                <input type="text" id="categoryId" name="categoryId" placeholder="Kategori ID">
+            <div class="form-group" id="categoryGroup" style="display: none;">
+                <label for="categoryId">Kategori ID (Worker için)</label>
+                <input type="text" id="categoryId" placeholder="category-id-123">
             </div>
 
             <div class="user-type-section worker-section" id="workerInfo" style="display: none;">
@@ -184,20 +182,27 @@
             const emailHelp = document.getElementById('emailHelp');
             const workerInfo = document.getElementById('workerInfo');
             const employerInfo = document.getElementById('employerInfo');
+            const categoryGroup = document.getElementById('categoryGroup');
 
             if (userType === 'worker') {
+                emailGroup.style.display = 'block';
+                categoryGroup.style.display = 'block';
                 emailRequired.style.display = 'none';
                 emailHelp.textContent = 'Email opsiyonel (zorunlu değil)';
                 emailHelp.style.color = '#28a745';
                 workerInfo.style.display = 'block';
                 employerInfo.style.display = 'none';
             } else if (userType === 'employer') {
+                emailGroup.style.display = 'block';
+                categoryGroup.style.display = 'none';
                 emailRequired.style.display = 'inline';
                 emailHelp.textContent = 'Email zorunlu';
                 emailHelp.style.color = '#dc3545';
                 workerInfo.style.display = 'none';
                 employerInfo.style.display = 'block';
             } else {
+                emailGroup.style.display = 'none';
+                categoryGroup.style.display = 'none';
                 emailRequired.style.display = 'inline';
                 emailHelp.textContent = '';
                 workerInfo.style.display = 'none';
@@ -237,26 +242,65 @@
             return { isValid: errors.length === 0, errors };
         }
 
-        async function register(data) {
-            try {
-                const response = await fetch(`${API_BASE}/auth/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data)
-                });
+        function register() {
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const userType = document.getElementById('userType').value;
+            const categoryId = document.getElementById('categoryId').value;
 
-                const result = await response.json();
-                
-                if (response.ok) {
-                    showResult('✅ Başarılı!', result, 'success');
-                } else {
-                    showResult('❌ Hata!', result, 'error');
-                }
-            } catch (error) {
-                showResult('❌ Bağlantı Hatası!', { error: error.message }, 'error');
+            // Worker için email opsiyonel, employer için zorunlu
+            if (userType === 'employer' && !email) {
+                showResult('❌ Hata!', { error: 'Employer için email zorunludur' }, 'error');
+                return;
             }
+
+            const data = {
+                firstName,
+                lastName,
+                phone,
+                password,
+                userType
+            };
+
+            // Email sadece varsa ekle
+            if (email) {
+                data.email = email;
+            }
+
+            // CategoryId sadece worker için ve varsa ekle
+            if (userType === 'worker' && categoryId) {
+                data.categoryId = categoryId;
+            }
+
+            console.log('📤 Gönderilen veri:', data);
+
+            fetch('http://localhost:3000/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.accessToken) {
+                    showResult('✅ Kayıt başarılı!', result, 'success');
+                    console.log('🎉 Kullanıcı başarıyla kayıt oldu:', result.user);
+                    
+                    // Kategori bilgisini göster
+                    if (result.user.categories && result.user.categories.length > 0) {
+                        console.log('📋 Kullanıcının kategorileri:', result.user.categories);
+                    }
+                } else {
+                    showResult('❌ Kayıt başarısız!', result, 'error');
+                }
+            })
+            .catch(error => {
+                showResult('❌ Bağlantı Hatası!', { error: error.message }, 'error');
+            });
         }
 
         function registerWorker() {
