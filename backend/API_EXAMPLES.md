@@ -10,6 +10,148 @@ Tüm korumalı endpoint'ler için JWT token gereklidir:
 Authorization: Bearer YOUR_JWT_TOKEN
 ```
 
+## 📝 Register Endpoint
+
+### 1. Worker Kaydı (Email Opsiyonel)
+
+**Endpoint:** `POST /auth/register`
+
+**Açıklama:** Worker kullanıcısı kaydı - email zorunlu değil
+
+**Request Body:**
+```json
+{
+  "firstName": "Ahmet",
+  "lastName": "Yılmaz",
+  "phone": "+905551234567",
+  "password": "password123",
+  "userType": "worker",
+  "categoryId": "550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+**Örnek:**
+```bash
+curl -X POST http://localhost:3000/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName": "Ahmet",
+    "lastName": "Yılmaz",
+    "phone": "+905551234567",
+    "password": "password123",
+    "userType": "worker",
+    "categoryId": "550e8400-e29b-41d4-a716-446655440000"
+  }'
+```
+
+### 2. Employer Kaydı (Email Zorunlu)
+
+**Endpoint:** `POST /auth/register`
+
+**Açıklama:** Employer kullanıcısı kaydı - email zorunlu
+
+**Request Body:**
+```json
+{
+  "firstName": "Mehmet",
+  "lastName": "Demir",
+  "email": "mehmet@example.com",
+  "phone": "+905559876543",
+  "password": "password123",
+  "userType": "employer"
+}
+```
+
+**Örnek:**
+```bash
+curl -X POST http://localhost:3000/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName": "Mehmet",
+    "lastName": "Demir",
+    "email": "mehmet@example.com",
+    "phone": "+905559876543",
+    "password": "password123",
+    "userType": "employer"
+  }'
+```
+
+**Response (Her iki durum için):**
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "user-id",
+    "firstName": "Ahmet",
+    "lastName": "Yılmaz",
+    "email": null,
+    "phone": "+905551234567",
+    "userType": "worker",
+    "status": "active",
+    "isVerified": false,
+    "isOnline": false,
+    "rating": 0,
+    "totalReviews": 0,
+    "profileImage": null,
+    "bio": null,
+    "categories": []
+  },
+  "message": "Kullanıcı başarıyla kayıt oldu",
+  "status": "success",
+  "statusCode": 201
+}
+```
+
+**Hata Durumları:**
+
+**Worker için Email Gönderilirse:**
+```json
+{
+  "message": "Validation failed",
+  "error": "Bad Request",
+  "statusCode": 400,
+  "details": [
+    {
+      "field": "email",
+      "message": "Geçerli bir email adresi giriniz"
+    }
+  ]
+}
+```
+
+**Employer için Email Gönderilmezse:**
+```json
+{
+  "message": "Validation failed",
+  "error": "Bad Request",
+  "statusCode": 400,
+  "details": [
+    {
+      "field": "email",
+      "message": "email should not be empty"
+    }
+  ]
+}
+```
+
+**Telefon Numarası Zaten Kullanımda:**
+```json
+{
+  "message": "Telefon numarası zaten kullanımda",
+  "error": "Conflict",
+  "statusCode": 409
+}
+```
+
+**Employer için Email Zaten Kullanımda:**
+```json
+{
+  "message": "Email veya telefon numarası zaten kullanımda",
+  "error": "Conflict",
+  "statusCode": 409
+}
+```
+
 ## 👤 Users Endpoints
 
 ### 1. Kullanıcı Bilgilerini Güncelle (ID ile)

@@ -26,17 +26,33 @@ let AuthService = class AuthService {
     }
     async register(registerDto) {
         const { email, phone, password, userType, ...rest } = registerDto;
-        const existingUser = await this.userRepository.findOne({
-            where: { phone, userType },
-        });
+        let existingUser;
+        if (userType === 'employer') {
+            existingUser = await this.userRepository.findOne({
+                where: [
+                    { email, userType },
+                    { phone, userType }
+                ],
+            });
+        }
+        else {
+            existingUser = await this.userRepository.findOne({
+                where: { phone, userType },
+            });
+        }
         console.log('existingUser', existingUser);
         if (existingUser) {
-            throw new common_1.ConflictException('Email veya telefon numarası zaten kullanımda');
+            if (userType === 'employer') {
+                throw new common_1.ConflictException('Email veya telefon numarası zaten kullanımda');
+            }
+            else {
+                throw new common_1.ConflictException('Telefon numarası zaten kullanımda');
+            }
         }
         const hashedPassword = await bcrypt.hash(password, 12);
         const user = this.userRepository.create({
             ...rest,
-            email,
+            email: userType === 'employer' ? email : null,
             phone,
             userType,
             password: hashedPassword,

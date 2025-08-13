@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, MinLength, IsOptional } from 'class-validator';
+import { IsEmail, IsString, MinLength, IsOptional, ValidateIf } from 'class-validator';
 
 export class RegisterDto {
   @ApiProperty()
@@ -10,9 +10,9 @@ export class RegisterDto {
   @IsString()
   lastName: string;
 
-  @ApiProperty({required: false})
-  @IsOptional()
-  @IsEmail()
+  @ApiProperty({required: false, description: 'Email zorunlu değil (worker için opsiyonel, employer için zorunlu)'})
+  @ValidateIf((o) => o.userType === 'employer')
+  @IsEmail({}, { message: 'Geçerli bir email adresi giriniz' })
   email: string;
 
   @ApiProperty()

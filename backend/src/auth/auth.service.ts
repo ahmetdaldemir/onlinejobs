@@ -17,14 +17,31 @@ export class AuthService {
   async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
     const { email, phone, password, userType, ...rest } = registerDto;
 
-    // Email ve telefon kontrolü
-    const existingUser = await this.userRepository.findOne({
-      where:  { phone, userType },
-    });
+    // Email ve telefon kontrolü - userType'a göre
+    let existingUser;
+    
+    if (userType === 'employer') {
+      // Employer için email ve telefon kontrolü
+      existingUser = await this.userRepository.findOne({
+        where: [
+          { email, userType },
+          { phone, userType }
+        ],
+      });
+    } else {
+      // Worker için sadece telefon kontrolü
+      existingUser = await this.userRepository.findOne({
+        where: { phone, userType },
+      });
+    }
 
     console.log('existingUser',existingUser);
     if (existingUser) {
-      throw new ConflictException('Email veya telefon numarası zaten kullanımda');
+      if (userType === 'employer') {
+        throw new ConflictException('Email veya telefon numarası zaten kullanımda');
+      } else {
+        throw new ConflictException('Telefon numarası zaten kullanımda');
+      }
     }
 
     // Şifre hash'leme
@@ -33,7 +50,7 @@ export class AuthService {
     // Kullanıcı oluşturma
     const user = this.userRepository.create({
       ...rest,
-      email,
+      email: userType === 'employer' ? email : null, // Worker için email null olabilir
       phone,
       userType,
       password: hashedPassword,

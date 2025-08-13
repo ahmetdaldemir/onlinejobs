@@ -26,8 +26,9 @@ __decorate([
     __metadata("design:type", String)
 ], RegisterDto.prototype, "lastName", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsEmail)(),
+    (0, swagger_1.ApiProperty)({ required: false, description: 'Email zorunlu değil (worker için opsiyonel, employer için zorunlu)' }),
+    (0, class_validator_1.ValidateIf)((o) => o.userType === 'employer'),
+    (0, class_validator_1.IsEmail)({}, { message: 'Geçerli bir email adresi giriniz' }),
     __metadata("design:type", String)
 ], RegisterDto.prototype, "email", void 0);
 __decorate([
