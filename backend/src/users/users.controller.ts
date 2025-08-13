@@ -170,6 +170,16 @@ export class UsersController {
     return this.usersService.updateIsOnline(req.user.sub, isOnline);
   }
 
+
+  @Get('is-verified')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Kullanıcının tüm adres bilgilerini getir (alias)' })
+  @ApiResponse({ status: 200, description: 'Kullanıcının tüm adres bilgileri' })
+  async getUserIsVerified(@Request() req) {
+    return this.usersService.getUserIsVerified(req.user.sub);
+  }
+
   @Put('location')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -311,4 +321,6 @@ export class UsersController {
       lastName: user.lastName
     };
   }
+
+ 
 } 

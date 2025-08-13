@@ -539,4 +539,9 @@ export class UsersService {
     user.lastSeen = new Date();
     return this.userRepository.save(user);
   }
+
+  async getUserIsVerified(userId: string): Promise<boolean> {
+    const user = await this.findById(userId);
+    return user.isVerified;
+  }
 } 
