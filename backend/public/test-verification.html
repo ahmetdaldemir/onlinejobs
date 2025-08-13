@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Test - Online Jobs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .document-section {
+            border: 2px solid #e0e0e0;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .document-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .document-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-approved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .upload-btn {
+            background-color: #28a745;
+        }
+        .upload-btn:hover {
+            background-color: #218838;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .document-list {
+            margin-top: 20px;
+        }
+        .document-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .document-item h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .document-item p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #28a745;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 Verification Test - Online Jobs</h1>
+        
+        <div class="info result">
+            <strong>Test Açıklaması:</strong>
+            • Worker kullanıcıları için doğrulama belgesi yükleme sistemi
+            • Gerekli belgeler: Ustalık belgesi, Vergi levhası, Sözleşme çıktısı
+            • Sadece PDF, JPG, PNG dosyaları kabul edilir (max 5MB)
+        </div>
+
+        <!-- Token Girişi -->
+        <div class="form-group">
+            <label for="token">JWT Token (Worker için)</label>
+            <input type="text" id="token" placeholder="Bearer YOUR_JWT_TOKEN" style="font-family: monospace;">
+        </div>
+
+        <button onclick="getMyStatus()">📊 Durumumu Getir</button>
+        <button onclick="getRequiredDocuments()">📋 Gerekli Belgeleri Getir</button>
+        <button onclick="getMyDocuments()">📁 Belgelerimi Getir</button>
+
+        <hr style="margin: 30px 0;">
+
+        <!-- Belge Yükleme -->
+        <div class="document-section">
+            <h3>📤 Belge Yükle</h3>
+            
+            <div class="form-group">
+                <label for="documentType">Belge Türü *</label>
+                <select id="documentType" required>
+                    <option value="">Seçiniz</option>
+                    <option value="mastery_certificate">Ustalık Belgesi</option>
+                    <option value="tax_certificate">Vergi Levhası</option>
+                    <option value="contract_pdf">Sözleşme Çıktısı</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Açıklama (Opsiyonel)</label>
+                <input type="text" id="description" placeholder="Belge açıklaması">
+            </div>
+
+            <div class="form-group">
+                <label for="file">Dosya * (PDF, JPG, PNG, max 5MB)</label>
+                <input type="file" id="file" accept=".pdf,.jpg,.jpeg,.png" required>
+            </div>
+
+            <button onclick="uploadDocument()" class="upload-btn">📤 Belge Yükle</button>
+        </div>
+
+        <!-- Belge Listesi -->
+        <div class="document-section">
+            <h3>📁 Yüklenen Belgeler</h3>
+            <div id="documentList" class="document-list">
+                <p>Belgeler yükleniyor...</p>
+            </div>
+        </div>
+
+        <!-- Doğrulama Durumu -->
+        <div class="document-section">
+            <h3>📊 Doğrulama Durumu</h3>
+            <div id="verificationStatus">
+                <p>Durum yükleniyor...</p>
+            </div>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000';
+
+        function getToken() {
+            const token = document.getElementById('token').value;
+            if (!token) {
+                showResult('❌ Hata!', { error: 'JWT Token gerekli' }, 'error');
+                return null;
+            }
+            return token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+        }
+
+        async function getMyStatus() {
+            const token = getToken();
+            if (!token) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/verification/my-status`, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayVerificationStatus(result);
+                    showResult('✅ Durum başarıyla getirildi', result, 'success');
+                } else {
+                    showResult('❌ Hata!', result, 'error');
+                }
+            } catch (error) {
+                showResult('❌ Bağlantı Hatası!', { error: error.message }, 'error');
+            }
+        }
+
+        async function getRequiredDocuments() {
+            try {
+                const response = await fetch(`${API_BASE}/verification/required-documents`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult('✅ Gerekli belgeler getirildi', result, 'success');
+                } else {
+                    showResult('❌ Hata!', result, 'error');
+                }
+            } catch (error) {
+                showResult('❌ Bağlantı Hatası!', { error: error.message }, 'error');
+            }
+        }
+
+        async function getMyDocuments() {
+            const token = getToken();
+            if (!token) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/verification/my-documents`, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayDocumentList(result);
+                    showResult('✅ Belgeler başarıyla getirildi', result, 'success');
+                } else {
+                    showResult('❌ Hata!', result, 'error');
+                }
+            } catch (error) {
+                showResult('❌ Bağlantı Hatası!', { error: error.message }, 'error');
+            }
+        }
+
+        async function uploadDocument() {
+            const token = getToken();
+            if (!token) return;
+
+            const documentType = document.getElementById('documentType').value;
+            const description = document.getElementById('description').value;
+            const fileInput = document.getElementById('file');
+
+            if (!documentType) {
+                showResult('❌ Hata!', { error: 'Belge türü seçiniz' }, 'error');
+                return;
+            }
+
+            if (!fileInput.files[0]) {
+                showResult('❌ Hata!', { error: 'Dosya seçiniz' }, 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('documentType', documentType);
+            formData.append('file', fileInput.files[0]);
+            if (description) {
+                formData.append('description', description);
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/verification/upload`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': token
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult('✅ Belge başarıyla yüklendi', result, 'success');
+                    // Belgeleri yenile
+                    getMyDocuments();
+                    getMyStatus();
+                } else {
+                    showResult('❌ Hata!', result, 'error');
+                }
+            } catch (error) {
+                showResult('❌ Bağlantı Hatası!', { error: error.message }, 'error');
+            }
+        }
+
+        async function deleteDocument(verificationId) {
+            const token = getToken();
+            if (!token) return;
+
+            if (!confirm('Bu belgeyi silmek istediğinizden emin misiniz?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/verification/${verificationId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showResult('✅ Belge başarıyla silindi', result, 'success');
+                    // Belgeleri yenile
+                    getMyDocuments();
+                    getMyStatus();
+                } else {
+                    showResult('❌ Hata!', result, 'error');
+                }
+            } catch (error) {
+                showResult('❌ Bağlantı Hatası!', { error: error.message }, 'error');
+            }
+        }
+
+        function displayVerificationStatus(status) {
+            const statusDiv = document.getElementById('verificationStatus');
+            
+            const progress = (status.approvedDocuments / 3) * 100;
+            
+            statusDiv.innerHTML = `
+                <div style="margin-bottom: 15px;">
+                    <strong>Doğrulama Durumu:</strong> 
+                    <span class="document-status ${status.isVerified ? 'status-approved' : 'status-pending'}">
+                        ${status.isVerified ? 'Doğrulanmış' : 'Doğrulanmamış'}
+                    </span>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${progress}%"></div>
+                </div>
+                
+                <p><strong>Toplam Belge:</strong> ${status.totalDocuments}/3</p>
+                <p><strong>Onaylanan:</strong> ${status.approvedDocuments}</p>
+                <p><strong>Bekleyen:</strong> ${status.pendingDocuments}</p>
+                <p><strong>Reddedilen:</strong> ${status.rejectedDocuments}</p>
+            `;
+        }
+
+        function displayDocumentList(documents) {
+            const listDiv = document.getElementById('documentList');
+            
+            if (documents.length === 0) {
+                listDiv.innerHTML = '<p>Henüz belge yüklenmemiş.</p>';
+                return;
+            }
+
+            const documentTypes = {
+                'mastery_certificate': 'Ustalık Belgesi',
+                'tax_certificate': 'Vergi Levhası',
+                'contract_pdf': 'Sözleşme Çıktısı'
+            };
+
+            const statusClasses = {
+                'pending': 'status-pending',
+                'approved': 'status-approved',
+                'rejected': 'status-rejected'
+            };
+
+            const statusTexts = {
+                'pending': 'Bekliyor',
+                'approved': 'Onaylandı',
+                'rejected': 'Reddedildi'
+            };
+
+            listDiv.innerHTML = documents.map(doc => `
+                <div class="document-item">
+                    <h4>
+                        ${documentTypes[doc.documentType] || doc.documentType}
+                        <span class="document-status ${statusClasses[doc.status]}">
+                            ${statusTexts[doc.status]}
+                        </span>
+                    </h4>
+                    <p><strong>Dosya:</strong> ${doc.originalFileName}</p>
+                    <p><strong>Boyut:</strong> ${(doc.fileSize / 1024 / 1024).toFixed(2)} MB</p>
+                    <p><strong>Yüklenme Tarihi:</strong> ${new Date(doc.createdAt).toLocaleString('tr-TR')}</p>
+                    ${doc.status === 'pending' ? `
+                        <button onclick="deleteDocument('${doc.id}')" class="delete-btn">🗑️ Sil</button>
+                    ` : ''}
+                    ${doc.rejectionReason ? `<p><strong>Red Sebebi:</strong> ${doc.rejectionReason}</p>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function showResult(title, data, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = `result ${type}`;
+            resultDiv.innerHTML = `<strong>${title}</strong>\n\n${JSON.stringify(data, null, 2)}`;
+        }
+
+        // Sayfa yüklendiğinde otomatik olarak durumu getir
+        document.addEventListener('DOMContentLoaded', function() {
+            // Token varsa otomatik durum getir
+            if (document.getElementById('token').value) {
+                getMyStatus();
+                getMyDocuments();
+            }
+        });
+    </script>
+</body>
+</html>

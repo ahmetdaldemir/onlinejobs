@@ -152,267 +152,586 @@ curl -X POST http://localhost:3000/auth/register \
 }
 ```
 
-## 👤 Users Endpoints
+## 📋 Verification Endpoints
 
-### 1. Kullanıcı Bilgilerini Güncelle (ID ile)
+### 1. Gerekli Belge Türlerini Getir
 
-**Endpoint:** `PUT /users/user-info`
+**Endpoint:** `GET /verification/required-documents`
 
-**Açıklama:** UserInfo kaydını ID ile günceller veya yeni kayıt oluşturur.
-
-**Request Body:**
-```json
-{
-  "userInfoId": "550e8400-e29b-41d4-a716-446655440000",  // Opsiyonel - ID varsa günceller
-  "name": "Ev Adresi",                                    // Opsiyonel - ID yoksa zorunlu
-  "latitude": 41.0082,
-  "longitude": 28.9784,
-  "address": "İstanbul, Türkiye",
-  "neighborhood": "Kadıköy",
-  "buildingNo": "123",
-  "floor": "3",
-  "apartmentNo": "A",
-  "description": "Ana giriş, asansör var"
-}
-```
-
-**Örnekler:**
-
-**1. ID ile Güncelleme:**
-```bash
-curl -X PUT http://localhost:3000/users/user-info \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "userInfoId": "550e8400-e29b-41d4-a716-446655440000",
-    "address": "Yeni adres bilgisi",
-    "latitude": 41.0082,
-    "longitude": 28.9784
-  }'
-```
-
-**2. Name ile Güncelleme (ID yoksa):**
-```bash
-curl -X PUT http://localhost:3000/users/user-info \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Ev Adresi",
-    "address": "İstanbul, Türkiye",
-    "latitude": 41.0082,
-    "longitude": 28.9784
-  }'
-```
-
-**3. Yeni Kayıt Oluşturma:**
-```bash
-curl -X PUT http://localhost:3000/users/user-info \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "İş Yeri Adresi",
-    "address": "Ankara, Türkiye",
-    "latitude": 39.9334,
-    "longitude": 32.8597
-  }'
-```
+**Açıklama:** Worker kullanıcıları için gerekli belge türlerini listeler
 
 **Response:**
 ```json
-{
-  "id": "user-id",
-  "firstName": "John",
-  "lastName": "Doe",
-  "email": "john@example.com",
-  "userInfos": [
-    {
-      "id": "550e8400-e29b-41d4-a716-446655440000",
-      "name": "Ev Adresi",
-      "latitude": 41.0082,
-      "longitude": 28.9784,
-      "address": "İstanbul, Türkiye"
-    }
-  ]
-}
-```
-
-**Hata Durumları:**
-```json
-{
-  "message": "Adres adı (name) zorunludur veya userInfoId belirtilmelidir",
-  "error": "Bad Request",
-  "statusCode": 400
-}
-```
-
-```json
-{
-  "message": "Belirtilen userInfoId ile kayıt bulunamadı veya bu kullanıcıya ait değil",
-  "error": "Bad Request", 
-  "statusCode": 400
-}
-```
-
-## 💼 Jobs Endpoints
-
-### 1. İş İlanı Oluştur
-
-**Endpoint:** `POST /jobs`
-
-**Açıklama:** Employer kullanıcıları için iş ilanı oluşturur. Sadece employer tipindeki kullanıcılar iş ilanı oluşturabilir.
-
-**Request Body:**
-```json
-{
-  "title": "Ev Temizliği İhtiyacı",
-  "description": "3+1 evimizin haftalık temizliği için güvenilir temizlik görevlisi arıyoruz. Deneyimli, düzenli ve temiz çalışan birini tercih ediyoruz.",
-  "budget": "500-800 TL",
-  "scheduledDate": "2024-01-15",
-  "scheduledTime": "09:00",
-  "isUrgent": false,
-  "categoryId": "550e8400-e29b-41d4-a716-446655440000",
-  "userInfoId": "550e8400-e29b-41d4-a716-446655440001"
-}
-```
-
-**Zorunlu Alanlar:**
-- `title`: İş ilanının başlığı
-- `description`: İş ilanının açıklaması
-
-**Opsiyonel Alanlar:**
-- `budget`: Bütçe bilgisi (örn: "500-800 TL", "Saatlik 50 TL")
-- `scheduledDate`: Planlanan tarih (YYYY-MM-DD formatında)
-- `scheduledTime`: Planlanan saat (HH:MM formatında)
-- `isUrgent`: Acil iş mi? (boolean)
-- `categoryId`: Kategori ID'si
-- `userInfoId`: Konum bilgilerini içeren UserInfo ID'si
-
-**Örnekler:**
-
-**1. Temel İş İlanı:**
-```bash
-curl -X POST http://localhost:3000/jobs \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Bahçe Bakımı",
-    "description": "Villa bahçemizin düzenli bakımı için deneyimli bahçıvan arıyoruz.",
-    "budget": "1000-1500 TL",
-    "categoryId": "550e8400-e29b-41d4-a716-446655440000"
-  }'
-```
-
-**2. Konum Bilgili İş İlanı:**
-```bash
-curl -X POST http://localhost:3000/jobs \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Ev Taşıma Hizmeti",
-    "description": "2+1 evimizi taşımak için güvenilir taşıma firması arıyoruz.",
-    "budget": "2000-3000 TL",
-    "scheduledDate": "2024-01-20",
-    "scheduledTime": "10:00",
-    "isUrgent": true,
-    "categoryId": "550e8400-e29b-41d4-a716-446655440000",
-    "userInfoId": "550e8400-e29b-41d4-a716-446655440001"
-  }'
-```
-
-**3. Acil İş İlanı:**
-```bash
-curl -X POST http://localhost:3000/jobs \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Acil Su Tesisatı Tamiri",
-    "description": "Evimizde su kaçağı var, acil tamir gerekiyor.",
-    "budget": "500-1000 TL",
-    "isUrgent": true,
-    "categoryId": "550e8400-e29b-41d4-a716-446655440000"
-  }'
-```
-
-**Response:**
-```json
-{
-  "id": "550e8400-e29b-41d4-a716-446655440002",
-  "title": "Ev Temizliği İhtiyacı",
-  "description": "3+1 evimizin haftalık temizliği için güvenilir temizlik görevlisi arıyoruz.",
-  "status": "open",
-  "budget": "500-800 TL",
-  "scheduledDate": "2024-01-15",
-  "scheduledTime": "09:00",
-  "isUrgent": false,
-  "viewCount": 0,
-  "applicationCount": 0,
-  "createdAt": "2024-01-10T10:30:00.000Z",
-  "updatedAt": "2024-01-10T10:30:00.000Z",
-  "employerId": "550e8400-e29b-41d4-a716-446655440003",
-  "categoryId": "550e8400-e29b-41d4-a716-446655440000",
-  "userInfoId": "550e8400-e29b-41d4-a716-446655440001",
-  "employer": {
-    "id": "550e8400-e29b-41d4-a716-446655440003",
-    "firstName": "John",
-    "lastName": "Doe",
-    "email": "john@example.com"
+[
+  {
+    "type": "mastery_certificate",
+    "name": "Ustalık Belgesi",
+    "description": "Mesleki yeterlilik belgesi veya ustalık belgesi"
   },
-  "category": {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "Temizlik",
-    "description": "Temizlik hizmetleri"
+  {
+    "type": "tax_certificate",
+    "name": "Vergi Levhası",
+    "description": "Vergi dairesinden alınan vergi levhası"
+  },
+  {
+    "type": "contract_pdf",
+    "name": "Sözleşme Çıktısı",
+    "description": "İş sözleşmesi veya anlaşma belgesi (PDF)"
   }
-}
+]
 ```
 
-**Hata Durumları:**
+### 2. Doğrulama Belgesi Yükle
 
-**Sadece Employer'lar İş İlanı Oluşturabilir:**
-```json
-{
-  "message": "Sadece employer'lar iş ilanı oluşturabilir",
-  "error": "Forbidden",
-  "statusCode": 403
-}
+**Endpoint:** `POST /verification/upload`
+
+**Açıklama:** Worker kullanıcıları için doğrulama belgesi yükleme (Sadece worker'lar)
+
+**Headers:**
+```bash
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: multipart/form-data
 ```
 
-**Geçersiz Veri:**
-```json
-{
-  "message": "Validation failed",
-  "error": "Bad Request",
-  "statusCode": 400,
-  "details": [
-    {
-      "field": "title",
-      "message": "title should not be empty"
-    }
-  ]
-}
-```
-
-### 2. İş İlanlarını Listele
-
-**Endpoint:** `GET /jobs`
-
-**Query Parameters:**
-- `status`: İş durumu (open, in_progress, completed, cancelled)
-- `categoryId`: Kategori ID'si
-- `employerId`: İşveren ID'si
-- `latitude`: Enlem (konum bazlı arama için)
-- `longitude`: Boylam (konum bazlı arama için)
-- `radius`: Arama yarıçapı (km)
+**Form Data:**
+- `documentType`: Belge türü (mastery_certificate, tax_certificate, contract_pdf)
+- `description`: Belge açıklaması (opsiyonel)
+- `file`: Belge dosyası (PDF, JPG, PNG, max 5MB)
 
 **Örnek:**
 ```bash
-curl -X GET "http://localhost:3000/jobs?status=open&categoryId=550e8400-e29b-41d4-a716-446655440000&latitude=40.9909&longitude=29.0303&radius=10"
+curl -X POST http://localhost:3000/verification/upload \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -F "documentType=mastery_certificate" \
+  -F "description=2023 yılı ustalık belgesi" \
+  -F "file=@ustalik_belgesi.pdf"
+```
+
+**Response:**
+```json
+{
+  "id": "verification-id",
+  "userId": "user-id",
+  "documentType": "mastery_certificate",
+  "documentUrl": "/uploads/verifications/verification-1234567890.pdf",
+  "originalFileName": "ustalik_belgesi.pdf",
+  "mimeType": "application/pdf",
+  "fileSize": 1024000,
+  "status": "pending",
+  "createdAt": "2024-01-10T10:30:00.000Z",
+  "updatedAt": "2024-01-10T10:30:00.000Z"
+}
+```
+
+### 3. Kullanıcının Belgelerini Getir
+
+**Endpoint:** `GET /verification/my-documents`
+
+**Açıklama:** Kullanıcının yüklediği tüm doğrulama belgelerini listeler
+
+**Headers:**
+```bash
+Authorization: Bearer YOUR_JWT_TOKEN
+```
+
+**Response:**
+```json
+[
+  {
+    "id": "verification-id-1",
+    "documentType": "mastery_certificate",
+    "documentUrl": "/uploads/verifications/verification-1234567890.pdf",
+    "originalFileName": "ustalik_belgesi.pdf",
+    "mimeType": "application/pdf",
+    "fileSize": 1024000,
+    "status": "approved",
+    "adminNotes": "Belge onaylandı",
+    "rejectionReason": null,
+    "reviewedAt": "2024-01-11T15:30:00.000Z",
+    "createdAt": "2024-01-10T10:30:00.000Z"
+  },
+  {
+    "id": "verification-id-2",
+    "documentType": "tax_certificate",
+    "documentUrl": "/uploads/verifications/verification-1234567891.jpg",
+    "originalFileName": "vergi_levhasi.jpg",
+    "mimeType": "image/jpeg",
+    "fileSize": 512000,
+    "status": "pending",
+    "adminNotes": null,
+    "rejectionReason": null,
+    "reviewedAt": null,
+    "createdAt": "2024-01-10T11:30:00.000Z"
+  }
+]
+```
+
+### 4. Doğrulama Durumunu Getir
+
+**Endpoint:** `GET /verification/my-status`
+
+**Açıklama:** Kullanıcının doğrulama durumunu ve istatistiklerini getirir
+
+**Headers:**
+```bash
+Authorization: Bearer YOUR_JWT_TOKEN
+```
+
+**Response:**
+```json
+{
+  "isVerified": false,
+  "totalDocuments": 2,
+  "approvedDocuments": 1,
+  "pendingDocuments": 1,
+  "rejectedDocuments": 0,
+  "documents": [
+    {
+      "id": "verification-id-1",
+      "documentType": "mastery_certificate",
+      "status": "approved"
+    },
+    {
+      "id": "verification-id-2",
+      "documentType": "tax_certificate",
+      "status": "pending"
+    }
+  ]
+}
+```
+
+### 5. Belge Sil
+
+**Endpoint:** `DELETE /verification/:id`
+
+**Açıklama:** Bekleyen durumdaki belgeyi siler (Sadece pending belgeler)
+
+**Headers:**
+```bash
+Authorization: Bearer YOUR_JWT_TOKEN
+```
+
+**Response:**
+```json
+{
+  "message": "Belge başarıyla silindi"
+}
+```
+
+### 6. Admin: Bekleyen Belgeleri Listele
+
+**Endpoint:** `GET /verification/admin/pending`
+
+**Açıklama:** Tüm bekleyen doğrulama belgelerini listeler (Admin yetkisi gerekli)
+
+**Headers:**
+```bash
+Authorization: Bearer YOUR_ADMIN_JWT_TOKEN
+```
+
+**Response:**
+```json
+[
+  {
+    "id": "verification-id",
+    "documentType": "mastery_certificate",
+    "documentUrl": "/uploads/verifications/verification-1234567890.pdf",
+    "originalFileName": "ustalik_belgesi.pdf",
+    "status": "pending",
+    "createdAt": "2024-01-10T10:30:00.000Z",
+    "user": {
+      "id": "user-id",
+      "firstName": "Ahmet",
+      "lastName": "Yılmaz",
+      "userType": "worker"
+    }
+  }
+]
+```
+
+### 7. Admin: Belge Durumunu Güncelle
+
+**Endpoint:** `PUT /verification/admin/:id/status`
+
+**Açıklama:** Doğrulama belgesi durumunu günceller (Admin yetkisi gerekli)
+
+**Headers:**
+```bash
+Authorization: Bearer YOUR_ADMIN_JWT_TOKEN
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "status": "approved",
+  "adminNotes": "Belge geçerli ve onaylandı"
+}
+```
+
+**Veya Red Durumu:**
+```json
+{
+  "status": "rejected",
+  "adminNotes": "Belge eksik bilgi içeriyor",
+  "rejectionReason": "Belge net değil, yeniden yüklenmesi gerekiyor"
+}
+```
+
+**Response:**
+```json
+{
+  "id": "verification-id",
+  "status": "approved",
+  "adminNotes": "Belge geçerli ve onaylandı",
+  "rejectionReason": null,
+  "reviewedAt": "2024-01-11T15:30:00.000Z",
+  "reviewedBy": "admin-id"
+}
+```
+
+**Hata Durumları:**
+
+**Worker Olmayan Kullanıcı Belge Yüklemeye Çalışırsa:**
+```json
+{
+  "message": "Sadece worker kullanıcıları belge yükleyebilir",
+  "error": "Bad Request",
+  "statusCode": 400
+}
+```
+
+**Aynı Belge Türü Zaten Yüklenmişse:**
+```json
+{
+  "message": "Bu belge türü için zaten bir belge yüklenmiş",
+  "error": "Conflict",
+  "statusCode": 409
+}
+```
+
+**Geçersiz Dosya Türü:**
+```json
+{
+  "message": "Geçersiz dosya türü. Sadece PDF, JPG, PNG dosyaları kabul edilir",
+  "error": "Bad Request",
+  "statusCode": 400
+}
+```
+
+**Dosya Boyutu Aşımı:**
+```json
+{
+  "message": "Dosya boyutu 5MB'dan büyük olamaz",
+  "error": "Bad Request",
+  "statusCode": 400
+}
+```
+
+## 👤 Users Endpoints
+
+### 1. Kullanıcıları Listele
+
+**Endpoint:** `GET /users`
+
+**Açıklama:** Kullanıcıları listeler (filtreleme seçenekleri ile)
+
+**Query Parameters:**
+- `status`: Kullanıcı durumu (active, inactive)
+- `userType`: Kullanıcı tipi (worker, employer)
+- `isOnline`: Online durumu (true, false)
+
+**Örnek:**
+```bash
+curl -X GET "http://localhost:3000/users?status=active&userType=worker"
+```
+
+**Response:**
+```json
+[
+  {
+    "id": "user-id",
+    "firstName": "Ahmet",
+    "lastName": "Yılmaz",
+    "email": null,
+    "phone": "+905551234567",
+    "userType": "worker",
+    "status": "active",
+    "isVerified": false,
+    "isOnline": true,
+    "rating": 0,
+    "totalReviews": 0,
+    "profileImage": null,
+    "bio": null,
+    "categoryIds": ["category-id-1", "category-id-2"],
+    "createdAt": "2024-01-10T10:30:00.000Z"
+  }
+]
+```
+
+## 📋 Jobs Endpoints
+
+### 1. İş İlanlarını Listele (Kategori Filtreleme ile)
+
+**Endpoint:** `GET /jobs`
+
+**Açıklama:** İş ilanlarını listeler. Worker kullanıcıları için kategorilerine göre otomatik filtreleme yapar.
+
+**Headers (Opsiyonel):**
+```bash
+Authorization: Bearer YOUR_JWT_TOKEN
+```
+
+**Query Parameters:**
+- `status`: İş durumu (open, closed, in_progress)
+- `categoryId`: Kategori ID'si
+- `employerId`: İşveren ID'si
+- `latitude`: Enlem (konum filtreleme için)
+- `longitude`: Boylam (konum filtreleme için)
+- `radius`: Yarıçap (km) (konum filtreleme için)
+
+**Özellikler:**
+- **Worker kullanıcıları:** Sadece kendi kategorilerindeki işleri görür
+- **Employer kullanıcıları:** Tüm işleri görür
+- **Giriş yapmayan kullanıcılar:** Tüm işleri görür
+
+**Örnek (Worker için):**
+```bash
+curl -X GET "http://localhost:3000/jobs" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
+**Örnek (Giriş yapmadan):**
+```bash
+curl -X GET "http://localhost:3000/jobs?status=open&categoryId=category-id"
+```
+
+**Response:**
+```json
+[
+  {
+    "id": "job-id",
+    "title": "Elektrik Tesisatçısı Aranıyor",
+    "description": "Deneyimli elektrik tesisatçısı aranıyor...",
+    "salary": 8000,
+    "status": "open",
+    "employerId": "employer-id",
+    "categoryId": "category-id",
+    "createdAt": "2024-01-10T10:30:00.000Z",
+    "employer": {
+      "id": "employer-id",
+      "firstName": "Mehmet",
+      "lastName": "Demir",
+      "userType": "employer"
+    },
+    "category": {
+      "id": "category-id",
+      "name": "Elektrik",
+      "description": "Elektrik işleri"
+    },
+    "userInfo": {
+      "latitude": 41.0082,
+      "longitude": 28.9784
+    }
+  }
+]
+```
+
+### 2. İş İlanı Oluştur
+
+**Endpoint:** `POST /jobs`
+
+**Açıklama:** Yeni iş ilanı oluşturur (Sadece employer'lar)
+
+**Headers:**
+```bash
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "title": "Elektrik Tesisatçısı Aranıyor",
+  "description": "Deneyimli elektrik tesisatçısı aranıyor. En az 3 yıl deneyim gerekli.",
+  "salary": 8000,
+  "categoryId": "category-id",
+  "requirements": "Elektrik mühendisliği mezunu, 3+ yıl deneyim",
+  "location": "İstanbul, Kadıköy",
+  "latitude": 41.0082,
+  "longitude": 28.9784
+}
+```
+
+**Response:**
+```json
+{
+  "id": "job-id",
+  "title": "Elektrik Tesisatçısı Aranıyor",
+  "description": "Deneyimli elektrik tesisatçısı aranıyor...",
+  "salary": 8000,
+  "status": "open",
+  "employerId": "employer-id",
+  "categoryId": "category-id",
+  "createdAt": "2024-01-10T10:30:00.000Z"
+}
 ```
 
 ### 3. İş İlanı Detayı
 
 **Endpoint:** `GET /jobs/:id`
 
+**Açıklama:** Belirli bir iş ilanının detaylarını getirir
+
 **Örnek:**
 ```bash
-curl -X GET http://localhost:3000/jobs/550e8400-e29b-41d4-a716-446655440002
-``` 
+curl -X GET http://localhost:3000/jobs/job-id
+```
+
+**Response:**
+```json
+{
+  "id": "job-id",
+  "title": "Elektrik Tesisatçısı Aranıyor",
+  "description": "Deneyimli elektrik tesisatçısı aranıyor...",
+  "salary": 8000,
+  "status": "open",
+  "employerId": "employer-id",
+  "categoryId": "category-id",
+  "requirements": "Elektrik mühendisliği mezunu, 3+ yıl deneyim",
+  "location": "İstanbul, Kadıköy",
+  "createdAt": "2024-01-10T10:30:00.000Z",
+  "employer": {
+    "id": "employer-id",
+    "firstName": "Mehmet",
+    "lastName": "Demir",
+    "userType": "employer"
+  },
+  "category": {
+    "id": "category-id",
+    "name": "Elektrik",
+    "description": "Elektrik işleri"
+  },
+  "applications": [
+    {
+      "id": "application-id",
+      "workerId": "worker-id",
+      "status": "pending",
+      "createdAt": "2024-01-10T11:30:00.000Z"
+    }
+  ]
+}
+```
+
+### 4. İş Başvurusu Yap
+
+**Endpoint:** `POST /jobs/:id/apply`
+
+**Açıklama:** İş ilanına başvuru yapar (Sadece worker'lar)
+
+**Headers:**
+```bash
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "coverLetter": "Bu pozisyon için başvuruyorum. Deneyimlerim...",
+  "expectedSalary": 7500
+}
+```
+
+**Response:**
+```json
+{
+  "id": "application-id",
+  "jobId": "job-id",
+  "workerId": "worker-id",
+  "status": "pending",
+  "coverLetter": "Bu pozisyon için başvuruyorum...",
+  "expectedSalary": 7500,
+  "createdAt": "2024-01-10T11:30:00.000Z"
+}
+```
+
+### 5. Kendi İşlerimi Getir
+
+**Endpoint:** `GET /jobs/my/jobs`
+
+**Açıklama:** Kullanıcının oluşturduğu iş ilanlarını getirir (Sadece employer'lar)
+
+**Headers:**
+```bash
+Authorization: Bearer YOUR_JWT_TOKEN
+```
+
+**Response:**
+```json
+[
+  {
+    "id": "job-id",
+    "title": "Elektrik Tesisatçısı Aranıyor",
+    "status": "open",
+    "applicationsCount": 3,
+    "createdAt": "2024-01-10T10:30:00.000Z"
+  }
+]
+```
+
+### 6. Başvurularımı Getir
+
+**Endpoint:** `GET /jobs/my/applications`
+
+**Açıklama:** Kullanıcının yaptığı iş başvurularını getirir (Sadece worker'lar)
+
+**Headers:**
+```bash
+Authorization: Bearer YOUR_JWT_TOKEN
+```
+
+**Response:**
+```json
+[
+  {
+    "id": "application-id",
+    "jobId": "job-id",
+    "status": "pending",
+    "createdAt": "2024-01-10T11:30:00.000Z",
+    "job": {
+      "id": "job-id",
+      "title": "Elektrik Tesisatçısı Aranıyor",
+      "employer": {
+        "firstName": "Mehmet",
+        "lastName": "Demir"
+      }
+    }
+  }
+]
+```
+
+**Worker Kategori Filtreleme Özelliği:**
+
+Worker kullanıcıları `/jobs` endpoint'ini çağırdığında:
+
+1. **Kullanıcının kategorileri kontrol edilir** (`user.categoryIds`)
+2. **user_categories tablosu ile join yapılır**
+3. **Sadece kullanıcının kategorilerindeki işler filtrelenir**
+4. **Kategori yoksa tüm işler gösterilir**
+
+**Örnek SQL Sorgusu:**
+```sql
+SELECT job.* 
+FROM jobs job
+LEFT JOIN user_categories uc ON uc.userId = :userId
+WHERE job.categoryId = uc.categoryId 
+AND uc.categoryId IN (:categoryIds)
+```
+
+**Test Senaryoları:**
+
+1. **Worker giriş yapmadan:** Tüm işler görünür
+2. **Worker giriş yaparak:** Sadece kategorilerindeki işler görünür
+3. **Employer giriş yaparak:** Tüm işler görünür
+4. **Kategori filtresi ile:** Ek filtreleme yapılır 

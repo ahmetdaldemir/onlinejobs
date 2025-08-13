@@ -13,6 +13,9 @@ const users_controller_1 = require("./users.controller");
 const users_service_1 = require("./users.service");
 const user_entity_1 = require("./entities/user.entity");
 const user_info_entity_1 = require("./entities/user-info.entity");
+const user_verification_entity_1 = require("./entities/user-verification.entity");
+const user_verification_controller_1 = require("./user-verification.controller");
+const user_verification_service_1 = require("./user-verification.service");
 const category_entity_1 = require("../categories/entities/category.entity");
 const upload_module_1 = require("../upload/upload.module");
 let UsersModule = class UsersModule {
@@ -20,10 +23,13 @@ let UsersModule = class UsersModule {
 exports.UsersModule = UsersModule;
 exports.UsersModule = UsersModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, user_info_entity_1.UserInfo, category_entity_1.Category]), upload_module_1.UploadModule],
-        controllers: [users_controller_1.UsersController],
-        providers: [users_service_1.UsersService],
-        exports: [users_service_1.UsersService],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, user_info_entity_1.UserInfo, user_verification_entity_1.UserVerification, category_entity_1.Category]),
+            upload_module_1.UploadModule,
+        ],
+        controllers: [users_controller_1.UsersController, user_verification_controller_1.UserVerificationController],
+        providers: [users_service_1.UsersService, user_verification_service_1.UserVerificationService],
+        exports: [users_service_1.UsersService, user_verification_service_1.UserVerificationService],
     })
 ], UsersModule);
 //# sourceMappingURL=users.module.js.map

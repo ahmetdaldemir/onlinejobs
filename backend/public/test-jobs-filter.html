@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jobs Filter Test - Online Jobs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .filter-section {
+            border: 2px solid #e0e0e0;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .filter-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .worker-btn {
+            background-color: #28a745;
+        }
+        .worker-btn:hover {
+            background-color: #218838;
+        }
+        .employer-btn {
+            background-color: #ffc107;
+            color: #333;
+        }
+        .employer-btn:hover {
+            background-color: #e0a800;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .job-list {
+            margin-top: 20px;
+        }
+        .job-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .job-item h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .job-item p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .category-badge {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin: 2px;
+        }
+        .user-info {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .user-info h3 {
+            margin-top: 0;
+            color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Jobs Filter Test - Online Jobs</h1>
+        
+        <div class="info result">
+            <strong>Test Açıklaması:</strong>
+            • Worker kullanıcıları için kategori bazlı iş filtreleme sistemi
+            • Worker'lar sadece kendi kategorilerindeki işleri görür
+            • Employer'lar ve giriş yapmayan kullanıcılar tüm işleri görür
+        </div>
+
+        <!-- Token Girişi -->
+        <div class="form-group">
+            <label for="token">JWT Token (Opsiyonel)</label>
+            <input type="text" id="token" placeholder="Bearer YOUR_JWT_TOKEN" style="font-family: monospace;">
+        </div>
+
+        <!-- Kullanıcı Bilgisi -->
+        <div class="user-info" id="userInfo" style="display: none;">
+            <h3>👤 Kullanıcı Bilgisi</h3>
+            <div id="userDetails"></div>
+        </div>
+
+        <button onclick="getUserInfo()">👤 Kullanıcı Bilgisi Getir</button>
+        <button onclick="getJobsWithoutAuth()">📋 Tüm İşleri Getir (Giriş Yapmadan)</button>
+        <button onclick="getJobsWithAuth()">🔍 İşleri Getir (Kullanıcı Kategorilerine Göre)</button>
+
+        <hr style="margin: 30px 0;">
+
+        <!-- Filtreler -->
+        <div class="filter-section">
+            <h3>🔧 Filtreler</h3>
+            
+            <div class="form-group">
+                <label for="status">Durum</label>
+                <select id="status">
+                    <option value="">Tümü</option>
+                    <option value="open">Açık</option>
+                    <option value="closed">Kapalı</option>
+                    <option value="in_progress">Devam Ediyor</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="categoryId">Kategori ID</label>
+                <input type="text" id="categoryId" placeholder="Kategori ID">
+            </div>
+
+            <div class="form-group">
+                <label for="employerId">İşveren ID</label>
+                <input type="text" id="employerId" placeholder="İşveren ID">
+            </div>
+
+            <div class="form-group">
+                <label for="latitude">Enlem</label>
+                <input type="number" id="latitude" step="0.000001" placeholder="41.0082">
+            </div>
+
+            <div class="form-group">
+                <label for="longitude">Boylam</label>
+                <input type="number" id="longitude" step="0.000001" placeholder="28.9784">
+            </div>
+
+            <div class="form-group">
+                <label for="radius">Yarıçap (km)</label>
+                <input type="number" id="radius" placeholder="50">
+            </div>
+
+            <button onclick="getJobsWithFilters()" class="worker-btn">🔍 Filtreli İşleri Getir</button>
+        </div>
+
+        <!-- İş Listesi -->
+        <div class="filter-section">
+            <h3>📋 İş İlanları</h3>
+            <div id="jobList" class="job-list">
+                <p>İşler yükleniyor...</p>
+            </div>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000';
+
+        function getToken() {
+            const token = document.getElementById('token').value;
+            return token.startsWith('Bearer ') ? token : token ? `Bearer ${token}` : null;
+        }
+
+        async function getUserInfo() {
+            const token = getToken();
+            if (!token) {
+                showResult('❌ Hata!', { error: 'JWT Token gerekli' }, 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/users/me`, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayUserInfo(result);
+                    showResult('✅ Kullanıcı bilgisi başarıyla getirildi', result, 'success');
+                } else {
+                    showResult('❌ Hata!', result, 'error');
+                }
+            } catch (error) {
+                showResult('❌ Bağlantı Hatası!', { error: error.message }, 'error');
+            }
+        }
+
+        async function getJobsWithoutAuth() {
+            try {
+                const response = await fetch(`${API_BASE}/jobs`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayJobList(result);
+                    showResult('✅ İşler başarıyla getirildi (Giriş yapmadan)', result, 'success');
+                } else {
+                    showResult('❌ Hata!', result, 'error');
+                }
+            } catch (error) {
+                showResult('❌ Bağlantı Hatası!', { error: error.message }, 'error');
+            }
+        }
+
+        async function getJobsWithAuth() {
+            const token = getToken();
+            if (!token) {
+                showResult('❌ Hata!', { error: 'JWT Token gerekli' }, 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/jobs`, {
+                    headers: {
+                        'Authorization': token
+                    }
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayJobList(result);
+                    showResult('✅ İşler başarıyla getirildi (Kullanıcı kategorilerine göre)', result, 'success');
+                } else {
+                    showResult('❌ Hata!', result, 'error');
+                }
+            } catch (error) {
+                showResult('❌ Bağlantı Hatası!', { error: error.message }, 'error');
+            }
+        }
+
+        async function getJobsWithFilters() {
+            const token = getToken();
+            const filters = getFilters();
+            
+            const url = new URL(`${API_BASE}/jobs`);
+            Object.keys(filters).forEach(key => {
+                if (filters[key]) {
+                    url.searchParams.append(key, filters[key]);
+                }
+            });
+
+            try {
+                const headers = {};
+                if (token) {
+                    headers['Authorization'] = token;
+                }
+
+                const response = await fetch(url, { headers });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    displayJobList(result);
+                    showResult('✅ Filtreli işler başarıyla getirildi', result, 'success');
+                } else {
+                    showResult('❌ Hata!', result, 'error');
+                }
+            } catch (error) {
+                showResult('❌ Bağlantı Hatası!', { error: error.message }, 'error');
+            }
+        }
+
+        function getFilters() {
+            return {
+                status: document.getElementById('status').value,
+                categoryId: document.getElementById('categoryId').value,
+                employerId: document.getElementById('employerId').value,
+                latitude: document.getElementById('latitude').value,
+                longitude: document.getElementById('longitude').value,
+                radius: document.getElementById('radius').value
+            };
+        }
+
+        function displayUserInfo(user) {
+            const userInfoDiv = document.getElementById('userInfo');
+            const userDetailsDiv = document.getElementById('userDetails');
+            
+            userDetailsDiv.innerHTML = `
+                <p><strong>ID:</strong> ${user.id}</p>
+                <p><strong>Ad Soyad:</strong> ${user.firstName} ${user.lastName}</p>
+                <p><strong>Kullanıcı Tipi:</strong> ${user.userType}</p>
+                <p><strong>Telefon:</strong> ${user.phone}</p>
+                <p><strong>Email:</strong> ${user.email || 'Yok'}</p>
+                <p><strong>Kategoriler:</strong> ${user.categoryIds ? user.categoryIds.join(', ') : 'Yok'}</p>
+                <p><strong>Doğrulanmış:</strong> ${user.isVerified ? 'Evet' : 'Hayır'}</p>
+            `;
+            
+            userInfoDiv.style.display = 'block';
+        }
+
+        function displayJobList(jobs) {
+            const listDiv = document.getElementById('jobList');
+            
+            if (jobs.length === 0) {
+                listDiv.innerHTML = '<p>Hiç iş ilanı bulunamadı.</p>';
+                return;
+            }
+
+            listDiv.innerHTML = jobs.map(job => `
+                <div class="job-item">
+                    <h4>${job.title}</h4>
+                    <p><strong>İşveren:</strong> ${job.employer ? `${job.employer.firstName} ${job.employer.lastName}` : 'Bilinmiyor'}</p>
+                    <p><strong>Kategori:</strong> 
+                        <span class="category-badge">${job.category ? job.category.name : 'Kategorisiz'}</span>
+                        ${job.category ? `(ID: ${job.category.id})` : ''}
+                    </p>
+                    <p><strong>Durum:</strong> ${job.status}</p>
+                    <p><strong>Maaş:</strong> ${job.salary ? `${job.salary} TL` : 'Belirtilmemiş'}</p>
+                    <p><strong>Açıklama:</strong> ${job.description ? job.description.substring(0, 100) + '...' : 'Açıklama yok'}</p>
+                    <p><strong>Oluşturulma:</strong> ${new Date(job.createdAt).toLocaleString('tr-TR')}</p>
+                    ${job.userInfo ? `
+                        <p><strong>Konum:</strong> ${job.userInfo.latitude}, ${job.userInfo.longitude}</p>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function showResult(title, data, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = `result ${type}`;
+            resultDiv.innerHTML = `<strong>${title}</strong>\n\n${JSON.stringify(data, null, 2)}`;
+        }
+
+        // Sayfa yüklendiğinde otomatik olarak tüm işleri getir
+        document.addEventListener('DOMContentLoaded', function() {
+            getJobsWithoutAuth();
+        });
+    </script>
+</body>
+</html>

@@ -61,7 +61,7 @@ export class JobsService {
     return savedJob;
   }
 
-  async findAll(filters?: any): Promise<Job[]> {
+  async findAll(filters?: any, user?: any): Promise<Job[]> {
     const query = this.jobRepository.createQueryBuilder('job')
       .leftJoinAndSelect('job.employer', 'employer')
       .leftJoinAndSelect('job.category', 'category')
@@ -69,6 +69,23 @@ export class JobsService {
 
     if (filters?.status) {
       query.andWhere('job.status = :status', { status: filters.status });
+    }
+
+    // Worker kullanıcıları için kategori filtreleme
+    if (user?.userType === 'worker') {
+      console.log('👷 Worker kullanıcısı için kategori filtreleme yapılıyor...');
+      console.log('📋 Kullanıcının kategorileri:', user.categoryIds);
+      
+      if (user.categoryIds && user.categoryIds.length > 0) {
+        // user_categories tablosu üzerinden filtreleme
+        query.leftJoin('user_categories', 'uc', 'uc.userId = :userId', { userId: user.id });
+        query.andWhere('job.categoryId = uc.categoryId');
+        query.andWhere('uc.categoryId IN (:...categoryIds)', { categoryIds: user.categoryIds });
+        
+        console.log('🔍 Kategori filtresi eklendi. Aranan kategoriler:', user.categoryIds);
+      } else {
+        console.log('⚠️ Worker kullanıcısının seçili kategorisi yok, tüm işler gösterilecek');
+      }
     }
 
     if (filters?.categoryId) {
@@ -104,6 +121,7 @@ export class JobsService {
       console.log('   - Job kayıtlarında userInfoId null');
       console.log('   - UserInfo kayıtlarında latitude/longitude null');
       console.log('   - Belirtilen koordinatlarda 50km yarıçapında iş yok');
+      console.log('   - Worker kullanıcısının kategorileri ile eşleşen iş yok');
       
       // Basit test: Konum filtresi olmadan tüm job'ları getir
       const allJobs = await this.jobRepository.find({

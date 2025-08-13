@@ -1,4 +1,5 @@
 import { UserInfo } from './user-info.entity';
+import { UserVerification } from './user-verification.entity';
 export declare enum UserStatus {
     ACTIVE = "active",
     INACTIVE = "inactive"
@@ -27,6 +28,7 @@ export declare class User {
     categoryIds: string[];
     categories: any[];
     userInfos: UserInfo[];
+    verifications: UserVerification[];
     commentsGiven: any[];
     commentsReceived: any[];
 }

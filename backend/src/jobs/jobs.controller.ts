@@ -2,6 +2,7 @@ import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Requ
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { JobsService } from './jobs.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { OptionalAuthGuard } from '../auth/guards/optional-auth.guard';
 import { ApplicationStatus } from './entities/job-application.entity';
 import { CreateJobDto } from './dto/create-job.dto';
 import { CreateJobApplicationDto } from './dto/create-job-application.dto';
@@ -33,7 +34,9 @@ export class JobsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'İş ilanlarını listele' })
+  @UseGuards(OptionalAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'İş ilanlarını listele (Worker\'lar için kategorilerine göre filtrelenir)' })
   @ApiQuery({ name: 'status', required: false })
   @ApiQuery({ name: 'categoryId', required: false })
   @ApiQuery({ name: 'employerId', required: false })
@@ -41,8 +44,26 @@ export class JobsController {
   @ApiQuery({ name: 'longitude', required: false, type: Number })
   @ApiQuery({ name: 'radius', required: false, type: Number })
   @ApiResponse({ status: 200, description: 'İş ilanları listelendi' })
-  async findAll(@Query() filters: any) {
-    return this.jobsService.findAll(filters);
+  async findAll(@Query() filters: any, @Request() req) {
+    let user = null;
+    
+    // Eğer JWT token varsa kullanıcı bilgisini al
+    if (req.user) {
+      try {
+        user = await this.usersService.findById(req.user.sub);
+        console.log('👤 Kullanıcı bilgisi alındı:', {
+          id: user.id,
+          userType: user.userType,
+          categoryIds: user.categoryIds
+        });
+      } catch (error) {
+        console.log('⚠️ Kullanıcı bilgisi alınamadı:', error.message);
+      }
+    } else {
+      console.log('👤 Kullanıcı girişi yapılmamış, tüm işler gösterilecek');
+    }
+    
+    return this.jobsService.findAll(filters, user);
   }
 
   @Get('my/applications')

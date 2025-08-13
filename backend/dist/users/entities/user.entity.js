@@ -15,6 +15,7 @@ const class_transformer_1 = require("class-transformer");
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 const user_info_entity_1 = require("./user-info.entity");
+const user_verification_entity_1 = require("./user-verification.entity");
 var UserStatus;
 (function (UserStatus) {
     UserStatus["ACTIVE"] = "active";
@@ -145,6 +146,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => user_info_entity_1.UserInfo, 'user'),
     __metadata("design:type", Array)
 ], User.prototype, "userInfos", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => user_verification_entity_1.UserVerification, 'user'),
+    __metadata("design:type", Array)
+], User.prototype, "verifications", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)('Comment', 'commenter'),
     __metadata("design:type", Array)

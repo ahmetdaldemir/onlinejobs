@@ -15,6 +15,7 @@ import { Exclude } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional } from 'class-validator';
 import { UserInfo } from './user-info.entity';
+import { UserVerification } from './user-verification.entity';
  
  
 export enum UserStatus {
@@ -123,6 +124,10 @@ export class User {
 
   @OneToMany(() => UserInfo, 'user')
   userInfos: UserInfo[];
+
+  // Verification ilişkisi
+  @OneToMany(() => UserVerification, 'user')
+  verifications: UserVerification[];
 
   // Comment ilişkileri
   @OneToMany('Comment', 'commenter')
