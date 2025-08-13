@@ -10,7 +10,8 @@ export class RegisterDto {
   @IsString()
   lastName: string;
 
-  @ApiProperty()
+  @ApiProperty({required: false})
+  @IsOptional()
   @IsEmail()
   email: string;
 
