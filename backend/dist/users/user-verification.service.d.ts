@@ -7,7 +7,7 @@ export declare class UserVerificationService {
     private userRepository;
     constructor(verificationRepository: Repository<UserVerification>, userRepository: Repository<User>);
     getUserVerifications(userId: string): Promise<UserVerification[]>;
-    uploadDocument(userId: string, documentType: DocumentType, file: Express.Multer.File, description?: string): Promise<UserVerification>;
+    uploadDocument(userId: string, documentType: DocumentType, file: any, description?: string): Promise<UserVerification>;
     updateVerificationStatus(verificationId: string, adminId: string, updateDto: UpdateVerificationStatusDto): Promise<UserVerification>;
     checkAndUpdateUserVerification(userId: string): Promise<void>;
     deleteDocument(verificationId: string, userId: string): Promise<void>;

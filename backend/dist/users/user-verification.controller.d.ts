@@ -20,7 +20,7 @@ export declare class UserVerificationController {
         name: string;
         description: string;
     }[]>;
-    uploadDocument(req: any, uploadDto: UploadVerificationDocumentDto, file: Express.Multer.File): Promise<import("./entities/user-verification.entity").UserVerification>;
+    uploadDocument(req: any, uploadDto: UploadVerificationDocumentDto, file: any): Promise<import("./entities/user-verification.entity").UserVerification>;
     deleteDocument(id: string, req: any): Promise<{
         message: string;
     }>;

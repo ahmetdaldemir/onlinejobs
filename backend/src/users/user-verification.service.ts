@@ -26,7 +26,7 @@ export class UserVerificationService {
   async uploadDocument(
     userId: string,
     documentType: DocumentType,
-    file: Express.Multer.File,
+    file: any,
     description?: string,
   ): Promise<UserVerification> {
     // Kullanıcının worker olduğunu kontrol et

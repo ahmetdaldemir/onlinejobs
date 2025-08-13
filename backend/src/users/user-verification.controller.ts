@@ -116,7 +116,7 @@ export class UserVerificationController {
   async uploadDocument(
     @Request() req,
     @Body() uploadDto: UploadVerificationDocumentDto,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: any,
   ) {
     if (!file) {
       throw new BadRequestException('Dosya yüklenmedi');
