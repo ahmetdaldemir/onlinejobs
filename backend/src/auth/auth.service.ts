@@ -15,7 +15,7 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto): Promise<AuthResponseDto> {
-    const { email, phone, password, userType, categoryId, ...rest } = registerDto;
+    const { email, phone, password, userType, categoryIds, ...rest } = registerDto;
 
     // Email ve telefon kontrolü - userType'a göre
     let existingUser;
@@ -58,22 +58,26 @@ export class AuthService {
 
     const savedUser = await this.userRepository.save(user);
 
-    // Worker kullanıcısı için kategori ilişkisi kurma
-    if (userType === 'worker' && categoryId) {
-      console.log('👷 Worker kullanıcısı için kategori ilişkisi kuruluyor:', categoryId);
+    // Worker kullanıcısı için kategori ilişkileri kurma
+    if (userType === 'worker' && categoryIds && categoryIds.length > 0) {
+      console.log('👷 Worker kullanıcısı için kategori ilişkileri kuruluyor:', categoryIds);
       
-      // user_categories tablosuna ekleme
-      await this.userRepository
-        .createQueryBuilder()
-        .insert()
-        .into('user_categories')
-        .values({
-          userId: savedUser.id,
-          categoryId: categoryId
-        })
-        .execute();
+      // Her kategori için user_categories tablosuna ekleme
+      for (const categoryId of categoryIds) {
+        await this.userRepository
+          .createQueryBuilder()
+          .insert()
+          .into('user_categories')
+          .values({
+            userId: savedUser.id,
+            categoryId: categoryId
+          })
+          .execute();
+        
+        console.log(`✅ Kategori ilişkisi kuruldu: ${categoryId}`);
+      }
       
-      console.log('✅ Kategori ilişkisi başarıyla kuruldu');
+      console.log(`🎉 Toplam ${categoryIds.length} kategori ilişkisi başarıyla kuruldu`);
     }
 
     // Kullanıcıyı kategorileri ile birlikte getir

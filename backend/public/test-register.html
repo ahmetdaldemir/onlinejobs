@@ -144,8 +144,9 @@
             </div>
 
             <div class="form-group" id="categoryGroup" style="display: none;">
-                <label for="categoryId">Kategori ID (Worker için)</label>
-                <input type="text" id="categoryId" placeholder="category-id-123">
+                <label for="categoryIds">Kategori ID'leri (Worker için, virgülle ayırın)</label>
+                <input type="text" id="categoryIds" placeholder="category-id-1, category-id-2, category-id-3">
+                <small style="color: #666;">Birden fazla kategori seçebilirsiniz. Virgülle ayırın.</small>
             </div>
 
             <div class="user-type-section worker-section" id="workerInfo" style="display: none;">
@@ -211,18 +212,31 @@
         }
 
         function getFormData() {
+            const categoryIdsInput = document.getElementById('categoryIds').value;
+            
             const formData = {
                 firstName: document.getElementById('firstName').value,
                 lastName: document.getElementById('lastName').value,
                 phone: document.getElementById('phone').value,
                 password: document.getElementById('password').value,
-                userType: document.getElementById('userType').value,
-                categoryId: document.getElementById('categoryId').value || undefined
+                userType: document.getElementById('userType').value
             };
 
             const email = document.getElementById('email').value;
             if (email) {
                 formData.email = email;
+            }
+
+            // CategoryIds işleme
+            if (categoryIdsInput) {
+                const categoryIds = categoryIdsInput
+                    .split(',')
+                    .map(id => id.trim())
+                    .filter(id => id.length > 0);
+                
+                if (categoryIds.length > 0) {
+                    formData.categoryIds = categoryIds;
+                }
             }
 
             return formData;
@@ -249,7 +263,7 @@
             const phone = document.getElementById('phone').value;
             const password = document.getElementById('password').value;
             const userType = document.getElementById('userType').value;
-            const categoryId = document.getElementById('categoryId').value;
+            const categoryIdsInput = document.getElementById('categoryIds').value;
 
             // Worker için email opsiyonel, employer için zorunlu
             if (userType === 'employer' && !email) {
@@ -270,9 +284,17 @@
                 data.email = email;
             }
 
-            // CategoryId sadece worker için ve varsa ekle
-            if (userType === 'worker' && categoryId) {
-                data.categoryId = categoryId;
+            // CategoryIds sadece worker için ve varsa ekle
+            if (userType === 'worker' && categoryIdsInput) {
+                // Virgülle ayrılmış string'i array'e çevir
+                const categoryIds = categoryIdsInput
+                    .split(',')
+                    .map(id => id.trim())
+                    .filter(id => id.length > 0); // Boş değerleri filtrele
+                
+                if (categoryIds.length > 0) {
+                    data.categoryIds = categoryIds;
+                }
             }
 
             console.log('📤 Gönderilen veri:', data);
@@ -293,6 +315,7 @@
                     // Kategori bilgisini göster
                     if (result.user.categories && result.user.categories.length > 0) {
                         console.log('📋 Kullanıcının kategorileri:', result.user.categories);
+                        console.log(`🎯 Toplam ${result.user.categories.length} kategori seçildi`);
                     }
                 } else {
                     showResult('❌ Kayıt başarısız!', result, 'error');

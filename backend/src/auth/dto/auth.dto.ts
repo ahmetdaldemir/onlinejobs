@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, MinLength, IsOptional, ValidateIf } from 'class-validator';
+import { IsEmail, IsString, MinLength, IsOptional, ValidateIf, IsArray } from 'class-validator';
 
 export class RegisterDto {
   @ApiProperty()
@@ -28,10 +28,10 @@ export class RegisterDto {
   @IsString()
   userType: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, type: [String], description: 'Worker için kategori ID\'leri array olarak' })
   @IsOptional()
-  @IsString()
-  categoryId?: string;
+  @IsArray()
+  categoryIds?: string[];
 }
 
 export class LoginDto {

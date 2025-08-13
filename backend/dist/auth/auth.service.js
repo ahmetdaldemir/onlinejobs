@@ -25,7 +25,7 @@ let AuthService = class AuthService {
         this.jwtService = jwtService;
     }
     async register(registerDto) {
-        const { email, phone, password, userType, categoryId, ...rest } = registerDto;
+        const { email, phone, password, userType, categoryIds, ...rest } = registerDto;
         let existingUser;
         if (userType === 'employer') {
             existingUser = await this.userRepository.findOne({
@@ -58,18 +58,21 @@ let AuthService = class AuthService {
             password: hashedPassword,
         });
         const savedUser = await this.userRepository.save(user);
-        if (userType === 'worker' && categoryId) {
-            console.log('👷 Worker kullanıcısı için kategori ilişkisi kuruluyor:', categoryId);
-            await this.userRepository
-                .createQueryBuilder()
-                .insert()
-                .into('user_categories')
-                .values({
-                userId: savedUser.id,
-                categoryId: categoryId
-            })
-                .execute();
-            console.log('✅ Kategori ilişkisi başarıyla kuruldu');
+        if (userType === 'worker' && categoryIds && categoryIds.length > 0) {
+            console.log('👷 Worker kullanıcısı için kategori ilişkileri kuruluyor:', categoryIds);
+            for (const categoryId of categoryIds) {
+                await this.userRepository
+                    .createQueryBuilder()
+                    .insert()
+                    .into('user_categories')
+                    .values({
+                    userId: savedUser.id,
+                    categoryId: categoryId
+                })
+                    .execute();
+                console.log(`✅ Kategori ilişkisi kuruldu: ${categoryId}`);
+            }
+            console.log(`🎉 Toplam ${categoryIds.length} kategori ilişkisi başarıyla kuruldu`);
         }
         const userWithCategories = await this.userRepository.findOne({
             where: { id: savedUser.id },

@@ -48,11 +48,11 @@ __decorate([
     __metadata("design:type", String)
 ], RegisterDto.prototype, "userType", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, swagger_1.ApiProperty)({ required: false, type: [String], description: 'Worker için kategori ID\'leri array olarak' }),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], RegisterDto.prototype, "categoryId", void 0);
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Array)
+], RegisterDto.prototype, "categoryIds", void 0);
 class LoginDto {
 }
 exports.LoginDto = LoginDto;

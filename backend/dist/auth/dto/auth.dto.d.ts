@@ -5,7 +5,7 @@ export declare class RegisterDto {
     phone: string;
     password: string;
     userType: string;
-    categoryId?: string;
+    categoryIds?: string[];
 }
 export declare class LoginDto {
     phone: string;

@@ -27,11 +27,11 @@ Authorization: Bearer YOUR_JWT_TOKEN
   "phone": "+905551234567",
   "password": "123456",
   "userType": "worker",  // "worker" veya "employer"
-  "categoryId": "category-id-123"  // Worker için opsiyonel - kategori seçimi
+  "categoryIds": ["category-id-1", "category-id-2"]  // Worker için opsiyonel - kategori ID'leri array
 }
 ```
 
-**Worker Kaydı (Email olmadan):**
+**Worker Kaydı (Email olmadan, birden fazla kategori):**
 ```json
 {
   "firstName": "Mehmet",
@@ -39,7 +39,19 @@ Authorization: Bearer YOUR_JWT_TOKEN
   "phone": "+905551234568",
   "password": "123456",
   "userType": "worker",
-  "categoryId": "category-id-123"
+  "categoryIds": ["category-id-1", "category-id-2", "category-id-3"]
+}
+```
+
+**Worker Kaydı (Tek kategori):**
+```json
+{
+  "firstName": "Ali",
+  "lastName": "Veli",
+  "phone": "+905551234569",
+  "password": "123456",
+  "userType": "worker",
+  "categoryIds": ["category-id-1"]
 }
 ```
 
@@ -49,7 +61,7 @@ Authorization: Bearer YOUR_JWT_TOKEN
   "firstName": "Ayşe",
   "lastName": "Kaya",
   "email": "ayse@example.com",
-  "phone": "+905551234569",
+  "phone": "+905551234570",
   "password": "123456",
   "userType": "employer"
 }
@@ -75,8 +87,12 @@ Authorization: Bearer YOUR_JWT_TOKEN
     "bio": null,
     "categories": [
       {
-        "id": "category-id-123",
+        "id": "category-id-1",
         "name": "Elektrik"
+      },
+      {
+        "id": "category-id-2",
+        "name": "Su Tesisatı"
       }
     ]
   },
