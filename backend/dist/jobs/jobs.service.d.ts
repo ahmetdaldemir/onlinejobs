@@ -12,7 +12,7 @@ export declare class JobsService {
     private notificationsService;
     constructor(jobRepository: Repository<Job>, applicationRepository: Repository<JobApplication>, userRepository: Repository<User>, userInfoRepository: Repository<UserInfo>, notificationsService: NotificationsService);
     create(createJobDto: any, employerId: string): Promise<Job>;
-    findAll(filters?: any): Promise<Job[]>;
+    findAll(filters?: any, user?: any): Promise<Job[]>;
     findById(id: string): Promise<Job>;
     update(id: string, updateJobDto: any, userId: string): Promise<Job>;
     delete(id: string, userId: string): Promise<void>;

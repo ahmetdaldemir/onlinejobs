@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const jobs_service_1 = require("./jobs.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const optional_auth_guard_1 = require("../auth/guards/optional-auth.guard");
 const job_application_entity_1 = require("./entities/job-application.entity");
 const create_job_dto_1 = require("./dto/create-job.dto");
 const create_job_application_dto_1 = require("./dto/create-job-application.dto");
@@ -35,8 +36,25 @@ let JobsController = class JobsController {
         }
         return this.jobsService.create(createJobDto, req.user.sub);
     }
-    async findAll(filters) {
-        return this.jobsService.findAll(filters);
+    async findAll(filters, req) {
+        let user = null;
+        if (req.user) {
+            try {
+                user = await this.usersService.findById(req.user.sub);
+                console.log('👤 Kullanıcı bilgisi alındı:', {
+                    id: user.id,
+                    userType: user.userType,
+                    categoryIds: user.categoryIds
+                });
+            }
+            catch (error) {
+                console.log('⚠️ Kullanıcı bilgisi alınamadı:', error.message);
+            }
+        }
+        else {
+            console.log('👤 Kullanıcı girişi yapılmamış, tüm işler gösterilecek');
+        }
+        return this.jobsService.findAll(filters, user);
     }
     async getMyApplications(req) {
         return this.jobsService.getMyApplications(req.user.sub);
@@ -122,7 +140,9 @@ __decorate([
 ], JobsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
-    (0, swagger_1.ApiOperation)({ summary: 'İş ilanlarını listele' }),
+    (0, common_1.UseGuards)(optional_auth_guard_1.OptionalAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'İş ilanlarını listele (Worker\'lar için kategorilerine göre filtrelenir)' }),
     (0, swagger_1.ApiQuery)({ name: 'status', required: false }),
     (0, swagger_1.ApiQuery)({ name: 'categoryId', required: false }),
     (0, swagger_1.ApiQuery)({ name: 'employerId', required: false }),
@@ -131,8 +151,9 @@ __decorate([
     (0, swagger_1.ApiQuery)({ name: 'radius', required: false, type: Number }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'İş ilanları listelendi' }),
     __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], JobsController.prototype, "findAll", null);
 __decorate([

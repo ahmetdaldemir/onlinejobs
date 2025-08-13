@@ -17,6 +17,7 @@ const user_entity_1 = require("../users/entities/user.entity");
 const user_info_entity_1 = require("../users/entities/user-info.entity");
 const notifications_module_1 = require("../notifications/notifications.module");
 const users_module_1 = require("../users/users.module");
+const auth_module_1 = require("../auth/auth.module");
 let JobsModule = class JobsModule {
 };
 exports.JobsModule = JobsModule;
@@ -26,6 +27,7 @@ exports.JobsModule = JobsModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([job_entity_1.Job, job_application_entity_1.JobApplication, user_entity_1.User, user_info_entity_1.UserInfo]),
             notifications_module_1.NotificationsModule,
             users_module_1.UsersModule,
+            auth_module_1.AuthModule,
         ],
         controllers: [jobs_controller_1.JobsController],
         providers: [jobs_service_1.JobsService],

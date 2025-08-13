@@ -8,7 +8,7 @@ export declare class JobsController {
     private readonly usersService;
     constructor(jobsService: JobsService, usersService: UsersService);
     create(createJobDto: CreateJobDto, req: any): Promise<import("./entities/job.entity").Job>;
-    findAll(filters: any): Promise<import("./entities/job.entity").Job[]>;
+    findAll(filters: any, req: any): Promise<import("./entities/job.entity").Job[]>;
     getMyApplications(req: any): Promise<import("./entities/job-application.entity").JobApplication[]>;
     getMyJobs(req: any): Promise<import("./entities/job.entity").Job[]>;
     getMyJobsApplications(req: any): Promise<import("./entities/job-application.entity").JobApplication[]>;
