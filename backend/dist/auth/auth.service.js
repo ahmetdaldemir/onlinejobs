@@ -134,9 +134,9 @@ let AuthService = class AuthService {
         return user;
     }
     async checkPhone(checkPhoneDto) {
-        const { phone } = checkPhoneDto;
+        const { phone, userType } = checkPhoneDto;
         const existingUser = await this.userRepository.findOne({
-            where: { phone },
+            where: { phone, userType },
         });
         if (existingUser) {
             return {

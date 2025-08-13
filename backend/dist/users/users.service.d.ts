@@ -34,4 +34,5 @@ export declare class UsersService {
     setUserOffline(userId: string): Promise<User>;
     setTestUsersOnline(): Promise<void>;
     updateIsOnline(userId: string, isOnline: boolean): Promise<User>;
+    getUserIsVerified(userId: string): Promise<boolean>;
 }

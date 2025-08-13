@@ -51,6 +51,10 @@ export class CheckPhoneDto {
   @ApiProperty()
   @IsString()
   phone: string;
+
+  @ApiProperty()
+  @IsString()
+  userType: string;
 }
 
 export class AuthResponseDto {

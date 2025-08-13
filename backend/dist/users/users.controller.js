@@ -70,6 +70,9 @@ let UsersController = class UsersController {
     async updateIsOnline(req, isOnline) {
         return this.usersService.updateIsOnline(req.user.sub, isOnline);
     }
+    async getUserIsVerified(req) {
+        return this.usersService.getUserIsVerified(req.user.sub);
+    }
     async updateLocation(req, locationData) {
         return this.usersService.updateLocation(req.user.sub, locationData.latitude, locationData.longitude, locationData.name);
     }
@@ -276,6 +279,17 @@ __decorate([
     __metadata("design:paramtypes", [Object, Boolean]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateIsOnline", null);
+__decorate([
+    (0, common_1.Get)('is-verified'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcının tüm adres bilgilerini getir (alias)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcının tüm adres bilgileri' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getUserIsVerified", null);
 __decorate([
     (0, common_1.Put)('location'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

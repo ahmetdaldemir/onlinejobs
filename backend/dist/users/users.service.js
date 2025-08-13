@@ -432,6 +432,10 @@ let UsersService = class UsersService {
         user.lastSeen = new Date();
         return this.userRepository.save(user);
     }
+    async getUserIsVerified(userId) {
+        const user = await this.findById(userId);
+        return user.isVerified;
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([

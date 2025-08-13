@@ -78,6 +78,11 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CheckPhoneDto.prototype, "phone", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CheckPhoneDto.prototype, "userType", void 0);
 class AuthResponseDto {
 }
 exports.AuthResponseDto = AuthResponseDto;

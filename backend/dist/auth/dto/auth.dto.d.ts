@@ -14,6 +14,7 @@ export declare class LoginDto {
 }
 export declare class CheckPhoneDto {
     phone: string;
+    userType: string;
 }
 export declare class AuthResponseDto {
     accessToken: string;

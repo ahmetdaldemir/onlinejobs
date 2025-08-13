@@ -149,10 +149,10 @@ export class AuthService {
 
 
     async checkPhone(checkPhoneDto: CheckPhoneDto): Promise<{ message: string; status: string; statusCode: number }> {
-    const { phone } = checkPhoneDto;
+    const { phone,userType } = checkPhoneDto;
 
     const existingUser = await this.userRepository.findOne({
-      where: { phone },
+      where: { phone,userType },
     });
 
     if (existingUser) {

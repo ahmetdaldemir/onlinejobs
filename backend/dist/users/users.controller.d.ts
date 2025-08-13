@@ -18,6 +18,7 @@ export declare class UsersController {
     findById(id: string): Promise<import("./entities/user.entity").User>;
     updateStatus(req: any, status: UserStatus): Promise<import("./entities/user.entity").User>;
     updateIsOnline(req: any, isOnline: boolean): Promise<import("./entities/user.entity").User>;
+    getUserIsVerified(req: any): Promise<boolean>;
     updateLocation(req: any, locationData: {
         name?: string;
         latitude: number;
