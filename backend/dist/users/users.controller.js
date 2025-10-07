@@ -57,13 +57,6 @@ let UsersController = class UsersController {
     async getUserInfos(req) {
         return this.usersService.getUserInfo(req.user.sub);
     }
-    async findById(id) {
-        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-        if (!uuidRegex.test(id)) {
-            throw new common_1.BadRequestException(`Geçersiz UUID formatı: ${id}. Lütfen geçerli bir kullanıcı ID'si girin.`);
-        }
-        return this.usersService.findById(id);
-    }
     async updateStatus(req, status) {
         return this.usersService.updateStatus(req.user.sub, status);
     }
@@ -114,6 +107,13 @@ let UsersController = class UsersController {
             firstName: user.firstName,
             lastName: user.lastName
         };
+    }
+    async findById(id) {
+        const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (!uuidRegex.test(id)) {
+            throw new common_1.BadRequestException(`Geçersiz UUID formatı: ${id}. Lütfen geçerli bir kullanıcı ID'si girin.`);
+        }
+        return this.usersService.findById(id);
     }
 };
 exports.UsersController = UsersController;
@@ -245,19 +245,6 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getUserInfos", null);
-__decorate([
-    (0, common_1.Get)(':id'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı detayı' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı detayı' }),
-    (0, swagger_1.ApiResponse)({ status: 404, description: 'Kullanıcı bulunamadı' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Geçersiz UUID formatı' }),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "findById", null);
 __decorate([
     (0, common_1.Put)('status'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
@@ -443,6 +430,19 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getUserStatus", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı detayı (UUID ile)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı detayı' }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'Kullanıcı bulunamadı' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Geçersiz UUID formatı' }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "findById", null);
 exports.UsersController = UsersController = __decorate([
     (0, swagger_1.ApiTags)('Users'),
     (0, common_1.Controller)('users'),

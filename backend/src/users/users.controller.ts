@@ -130,22 +130,6 @@ export class UsersController {
     return this.usersService.getUserInfo(req.user.sub);
   }
 
-  @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcı detayı' })
-  @ApiResponse({ status: 200, description: 'Kullanıcı detayı' })
-  @ApiResponse({ status: 404, description: 'Kullanıcı bulunamadı' })
-  @ApiResponse({ status: 400, description: 'Geçersiz UUID formatı' })
-  async findById(@Param('id') id: string) {
-    // UUID formatını kontrol et
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    if (!uuidRegex.test(id)) {
-      throw new BadRequestException(`Geçersiz UUID formatı: ${id}. Lütfen geçerli bir kullanıcı ID'si girin.`);
-    }
-    return this.usersService.findById(id);
-  }
-
   @Put('status')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -342,5 +326,20 @@ export class UsersController {
     };
   }
 
- 
+  // ⚠️ Bu endpoint en sonda olmalı - genel parametreli route
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Kullanıcı detayı (UUID ile)' })
+  @ApiResponse({ status: 200, description: 'Kullanıcı detayı' })
+  @ApiResponse({ status: 404, description: 'Kullanıcı bulunamadı' })
+  @ApiResponse({ status: 400, description: 'Geçersiz UUID formatı' })
+  async findById(@Param('id') id: string) {
+    // UUID formatını kontrol et
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(id)) {
+      throw new BadRequestException(`Geçersiz UUID formatı: ${id}. Lütfen geçerli bir kullanıcı ID'si girin.`);
+    }
+    return this.usersService.findById(id);
+  }
 } 
