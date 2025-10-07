@@ -68,6 +68,10 @@ export class Job {
   @ApiProperty()
   isUrgent: boolean;
 
+  @Column({ type: 'text', nullable: true })
+  @ApiProperty()
+  jobImage: string;
+
   @Column({ default: 0 })
   @ApiProperty()
   viewCount: number;

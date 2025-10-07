@@ -15,6 +15,12 @@ export class CreateJobDto {
   @IsString()
   budget?: string;
 
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  jobImage?: string;
+
   @ApiProperty({ required: false })
   @IsOptional()
   @IsDateString()
