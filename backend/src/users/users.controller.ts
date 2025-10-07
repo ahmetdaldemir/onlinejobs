@@ -6,6 +6,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserStatus } from './entities/user.entity';
 import { UpdateUserInfoDto } from './dto/update-user-info.dto';
 import { IsUUID } from 'class-validator';
+import type { Express } from 'express';
 
 @ApiTags('Users')
 @Controller('users')

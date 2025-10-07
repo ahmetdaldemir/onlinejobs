@@ -6,6 +6,7 @@ import { UserInfo } from './entities/user-info.entity';
 import { UpdateUserInfoDto } from './dto/update-user-info.dto';
 import { Category } from '../categories/entities/category.entity';
 import { UploadService } from '../upload/upload.service';
+import type { Express } from 'express';
 
 @Injectable()
 export class UsersService {

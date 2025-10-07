@@ -11,6 +11,7 @@ import { UsersService } from '../users/users.service';
 import { BadRequestException } from '@nestjs/common';
 import { JobStatus } from './entities/job.entity';
 import { UploadService } from '../upload/upload.service';
+import type { Express } from 'express';
 
 @ApiTags('Jobs')
 @Controller('jobs')

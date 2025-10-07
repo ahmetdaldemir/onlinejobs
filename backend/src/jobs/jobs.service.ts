@@ -9,6 +9,7 @@ import { UserInfo } from '../users/entities/user-info.entity';
 import { UploadService } from '../upload/upload.service';
 import * as fs from 'fs';
 import * as path from 'path';
+import type { Express } from 'express';
 
 @Injectable()
 export class JobsService {
