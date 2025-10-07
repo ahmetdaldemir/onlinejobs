@@ -163,7 +163,8 @@ let JobsService = class JobsService {
                 console.log('🔍 Kategori filtresi eklendi. Aranan kategoriler:', user.categoryIds);
             }
             else {
-                console.log('⚠️ Worker kullanıcısının seçili kategorisi yok, tüm işler gösterilecek');
+                console.log('⚠️ Worker kullanıcısının seçili kategorisi yok, hiç iş gösterilmeyecek');
+                query.andWhere('1 = 0');
             }
         }
         if (filters?.categoryId) {
