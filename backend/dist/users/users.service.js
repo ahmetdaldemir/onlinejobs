@@ -71,6 +71,18 @@ let UsersService = class UsersService {
         if (!user) {
             throw new common_1.NotFoundException('Kullanıcı bulunamadı');
         }
+        if (user.categories && user.categories.length > 0) {
+            user.categoryIds = user.categories.map(cat => cat.id);
+            console.log('🔄 CategoryIds senkronize edildi:', {
+                userId: user.id,
+                categoryIds: user.categoryIds,
+                categoriesCount: user.categories.length
+            });
+        }
+        else if (!user.categoryIds || user.categoryIds.length === 0) {
+            user.categoryIds = [];
+            console.log('⚠️ Kullanıcının kategorisi yok:', user.id);
+        }
         return user;
     }
     async findOnlineWorkers(latitude, longitude, radius, categoryId) {

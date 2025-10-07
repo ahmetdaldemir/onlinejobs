@@ -69,6 +69,20 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('Kullanıcı bulunamadı');
     }
+    
+    // categoryIds array'ini categories relation'dan senkronize et
+    if (user.categories && user.categories.length > 0) {
+      user.categoryIds = user.categories.map(cat => cat.id);
+      console.log('🔄 CategoryIds senkronize edildi:', {
+        userId: user.id,
+        categoryIds: user.categoryIds,
+        categoriesCount: user.categories.length
+      });
+    } else if (!user.categoryIds || user.categoryIds.length === 0) {
+      user.categoryIds = [];
+      console.log('⚠️ Kullanıcının kategorisi yok:', user.id);
+    }
+    
     return user;
   }
 
