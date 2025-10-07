@@ -30,6 +30,7 @@ export declare class UsersService {
     createUserInfo(userId: string, createUserInfoDto: any): Promise<User>;
     updateProfile(userId: string, updateData: any, file?: any): Promise<User>;
     updateProfileImage(userId: string, imageUrl: string): Promise<User>;
+    updateProfileWithFile(userId: string, file: Express.Multer.File): Promise<User>;
     setUserOnline(userId: string): Promise<User>;
     setUserOffline(userId: string): Promise<User>;
     setTestUsersOnline(): Promise<void>;

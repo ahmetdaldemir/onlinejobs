@@ -4,9 +4,15 @@ export declare enum ApplicationStatus {
     REJECTED = "rejected",
     WITHDRAWN = "withdrawn"
 }
+export declare enum ApplicationTag {
+    URGENT = "urgent",
+    IMMEDIATE = "immediate",
+    SCHEDULED = "scheduled"
+}
 export declare class JobApplication {
     id: string;
     status: ApplicationStatus;
+    tag: ApplicationTag;
     coverLetter: string;
     proposedPrice: string;
     estimatedDuration: string;

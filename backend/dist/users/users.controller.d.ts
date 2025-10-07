@@ -27,9 +27,7 @@ export declare class UsersController {
     updateUserInfo(req: any, updateUserInfoDto: UpdateUserInfoDto): Promise<import("./entities/user.entity").User>;
     createUserInfo(req: any, createUserInfoDto: any): Promise<import("./entities/user.entity").User>;
     updateProfile(req: any, updateData: any, file?: any): Promise<import("./entities/user.entity").User>;
-    updateProfileImage(req: any, body: {
-        imageUrl: string;
-    }): Promise<import("./entities/user.entity").User>;
+    updateProfileImage(req: any, file: Express.Multer.File): Promise<import("./entities/user.entity").User>;
     getProfileImage(userId: string): Promise<{
         profileImage: string;
     }>;

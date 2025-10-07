@@ -464,9 +464,6 @@ export class UsersService {
   }
 
 
-  
-
-
   async updateProfile(userId: string, updateData: any, file?: any): Promise<User> {
     const user = await this.findById(userId);
     
@@ -507,6 +504,55 @@ export class UsersService {
     const user = await this.findById(userId);
     user.profileImage = imageUrl;
     return this.userRepository.save(user);
+  }
+
+  async updateProfileWithFile(userId: string, file: Express.Multer.File): Promise<User> {
+    const user = await this.findById(userId);
+    
+    if (!file) {
+      throw new BadRequestException('Dosya bulunamadı');
+    }
+
+    // Eski profil fotoğrafını sil (varsa ve default değilse)
+    if (user.profileImage && !user.profileImage.includes('default')) {
+      try {
+        const oldFilename = user.profileImage.split('/').pop();
+        await this.uploadService.deleteFile(oldFilename);
+        console.log('🗑️ Eski profil fotoğrafı silindi:', oldFilename);
+      } catch (error) {
+        console.error('⚠️ Eski profil fotoğrafı silinirken hata:', error.message);
+      }
+    }
+
+    // Yeni dosyayı kaydet
+    const fs = require('fs');
+    const path = require('path');
+    const uploadsPath = path.join(process.cwd(), 'uploads');
+    
+    if (!fs.existsSync(uploadsPath)) {
+      fs.mkdirSync(uploadsPath, { recursive: true });
+    }
+
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const extension = path.extname(file.originalname);
+    const filename = `profile-${uniqueSuffix}${extension}`;
+    const filepath = path.join(uploadsPath, filename);
+
+    fs.writeFileSync(filepath, file.buffer);
+
+    // URL oluştur ve kaydet
+    const imageUrl = this.uploadService.getFileUrl(filename);
+    user.profileImage = imageUrl;
+    
+    const savedUser = await this.userRepository.save(user);
+    
+    console.log('✅ Profil fotoğrafı güncellendi:', {
+      userId: user.id,
+      filename: filename,
+      url: imageUrl
+    });
+
+    return savedUser;
   }
 
   // Kullanıcıyı online yap

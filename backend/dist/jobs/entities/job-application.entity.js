@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.JobApplication = exports.ApplicationStatus = void 0;
+exports.JobApplication = exports.ApplicationTag = exports.ApplicationStatus = void 0;
 const typeorm_1 = require("typeorm");
 const swagger_1 = require("@nestjs/swagger");
 var ApplicationStatus;
@@ -19,6 +19,12 @@ var ApplicationStatus;
     ApplicationStatus["REJECTED"] = "rejected";
     ApplicationStatus["WITHDRAWN"] = "withdrawn";
 })(ApplicationStatus || (exports.ApplicationStatus = ApplicationStatus = {}));
+var ApplicationTag;
+(function (ApplicationTag) {
+    ApplicationTag["URGENT"] = "urgent";
+    ApplicationTag["IMMEDIATE"] = "immediate";
+    ApplicationTag["SCHEDULED"] = "scheduled";
+})(ApplicationTag || (exports.ApplicationTag = ApplicationTag = {}));
 let JobApplication = class JobApplication {
 };
 exports.JobApplication = JobApplication;
@@ -36,6 +42,15 @@ __decorate([
     (0, swagger_1.ApiProperty)({ enum: ApplicationStatus }),
     __metadata("design:type", String)
 ], JobApplication.prototype, "status", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        type: 'enum',
+        enum: ApplicationTag,
+        nullable: true,
+    }),
+    (0, swagger_1.ApiProperty)({ enum: ApplicationTag, description: 'Başvuru zamanlaması: Acil, Hemen, İleri zamanlı', required: false }),
+    __metadata("design:type", String)
+], JobApplication.prototype, "tag", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'text', nullable: true }),
     (0, swagger_1.ApiProperty)(),

@@ -259,14 +259,33 @@ export class UsersController {
   @Put('profile-image')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Profil fotoğrafını güncelle' })
+  @ApiOperation({ summary: 'Profil fotoğrafını güncelle (Dosya yükle)' })
   @ApiResponse({ status: 200, description: 'Profil fotoğrafı güncellendi' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['file'],
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'Profil fotoğrafı (max 5MB)',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
   async updateProfileImage(
     @Request() req,
-    @Body() body: { imageUrl: string },
+    @UploadedFile() file: Express.Multer.File,
   ) {
+    if (!file) {
+      throw new BadRequestException('Profil fotoğrafı yüklenmedi');
+    }
+    
     const userId = req.user.sub;
-    return this.usersService.updateProfileImage(userId, body.imageUrl);
+    return this.usersService.updateProfileWithFile(userId, file);
   }
 
   @Get('profile-image/:userId')

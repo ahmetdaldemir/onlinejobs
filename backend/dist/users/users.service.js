@@ -408,6 +408,42 @@ let UsersService = class UsersService {
         user.profileImage = imageUrl;
         return this.userRepository.save(user);
     }
+    async updateProfileWithFile(userId, file) {
+        const user = await this.findById(userId);
+        if (!file) {
+            throw new common_1.BadRequestException('Dosya bulunamadı');
+        }
+        if (user.profileImage && !user.profileImage.includes('default')) {
+            try {
+                const oldFilename = user.profileImage.split('/').pop();
+                await this.uploadService.deleteFile(oldFilename);
+                console.log('🗑️ Eski profil fotoğrafı silindi:', oldFilename);
+            }
+            catch (error) {
+                console.error('⚠️ Eski profil fotoğrafı silinirken hata:', error.message);
+            }
+        }
+        const fs = require('fs');
+        const path = require('path');
+        const uploadsPath = path.join(process.cwd(), 'uploads');
+        if (!fs.existsSync(uploadsPath)) {
+            fs.mkdirSync(uploadsPath, { recursive: true });
+        }
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const extension = path.extname(file.originalname);
+        const filename = `profile-${uniqueSuffix}${extension}`;
+        const filepath = path.join(uploadsPath, filename);
+        fs.writeFileSync(filepath, file.buffer);
+        const imageUrl = this.uploadService.getFileUrl(filename);
+        user.profileImage = imageUrl;
+        const savedUser = await this.userRepository.save(user);
+        console.log('✅ Profil fotoğrafı güncellendi:', {
+            userId: user.id,
+            filename: filename,
+            url: imageUrl
+        });
+        return savedUser;
+    }
     async setUserOnline(userId) {
         const user = await this.findById(userId);
         user.isOnline = true;

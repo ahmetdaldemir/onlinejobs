@@ -85,9 +85,12 @@ let UsersController = class UsersController {
     async updateProfile(req, updateData, file) {
         return this.usersService.updateProfile(req.user.sub, updateData, file);
     }
-    async updateProfileImage(req, body) {
+    async updateProfileImage(req, file) {
+        if (!file) {
+            throw new common_1.BadRequestException('Profil fotoğrafı yüklenmedi');
+        }
         const userId = req.user.sub;
-        return this.usersService.updateProfileImage(userId, body.imageUrl);
+        return this.usersService.updateProfileWithFile(userId, file);
     }
     async getProfileImage(userId) {
         const user = await this.usersService.findById(userId);
@@ -367,10 +370,25 @@ __decorate([
     (0, common_1.Put)('profile-image'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Profil fotoğrafını güncelle' }),
+    (0, swagger_1.ApiOperation)({ summary: 'Profil fotoğrafını güncelle (Dosya yükle)' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Profil fotoğrafı güncellendi' }),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
+    (0, swagger_1.ApiBody)({
+        schema: {
+            type: 'object',
+            required: ['file'],
+            properties: {
+                file: {
+                    type: 'string',
+                    format: 'binary',
+                    description: 'Profil fotoğrafı (max 5MB)',
+                },
+            },
+        },
+    }),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
     __param(0, (0, common_1.Request)()),
-    __param(1, (0, common_1.Body)()),
+    __param(1, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)

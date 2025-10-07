@@ -16,6 +16,12 @@ export enum ApplicationStatus {
   WITHDRAWN = 'withdrawn',
 }
 
+export enum ApplicationTag {
+  URGENT = 'urgent',        // Acil
+  IMMEDIATE = 'immediate',  // Hemen
+  SCHEDULED = 'scheduled',  // İleri zamanlı
+}
+
 @Entity('job_applications')
 @Index(['jobId', 'applicantId'], { unique: true })
 @Index(['status'])
@@ -31,6 +37,14 @@ export class JobApplication {
   })
   @ApiProperty({ enum: ApplicationStatus })
   status: ApplicationStatus;
+
+  @Column({
+    type: 'enum',
+    enum: ApplicationTag,
+    nullable: true,
+  })
+  @ApiProperty({ enum: ApplicationTag, description: 'Başvuru zamanlaması: Acil, Hemen, İleri zamanlı', required: false })
+  tag: ApplicationTag;
 
   @Column({ type: 'text', nullable: true })
   @ApiProperty()
