@@ -21,13 +21,17 @@ const job_application_entity_1 = require("./entities/job-application.entity");
 const notifications_service_1 = require("../notifications/notifications.service");
 const user_entity_1 = require("../users/entities/user.entity");
 const user_info_entity_1 = require("../users/entities/user-info.entity");
+const upload_service_1 = require("../upload/upload.service");
+const fs = require("fs");
+const path = require("path");
 let JobsService = class JobsService {
-    constructor(jobRepository, applicationRepository, userRepository, userInfoRepository, notificationsService) {
+    constructor(jobRepository, applicationRepository, userRepository, userInfoRepository, notificationsService, uploadService) {
         this.jobRepository = jobRepository;
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
         this.userInfoRepository = userInfoRepository;
         this.notificationsService = notificationsService;
+        this.uploadService = uploadService;
     }
     async create(createJobDto, employerId) {
         if (createJobDto.userInfoId === '') {
@@ -55,6 +59,91 @@ let JobsService = class JobsService {
             await this.notificationsService.createJobNotification(savedJob, employer);
         }
         return savedJob;
+    }
+    async createWithImages(createJobDto, images, employerId) {
+        const job = await this.create(createJobDto, employerId);
+        if (images && images.length > 0) {
+            const imageUrls = [];
+            const jobImagesPath = path.join(process.cwd(), 'uploads', 'job-images');
+            if (!fs.existsSync(jobImagesPath)) {
+                fs.mkdirSync(jobImagesPath, { recursive: true });
+            }
+            for (const image of images) {
+                try {
+                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+                    const extension = path.extname(image.originalname);
+                    const filename = `job-${uniqueSuffix}${extension}`;
+                    const filepath = path.join(jobImagesPath, filename);
+                    fs.writeFileSync(filepath, image.buffer);
+                    const imageUrl = this.uploadService.getJobImageUrl(filename);
+                    imageUrls.push(imageUrl);
+                    console.log('📷 İş resmi yüklendi:', filename);
+                }
+                catch (error) {
+                    console.error('❌ Resim yükleme hatası:', error);
+                }
+            }
+            if (imageUrls.length > 0) {
+                job.jobImages = imageUrls;
+                await this.jobRepository.save(job);
+            }
+        }
+        return job;
+    }
+    async addImages(jobId, images, userId) {
+        const job = await this.findById(jobId);
+        if (job.employerId !== userId) {
+            throw new common_1.ForbiddenException('Bu işe resim ekleme yetkiniz yok');
+        }
+        const currentImageCount = job.jobImages ? job.jobImages.length : 0;
+        if (currentImageCount + images.length > 10) {
+            throw new common_1.BadRequestException(`Maksimum 10 resim yükleyebilirsiniz. Mevcut: ${currentImageCount}, Yeni: ${images.length}`);
+        }
+        const imageUrls = job.jobImages || [];
+        const jobImagesPath = path.join(process.cwd(), 'uploads', 'job-images');
+        if (!fs.existsSync(jobImagesPath)) {
+            fs.mkdirSync(jobImagesPath, { recursive: true });
+        }
+        for (const image of images) {
+            try {
+                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+                const extension = path.extname(image.originalname);
+                const filename = `job-${uniqueSuffix}${extension}`;
+                const filepath = path.join(jobImagesPath, filename);
+                fs.writeFileSync(filepath, image.buffer);
+                const imageUrl = this.uploadService.getJobImageUrl(filename);
+                imageUrls.push(imageUrl);
+                console.log('📷 İş resmi eklendi:', filename);
+            }
+            catch (error) {
+                console.error('❌ Resim ekleme hatası:', error);
+            }
+        }
+        job.jobImages = imageUrls;
+        return this.jobRepository.save(job);
+    }
+    async deleteImage(jobId, filename, userId) {
+        const job = await this.findById(jobId);
+        if (job.employerId !== userId) {
+            throw new common_1.ForbiddenException('Bu işin resmini silme yetkiniz yok');
+        }
+        if (!job.jobImages || job.jobImages.length === 0) {
+            throw new common_1.NotFoundException('İş ilanında resim bulunamadı');
+        }
+        const imageUrl = this.uploadService.getJobImageUrl(filename);
+        const imageIndex = job.jobImages.indexOf(imageUrl);
+        if (imageIndex === -1) {
+            throw new common_1.NotFoundException('Resim bulunamadı');
+        }
+        job.jobImages.splice(imageIndex, 1);
+        try {
+            await this.uploadService.deleteJobImage(filename);
+            console.log('🗑️ İş resmi silindi:', filename);
+        }
+        catch (error) {
+            console.error('❌ Resim silme hatası:', error);
+        }
+        return this.jobRepository.save(job);
     }
     async findAll(filters, user) {
         const query = this.jobRepository.createQueryBuilder('job')
@@ -282,6 +371,7 @@ exports.JobsService = JobsService = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        notifications_service_1.NotificationsService])
+        notifications_service_1.NotificationsService,
+        upload_service_1.UploadService])
 ], JobsService);
 //# sourceMappingURL=jobs.service.js.map

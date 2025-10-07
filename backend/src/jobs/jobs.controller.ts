@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Request, ForbiddenException } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Request, ForbiddenException, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { JobsService } from './jobs.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OptionalAuthGuard } from '../auth/guards/optional-auth.guard';
@@ -9,6 +10,7 @@ import { CreateJobApplicationDto } from './dto/create-job-application.dto';
 import { UsersService } from '../users/users.service';
 import { BadRequestException } from '@nestjs/common';
 import { JobStatus } from './entities/job.entity';
+import { UploadService } from '../upload/upload.service';
 
 @ApiTags('Jobs')
 @Controller('jobs')
@@ -16,6 +18,7 @@ export class JobsController {
   constructor(
     private readonly jobsService: JobsService,
     private readonly usersService: UsersService,
+    private readonly uploadService: UploadService,
   ) {}
 
   @Post()
@@ -23,14 +26,41 @@ export class JobsController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'İş ilanı oluştur (Sadece employer\'lar)' })
   @ApiResponse({ status: 201, description: 'İş ilanı oluşturuldu' })
-  async create(@Body() createJobDto: CreateJobDto, @Request() req) {
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['title', 'description'],
+      properties: {
+        title: { type: 'string', description: 'İş başlığı' },
+        description: { type: 'string', description: 'İş açıklaması' },
+        budget: { type: 'string', description: 'Bütçe' },
+        scheduledDate: { type: 'string', format: 'date', description: 'Planlanan tarih' },
+        scheduledTime: { type: 'string', description: 'Planlanan saat' },
+        isUrgent: { type: 'boolean', description: 'Acil mi?' },
+        categoryId: { type: 'string', format: 'uuid', description: 'Kategori ID' },
+        userInfoId: { type: 'string', format: 'uuid', description: 'Konum bilgisi ID' },
+        images: {
+          type: 'array',
+          items: { type: 'string', format: 'binary' },
+          description: 'İş ilanı resimleri (max 5 adet, her biri max 5MB)',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FilesInterceptor('images', 5))
+  async create(
+    @Body() createJobDto: CreateJobDto,
+    @UploadedFiles() images: Array<Express.Multer.File>,
+    @Request() req,
+  ) {
     // Sadece employer'ların iş ilanı oluşturabilmesini kontrol et
     const user = await this.usersService.findById(req.user.sub);
     if (user.userType !== 'employer') {
       throw new ForbiddenException('Sadece employer\'lar iş ilanı oluşturabilir');
     }
 
-    return this.jobsService.create(createJobDto, req.user.sub);
+    return this.jobsService.createWithImages(createJobDto, images, req.user.sub);
   }
 
   @Get()
@@ -147,6 +177,49 @@ export class JobsController {
       throw new BadRequestException(`Geçersiz UUID formatı: ${id}. Lütfen geçerli bir iş ilanı ID'si girin.`);
     }
     return this.jobsService.findById(id);
+  }
+
+  @Post(':id/images')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'İş ilanına resim ekle' })
+  @ApiResponse({ status: 200, description: 'Resimler eklendi' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        images: {
+          type: 'array',
+          items: { type: 'string', format: 'binary' },
+          description: 'İş ilanı resimleri (max 5 adet, her biri max 5MB)',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FilesInterceptor('images', 5))
+  async uploadImages(
+    @Param('id') id: string,
+    @UploadedFiles() images: Array<Express.Multer.File>,
+    @Request() req,
+  ) {
+    if (!images || images.length === 0) {
+      throw new BadRequestException('En az bir resim yüklemelisiniz');
+    }
+    return this.jobsService.addImages(id, images, req.user.sub);
+  }
+
+  @Delete(':id/images/:filename')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'İş ilanından resim sil' })
+  @ApiResponse({ status: 200, description: 'Resim silindi' })
+  async deleteImage(
+    @Param('id') id: string,
+    @Param('filename') filename: string,
+    @Request() req,
+  ) {
+    return this.jobsService.deleteImage(id, filename, req.user.sub);
   }
 
   @Put(':id')

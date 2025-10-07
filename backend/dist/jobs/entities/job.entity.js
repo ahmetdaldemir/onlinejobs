@@ -74,6 +74,11 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Job.prototype, "isUrgent", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'simple-array', nullable: true }),
+    (0, swagger_1.ApiProperty)({ type: [String], description: 'İş ilanı resimleri (URL\'ler)' }),
+    __metadata("design:type", Array)
+], Job.prototype, "jobImages", void 0);
+__decorate([
     (0, typeorm_1.Column)({ default: 0 }),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", Number)

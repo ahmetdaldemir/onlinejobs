@@ -13,6 +13,7 @@ export declare class Job {
     scheduledDate: Date;
     scheduledTime: string;
     isUrgent: boolean;
+    jobImages: string[];
     viewCount: number;
     applicationCount: number;
     isFeatured: boolean;

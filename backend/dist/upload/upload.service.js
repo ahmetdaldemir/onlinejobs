@@ -18,11 +18,15 @@ let UploadService = class UploadService {
     constructor() {
         this.uploadPath = 'uploads';
         this.verificationPath = 'uploads/verifications';
+        this.jobImagesPath = 'uploads/job-images';
         if (!fs.existsSync(this.uploadPath)) {
             fs.mkdirSync(this.uploadPath, { recursive: true });
         }
         if (!fs.existsSync(this.verificationPath)) {
             fs.mkdirSync(this.verificationPath, { recursive: true });
+        }
+        if (!fs.existsSync(this.jobImagesPath)) {
+            fs.mkdirSync(this.jobImagesPath, { recursive: true });
         }
     }
     getMulterConfig() {
@@ -101,6 +105,42 @@ let UploadService = class UploadService {
     getVerificationFileUrl(filename) {
         const url = `/uploads/verifications/${filename}`;
         console.log('🔗 Verification dosya URL\'i oluşturuldu:', url);
+        return url;
+    }
+    getJobImagesMulterConfig() {
+        return {
+            storage: multer.diskStorage({
+                destination: (req, file, cb) => {
+                    cb(null, this.jobImagesPath);
+                },
+                filename: (req, file, cb) => {
+                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+                    const extension = path.extname(file.originalname);
+                    cb(null, `job-${uniqueSuffix}${extension}`);
+                },
+            }),
+            fileFilter: (req, file, cb) => {
+                if (file.mimetype.startsWith('image/')) {
+                    cb(null, true);
+                }
+                else {
+                    cb(new Error('Sadece resim dosyaları yüklenebilir!'), false);
+                }
+            },
+            limits: {
+                fileSize: 5 * 1024 * 1024,
+            },
+        };
+    }
+    async deleteJobImage(filename) {
+        const filePath = path.join(this.jobImagesPath, filename);
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+    }
+    getJobImageUrl(filename) {
+        const url = `/uploads/job-images/${filename}`;
+        console.log('🔗 Job image URL\'i oluşturuldu:', url);
         return url;
     }
 };

@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.JobsController = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
+const platform_express_1 = require("@nestjs/platform-express");
 const jobs_service_1 = require("./jobs.service");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const optional_auth_guard_1 = require("../auth/guards/optional-auth.guard");
@@ -24,17 +25,19 @@ const create_job_application_dto_1 = require("./dto/create-job-application.dto")
 const users_service_1 = require("../users/users.service");
 const common_2 = require("@nestjs/common");
 const job_entity_1 = require("./entities/job.entity");
+const upload_service_1 = require("../upload/upload.service");
 let JobsController = class JobsController {
-    constructor(jobsService, usersService) {
+    constructor(jobsService, usersService, uploadService) {
         this.jobsService = jobsService;
         this.usersService = usersService;
+        this.uploadService = uploadService;
     }
-    async create(createJobDto, req) {
+    async create(createJobDto, images, req) {
         const user = await this.usersService.findById(req.user.sub);
         if (user.userType !== 'employer') {
             throw new common_1.ForbiddenException('Sadece employer\'lar iş ilanı oluşturabilir');
         }
-        return this.jobsService.create(createJobDto, req.user.sub);
+        return this.jobsService.createWithImages(createJobDto, images, req.user.sub);
     }
     async findAll(filters, req) {
         let user = null;
@@ -88,6 +91,15 @@ let JobsController = class JobsController {
         }
         return this.jobsService.findById(id);
     }
+    async uploadImages(id, images, req) {
+        if (!images || images.length === 0) {
+            throw new common_2.BadRequestException('En az bir resim yüklemelisiniz');
+        }
+        return this.jobsService.addImages(id, images, req.user.sub);
+    }
+    async deleteImage(id, filename, req) {
+        return this.jobsService.deleteImage(id, filename, req.user.sub);
+    }
     async update(id, updateJobDto, req) {
         return this.jobsService.update(id, updateJobDto, req.user.sub);
     }
@@ -132,10 +144,35 @@ __decorate([
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'İş ilanı oluştur (Sadece employer\'lar)' }),
     (0, swagger_1.ApiResponse)({ status: 201, description: 'İş ilanı oluşturuldu' }),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
+    (0, swagger_1.ApiBody)({
+        schema: {
+            type: 'object',
+            required: ['title', 'description'],
+            properties: {
+                title: { type: 'string', description: 'İş başlığı' },
+                description: { type: 'string', description: 'İş açıklaması' },
+                budget: { type: 'string', description: 'Bütçe' },
+                scheduledDate: { type: 'string', format: 'date', description: 'Planlanan tarih' },
+                scheduledTime: { type: 'string', description: 'Planlanan saat' },
+                isUrgent: { type: 'boolean', description: 'Acil mi?' },
+                categoryId: { type: 'string', format: 'uuid', description: 'Kategori ID' },
+                userInfoId: { type: 'string', format: 'uuid', description: 'Konum bilgisi ID' },
+                images: {
+                    type: 'array',
+                    items: { type: 'string', format: 'binary' },
+                    description: 'İş ilanı resimleri (max 5 adet, her biri max 5MB)',
+                },
+            },
+        },
+    }),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)('images', 5)),
     __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Request)()),
+    __param(1, (0, common_1.UploadedFiles)()),
+    __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_job_dto_1.CreateJobDto, Object]),
+    __metadata("design:paramtypes", [create_job_dto_1.CreateJobDto,
+        Array, Object]),
     __metadata("design:returntype", Promise)
 ], JobsController.prototype, "create", null);
 __decorate([
@@ -243,6 +280,46 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], JobsController.prototype, "findById", null);
 __decorate([
+    (0, common_1.Post)(':id/images'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'İş ilanına resim ekle' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Resimler eklendi' }),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
+    (0, swagger_1.ApiBody)({
+        schema: {
+            type: 'object',
+            properties: {
+                images: {
+                    type: 'array',
+                    items: { type: 'string', format: 'binary' },
+                    description: 'İş ilanı resimleri (max 5 adet, her biri max 5MB)',
+                },
+            },
+        },
+    }),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)('images', 5)),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.UploadedFiles)()),
+    __param(2, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Array, Object]),
+    __metadata("design:returntype", Promise)
+], JobsController.prototype, "uploadImages", null);
+__decorate([
+    (0, common_1.Delete)(':id/images/:filename'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'İş ilanından resim sil' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Resim silindi' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Param)('filename')),
+    __param(2, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", Promise)
+], JobsController.prototype, "deleteImage", null);
+__decorate([
     (0, common_1.Put)(':id'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
@@ -315,6 +392,7 @@ exports.JobsController = JobsController = __decorate([
     (0, swagger_1.ApiTags)('Jobs'),
     (0, common_1.Controller)('jobs'),
     __metadata("design:paramtypes", [jobs_service_1.JobsService,
-        users_service_1.UsersService])
+        users_service_1.UsersService,
+        upload_service_1.UploadService])
 ], JobsController);
 //# sourceMappingURL=jobs.controller.js.map

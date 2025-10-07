@@ -16,10 +16,10 @@ export class CreateJobDto {
   budget?: string;
 
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, type: [String], description: 'İş ilanı resimleri (URL\'ler)' })
   @IsOptional()
-  @IsString()
-  jobImage?: string;
+  @IsString({ each: true })
+  jobImages?: string[];
 
   @ApiProperty({ required: false })
   @IsOptional()

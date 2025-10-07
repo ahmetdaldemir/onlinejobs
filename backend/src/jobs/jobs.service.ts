@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Job, JobStatus } from './entities/job.entity';
@@ -6,6 +6,9 @@ import { JobApplication, ApplicationStatus } from './entities/job-application.en
 import { NotificationsService } from '../notifications/notifications.service';
 import { User } from '../users/entities/user.entity';
 import { UserInfo } from '../users/entities/user-info.entity';
+import { UploadService } from '../upload/upload.service';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class JobsService {
@@ -19,6 +22,7 @@ export class JobsService {
     @InjectRepository(UserInfo)
     private userInfoRepository: Repository<UserInfo>,
     private notificationsService: NotificationsService,
+    private uploadService: UploadService,
   ) {}
 
   async create(createJobDto: any, employerId: string): Promise<Job> {
@@ -59,6 +63,134 @@ export class JobsService {
     }
 
     return savedJob;
+  }
+
+  async createWithImages(createJobDto: any, images: Array<Express.Multer.File>, employerId: string): Promise<Job> {
+    // Önce iş ilanını oluştur
+    const job = await this.create(createJobDto, employerId);
+
+    // Eğer resimler varsa yükle
+    if (images && images.length > 0) {
+      const imageUrls: string[] = [];
+
+      // job-images klasörünü oluştur (eğer yoksa)
+      const jobImagesPath = path.join(process.cwd(), 'uploads', 'job-images');
+      if (!fs.existsSync(jobImagesPath)) {
+        fs.mkdirSync(jobImagesPath, { recursive: true });
+      }
+
+      for (const image of images) {
+        try {
+          // Benzersiz dosya adı oluştur
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+          const extension = path.extname(image.originalname);
+          const filename = `job-${uniqueSuffix}${extension}`;
+          const filepath = path.join(jobImagesPath, filename);
+
+          // Dosyayı kaydet
+          fs.writeFileSync(filepath, image.buffer);
+
+          // URL oluştur
+          const imageUrl = this.uploadService.getJobImageUrl(filename);
+          imageUrls.push(imageUrl);
+
+          console.log('📷 İş resmi yüklendi:', filename);
+        } catch (error) {
+          console.error('❌ Resim yükleme hatası:', error);
+        }
+      }
+
+      // Job'a resimleri ekle
+      if (imageUrls.length > 0) {
+        job.jobImages = imageUrls;
+        await this.jobRepository.save(job);
+      }
+    }
+
+    return job;
+  }
+
+  async addImages(jobId: string, images: Array<Express.Multer.File>, userId: string): Promise<Job> {
+    const job = await this.findById(jobId);
+
+    // Sadece iş sahibi resim ekleyebilir
+    if (job.employerId !== userId) {
+      throw new ForbiddenException('Bu işe resim ekleme yetkiniz yok');
+    }
+
+    // Maksimum 10 resim kontrolü
+    const currentImageCount = job.jobImages ? job.jobImages.length : 0;
+    if (currentImageCount + images.length > 10) {
+      throw new BadRequestException(`Maksimum 10 resim yükleyebilirsiniz. Mevcut: ${currentImageCount}, Yeni: ${images.length}`);
+    }
+
+    const imageUrls: string[] = job.jobImages || [];
+
+    // job-images klasörünü oluştur (eğer yoksa)
+    const jobImagesPath = path.join(process.cwd(), 'uploads', 'job-images');
+    if (!fs.existsSync(jobImagesPath)) {
+      fs.mkdirSync(jobImagesPath, { recursive: true });
+    }
+
+    for (const image of images) {
+      try {
+        // Benzersiz dosya adı oluştur
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const extension = path.extname(image.originalname);
+        const filename = `job-${uniqueSuffix}${extension}`;
+        const filepath = path.join(jobImagesPath, filename);
+
+        // Dosyayı kaydet
+        fs.writeFileSync(filepath, image.buffer);
+
+        // URL oluştur
+        const imageUrl = this.uploadService.getJobImageUrl(filename);
+        imageUrls.push(imageUrl);
+
+        console.log('📷 İş resmi eklendi:', filename);
+      } catch (error) {
+        console.error('❌ Resim ekleme hatası:', error);
+      }
+    }
+
+    // Job'u güncelle
+    job.jobImages = imageUrls;
+    return this.jobRepository.save(job);
+  }
+
+  async deleteImage(jobId: string, filename: string, userId: string): Promise<Job> {
+    const job = await this.findById(jobId);
+
+    // Sadece iş sahibi resim silebilir
+    if (job.employerId !== userId) {
+      throw new ForbiddenException('Bu işin resmini silme yetkiniz yok');
+    }
+
+    if (!job.jobImages || job.jobImages.length === 0) {
+      throw new NotFoundException('İş ilanında resim bulunamadı');
+    }
+
+    // Resmi URL'den çıkar
+    const imageUrl = this.uploadService.getJobImageUrl(filename);
+    const imageIndex = job.jobImages.indexOf(imageUrl);
+
+    if (imageIndex === -1) {
+      throw new NotFoundException('Resim bulunamadı');
+    }
+
+    // URL'den kaldır
+    job.jobImages.splice(imageIndex, 1);
+
+    // Dosyayı fiziksel olarak sil
+    try {
+      await this.uploadService.deleteJobImage(filename);
+      console.log('🗑️ İş resmi silindi:', filename);
+    } catch (error) {
+      console.error('❌ Resim silme hatası:', error);
+    }
+
+    // Job'u güncelle
+    return this.jobRepository.save(job);
   }
 
   async findAll(filters?: any, user?: any): Promise<Job[]> {

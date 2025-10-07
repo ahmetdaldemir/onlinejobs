@@ -9,6 +9,7 @@ import { UserInfo } from '../users/entities/user-info.entity';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { UsersModule } from '../users/users.module';
 import { AuthModule } from '../auth/auth.module';
+import { UploadModule } from '../upload/upload.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuthModule } from '../auth/auth.module';
     NotificationsModule,
     UsersModule,
     AuthModule,
+    UploadModule,
   ],
   controllers: [JobsController],
   providers: [JobsService],

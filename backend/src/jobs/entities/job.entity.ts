@@ -68,9 +68,9 @@ export class Job {
   @ApiProperty()
   isUrgent: boolean;
 
-  @Column({ type: 'text', nullable: true })
-  @ApiProperty()
-  jobImage: string;
+  @Column({ type: 'simple-array', nullable: true })
+  @ApiProperty({ type: [String], description: 'İş ilanı resimleri (URL\'ler)' })
+  jobImages: string[];
 
   @Column({ default: 0 })
   @ApiProperty()

@@ -4,14 +4,19 @@ import { JobApplication, ApplicationStatus } from './entities/job-application.en
 import { NotificationsService } from '../notifications/notifications.service';
 import { User } from '../users/entities/user.entity';
 import { UserInfo } from '../users/entities/user-info.entity';
+import { UploadService } from '../upload/upload.service';
 export declare class JobsService {
     private jobRepository;
     private applicationRepository;
     private userRepository;
     private userInfoRepository;
     private notificationsService;
-    constructor(jobRepository: Repository<Job>, applicationRepository: Repository<JobApplication>, userRepository: Repository<User>, userInfoRepository: Repository<UserInfo>, notificationsService: NotificationsService);
+    private uploadService;
+    constructor(jobRepository: Repository<Job>, applicationRepository: Repository<JobApplication>, userRepository: Repository<User>, userInfoRepository: Repository<UserInfo>, notificationsService: NotificationsService, uploadService: UploadService);
     create(createJobDto: any, employerId: string): Promise<Job>;
+    createWithImages(createJobDto: any, images: Array<Express.Multer.File>, employerId: string): Promise<Job>;
+    addImages(jobId: string, images: Array<Express.Multer.File>, userId: string): Promise<Job>;
+    deleteImage(jobId: string, filename: string, userId: string): Promise<Job>;
     findAll(filters?: any, user?: any): Promise<Job[]>;
     findById(id: string): Promise<Job>;
     update(id: string, updateJobDto: any, userId: string): Promise<Job>;

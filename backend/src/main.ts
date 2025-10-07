@@ -36,6 +36,7 @@ async function bootstrap() {
   // Static dosyaları serve et
   app.use('/public', express.static(join(__dirname, '..', 'public')));
   app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
+  app.use('/uploads/job-images', express.static(join(__dirname, '..', 'uploads', 'job-images')));
   app.use('/test', express.static(join(__dirname, '..')));
 
   // Swagger dokümantasyonu - Daha detaylı konfigürasyon

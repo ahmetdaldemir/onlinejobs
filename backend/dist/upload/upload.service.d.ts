@@ -2,6 +2,7 @@ import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer
 export declare class UploadService {
     uploadPath: string;
     verificationPath: string;
+    jobImagesPath: string;
     constructor();
     getMulterConfig(): MulterOptions;
     getVerificationMulterConfig(): MulterOptions;
@@ -9,4 +10,7 @@ export declare class UploadService {
     deleteVerificationFile(filename: string): Promise<void>;
     getFileUrl(filename: string): string;
     getVerificationFileUrl(filename: string): string;
+    getJobImagesMulterConfig(): MulterOptions;
+    deleteJobImage(filename: string): Promise<void>;
+    getJobImageUrl(filename: string): string;
 }

@@ -30,6 +30,7 @@ async function bootstrap() {
     }));
     app.use('/public', express.static((0, path_1.join)(__dirname, '..', 'public')));
     app.use('/uploads', express.static((0, path_1.join)(__dirname, '..', 'uploads')));
+    app.use('/uploads/job-images', express.static((0, path_1.join)(__dirname, '..', 'uploads', 'job-images')));
     app.use('/test', express.static((0, path_1.join)(__dirname, '..')));
     const config = new swagger_1.DocumentBuilder()
         .setTitle('Online Jobs API')
