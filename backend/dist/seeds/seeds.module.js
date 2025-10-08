@@ -16,6 +16,7 @@ const locations_seed_1 = require("./locations.seed");
 const users_seed_1 = require("./users.seed");
 const user_info_seed_1 = require("./user-info.seed");
 const admin_seed_1 = require("./admin.seed");
+const fix_category_ids_seed_1 = require("./fix-category-ids.seed");
 const category_entity_1 = require("../categories/entities/category.entity");
 const country_entity_1 = require("../locations/entities/country.entity");
 const city_entity_1 = require("../locations/entities/city.entity");
@@ -49,6 +50,7 @@ exports.SeedsModule = SeedsModule = __decorate([
             users_seed_1.UsersSeedService,
             user_info_seed_1.UserInfoSeedService,
             admin_seed_1.AdminSeedService,
+            fix_category_ids_seed_1.FixCategoryIdsSeed,
         ],
         exports: [
             seed_service_1.SeedService,
@@ -57,6 +59,7 @@ exports.SeedsModule = SeedsModule = __decorate([
             users_seed_1.UsersSeedService,
             user_info_seed_1.UserInfoSeedService,
             admin_seed_1.AdminSeedService,
+            fix_category_ids_seed_1.FixCategoryIdsSeed,
         ],
     })
 ], SeedsModule);

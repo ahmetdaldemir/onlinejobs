@@ -7,6 +7,7 @@ import { LocationsSeedService } from './locations.seed';
 import { UsersSeedService } from './users.seed';
 import { UserInfoSeedService } from './user-info.seed';
 import { AdminSeedService } from './admin.seed';
+import { FixCategoryIdsSeed } from './fix-category-ids.seed';
 import { Category } from '../categories/entities/category.entity';
 import { Country } from '../locations/entities/country.entity';
 import { City } from '../locations/entities/city.entity';
@@ -37,6 +38,7 @@ import { Admin } from '../auth/entities/admin.entity';
     UsersSeedService,
     UserInfoSeedService,
     AdminSeedService,
+    FixCategoryIdsSeed,
   ],
   exports: [
     SeedService,
@@ -45,6 +47,7 @@ import { Admin } from '../auth/entities/admin.entity';
     UsersSeedService,
     UserInfoSeedService,
     AdminSeedService,
+    FixCategoryIdsSeed,
   ],
 })
 export class SeedsModule {} 

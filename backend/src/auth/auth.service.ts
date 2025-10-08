@@ -62,6 +62,10 @@ export class AuthService {
     if (userType === 'worker' && categoryIds && categoryIds.length > 0) {
       console.log('👷 Worker kullanıcısı için kategori ilişkileri kuruluyor:', categoryIds);
       
+      // categoryIds array'ini set et
+      savedUser.categoryIds = categoryIds;
+      await this.userRepository.save(savedUser);
+      
       // Her kategori için user_categories tablosuna ekleme
       for (const categoryId of categoryIds) {
         await this.userRepository
@@ -78,6 +82,7 @@ export class AuthService {
       }
       
       console.log(`🎉 Toplam ${categoryIds.length} kategori ilişkisi başarıyla kuruldu`);
+      console.log(`📋 CategoryIds array güncellendi:`, savedUser.categoryIds);
     }
 
     // Kullanıcıyı kategorileri ile birlikte getir

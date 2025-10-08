@@ -1,9 +1,11 @@
 import { SeedService } from './seed.service';
 import { DataSeedService } from './data-seed.service';
+import { FixCategoryIdsSeed } from './fix-category-ids.seed';
 export declare class SeedsController {
     private readonly seedService;
     private readonly dataSeedService;
-    constructor(seedService: SeedService, dataSeedService: DataSeedService);
+    private readonly fixCategoryIdsSeed;
+    constructor(seedService: SeedService, dataSeedService: DataSeedService, fixCategoryIdsSeed: FixCategoryIdsSeed);
     runAllSeeds(): Promise<void>;
     seedLocations(): Promise<void>;
     seedUsers(): Promise<void>;
@@ -35,6 +37,16 @@ export declare class SeedsController {
         added: number;
         updated: number;
     }>;
+    fixAllCategoryIds(): Promise<{
+        message: string;
+        status: string;
+    }>;
+    fixUserCategoryIds(userId: string): Promise<{
+        message: string;
+        userId: string;
+        categoryIds: string[];
+        status: string;
+    }>;
     getSeedStatus(): Promise<{
         message: string;
         endpoints: {
@@ -47,6 +59,8 @@ export declare class SeedsController {
             'POST /seeds/data/users': string;
             'POST /seeds/data/categories': string;
             'POST /seeds/data/user-infos': string;
+            'POST /seeds/fix/category-ids': string;
+            'POST /seeds/fix/category-ids/:userId': string;
         };
     }>;
 }

@@ -60,6 +60,8 @@ let AuthService = class AuthService {
         const savedUser = await this.userRepository.save(user);
         if (userType === 'worker' && categoryIds && categoryIds.length > 0) {
             console.log('👷 Worker kullanıcısı için kategori ilişkileri kuruluyor:', categoryIds);
+            savedUser.categoryIds = categoryIds;
+            await this.userRepository.save(savedUser);
             for (const categoryId of categoryIds) {
                 await this.userRepository
                     .createQueryBuilder()
@@ -73,6 +75,7 @@ let AuthService = class AuthService {
                 console.log(`✅ Kategori ilişkisi kuruldu: ${categoryId}`);
             }
             console.log(`🎉 Toplam ${categoryIds.length} kategori ilişkisi başarıyla kuruldu`);
+            console.log(`📋 CategoryIds array güncellendi:`, savedUser.categoryIds);
         }
         const userWithCategories = await this.userRepository.findOne({
             where: { id: savedUser.id },
