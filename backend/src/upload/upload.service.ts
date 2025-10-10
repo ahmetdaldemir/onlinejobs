@@ -9,6 +9,7 @@ export class UploadService {
   public uploadPath = 'uploads';
   public verificationPath = 'uploads/verifications';
   public jobImagesPath = 'uploads/job-images';
+  public portfolioImagesPath = 'uploads/portfolio-images';
 
   constructor() {
     // Uploads klasörünü oluştur (eğer yoksa)
@@ -24,6 +25,11 @@ export class UploadService {
     // Job images klasörünü oluştur (eğer yoksa)
     if (!fs.existsSync(this.jobImagesPath)) {
       fs.mkdirSync(this.jobImagesPath, { recursive: true });
+    }
+    
+    // Portfolio images klasörünü oluştur (eğer yoksa)
+    if (!fs.existsSync(this.portfolioImagesPath)) {
+      fs.mkdirSync(this.portfolioImagesPath, { recursive: true });
     }
   }
 
@@ -153,6 +159,47 @@ export class UploadService {
   getJobImageUrl(filename: string): string {
     const url = `/uploads/job-images/${filename}`;
     console.log('🔗 Job image URL\'i oluşturuldu:', url);
+    return url;
+  }
+
+  // Portfolio images için özel konfigürasyon
+  getPortfolioImagesMulterConfig(): MulterOptions {
+    return {
+      storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+          cb(null, this.portfolioImagesPath);
+        },
+        filename: (req, file, cb) => {
+          // Benzersiz dosya adı oluştur
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+          const extension = path.extname(file.originalname);
+          cb(null, `portfolio-${uniqueSuffix}${extension}`);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        // Sadece resim dosyalarını kabul et
+        if (file.mimetype.startsWith('image/')) {
+          cb(null, true);
+        } else {
+          cb(new Error('Sadece resim dosyaları yüklenebilir!'), false);
+        }
+      },
+      limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB limit
+      },
+    };
+  }
+
+  async deletePortfolioImage(filename: string): Promise<void> {
+    const filePath = path.join(this.portfolioImagesPath, filename);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+  }
+
+  getPortfolioImageUrl(filename: string): string {
+    const url = `/uploads/portfolio-images/${filename}`;
+    console.log('🔗 Portfolio image URL\'i oluşturuldu:', url);
     return url;
   }
 } 

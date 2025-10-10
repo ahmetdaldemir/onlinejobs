@@ -71,6 +71,14 @@ export class User {
   @Column({ type: 'text', nullable: true })
   @ApiProperty()
   profileImage: string;
+
+  @Column('text', { array: true, nullable: true, default: [] })
+  @ApiProperty({ 
+    type: [String], 
+    description: 'Worker kullanıcılar için portföy resimleri (max 10 resim)',
+    required: false 
+  })
+  portfolioImages: string[];
  
   @Column({ default: false })
   @ApiProperty()

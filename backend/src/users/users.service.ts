@@ -605,4 +605,127 @@ export class UsersService {
     const user = await this.findById(userId);
     return user.isVerified;
   }
+
+  // Portfolio yönetimi
+  async addPortfolioImage(userId: string, file: Express.Multer.File): Promise<User> {
+    const user = await this.findById(userId);
+
+    // Worker kontrolü
+    if (user.userType !== 'worker') {
+      throw new BadRequestException('Sadece worker kullanıcılar portföy resmi ekleyebilir');
+    }
+
+    // Max 10 resim kontrolü
+    if (user.portfolioImages && user.portfolioImages.length >= 10) {
+      throw new BadRequestException('Maksimum 10 portföy resmi eklenebilir');
+    }
+
+    // Dosya kaydetme
+    const fs = require('fs');
+    const path = require('path');
+    const portfolioPath = path.join(process.cwd(), 'uploads', 'portfolio-images');
+    
+    if (!fs.existsSync(portfolioPath)) {
+      fs.mkdirSync(portfolioPath, { recursive: true });
+    }
+
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const extension = path.extname(file.originalname);
+    const filename = `portfolio-${uniqueSuffix}${extension}`;
+    const filepath = path.join(portfolioPath, filename);
+
+    fs.writeFileSync(filepath, file.buffer);
+
+    // URL oluştur
+    const imageUrl = this.uploadService.getPortfolioImageUrl(filename);
+
+    // portfolioImages array'ini güncelle
+    if (!user.portfolioImages) {
+      user.portfolioImages = [];
+    }
+    user.portfolioImages.push(imageUrl);
+
+    const savedUser = await this.userRepository.save(user);
+    
+    console.log('✅ Portföy resmi eklendi:', {
+      userId: user.id,
+      filename: filename,
+      totalImages: user.portfolioImages.length
+    });
+
+    return savedUser;
+  }
+
+  async deletePortfolioImage(userId: string, imageUrl: string): Promise<User> {
+    const user = await this.findById(userId);
+
+    // Worker kontrolü
+    if (user.userType !== 'worker') {
+      throw new BadRequestException('Sadece worker kullanıcılar portföy resmi silebilir');
+    }
+
+    if (!user.portfolioImages || user.portfolioImages.length === 0) {
+      throw new BadRequestException('Silinecek portföy resmi bulunamadı');
+    }
+
+    // Resim URL'sinin kullanıcıya ait olup olmadığını kontrol et
+    if (!user.portfolioImages.includes(imageUrl)) {
+      throw new BadRequestException('Bu resim kullanıcıya ait değil');
+    }
+
+    // Dosyayı sil
+    try {
+      const filename = imageUrl.split('/').pop();
+      await this.uploadService.deletePortfolioImage(filename);
+      console.log('🗑️ Portföy resmi dosyası silindi:', filename);
+    } catch (error) {
+      console.error('⚠️ Portföy resmi dosyası silinirken hata:', error.message);
+    }
+
+    // Array'den çıkar
+    user.portfolioImages = user.portfolioImages.filter(img => img !== imageUrl);
+
+    const savedUser = await this.userRepository.save(user);
+    
+    console.log('✅ Portföy resmi kaldırıldı:', {
+      userId: user.id,
+      remainingImages: user.portfolioImages.length
+    });
+
+    return savedUser;
+  }
+
+  async getPortfolioImages(userId: string): Promise<string[]> {
+    const user = await this.findById(userId);
+    return user.portfolioImages || [];
+  }
+
+  async deleteAllPortfolioImages(userId: string): Promise<User> {
+    const user = await this.findById(userId);
+
+    if (!user.portfolioImages || user.portfolioImages.length === 0) {
+      return user;
+    }
+
+    // Tüm dosyaları sil
+    for (const imageUrl of user.portfolioImages) {
+      try {
+        const filename = imageUrl.split('/').pop();
+        await this.uploadService.deletePortfolioImage(filename);
+      } catch (error) {
+        console.error('⚠️ Portföy resmi silinirken hata:', error.message);
+      }
+    }
+
+    // Array'i temizle
+    user.portfolioImages = [];
+    
+    const savedUser = await this.userRepository.save(user);
+    
+    console.log('✅ Tüm portföy resimleri silindi:', {
+      userId: user.id
+    });
+
+    return savedUser;
+  }
 } 

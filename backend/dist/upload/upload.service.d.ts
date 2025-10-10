@@ -3,6 +3,7 @@ export declare class UploadService {
     uploadPath: string;
     verificationPath: string;
     jobImagesPath: string;
+    portfolioImagesPath: string;
     constructor();
     getMulterConfig(): MulterOptions;
     getVerificationMulterConfig(): MulterOptions;
@@ -13,4 +14,7 @@ export declare class UploadService {
     getJobImagesMulterConfig(): MulterOptions;
     deleteJobImage(filename: string): Promise<void>;
     getJobImageUrl(filename: string): string;
+    getPortfolioImagesMulterConfig(): MulterOptions;
+    deletePortfolioImage(filename: string): Promise<void>;
+    getPortfolioImageUrl(filename: string): string;
 }

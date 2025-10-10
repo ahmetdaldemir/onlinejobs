@@ -36,4 +36,8 @@ export declare class UsersService {
     setTestUsersOnline(): Promise<void>;
     updateIsOnline(userId: string, isOnline: boolean): Promise<User>;
     getUserIsVerified(userId: string): Promise<boolean>;
+    addPortfolioImage(userId: string, file: Express.Multer.File): Promise<User>;
+    deletePortfolioImage(userId: string, imageUrl: string): Promise<User>;
+    getPortfolioImages(userId: string): Promise<string[]>;
+    deleteAllPortfolioImages(userId: string): Promise<User>;
 }

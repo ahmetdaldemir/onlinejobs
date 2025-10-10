@@ -113,6 +113,18 @@ export class UploadController {
     return res.sendFile(filePath);
   }
 
+  @Get('portfolio-images/:filename')
+  @ApiOperation({ summary: 'Portföy resmini görüntüle' })
+  async servePortfolioImage(@Param('filename') filename: string, @Res() res: Response) {
+    const filePath = path.join(process.cwd(), 'uploads', 'portfolio-images', filename);
+    
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ message: 'Portföy resmi bulunamadı' });
+    }
+
+    return res.sendFile(filePath);
+  }
+
   @Get('test')
   @ApiOperation({ summary: 'Upload modülü test endpoint' })
   async testUpload() {

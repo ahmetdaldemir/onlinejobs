@@ -326,6 +326,118 @@ export class UsersController {
     };
   }
 
+  // Portfolio yönetimi
+  @Post('portfolio/images')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Portföy resmi ekle (sadece worker kullanıcılar için)' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['file'],
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'Portföy resmi (max 5MB, max 10 resim)',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 201, description: 'Portföy resmi eklendi' })
+  @ApiResponse({ status: 400, description: 'Geçersiz dosya veya maksimum resim sayısı aşıldı' })
+  @UseInterceptors(FileInterceptor('file'))
+  async addPortfolioImage(
+    @Request() req,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException('Resim dosyası yüklenmedi');
+    }
+    
+    const user = await this.usersService.addPortfolioImage(req.user.sub, file);
+    return {
+      message: 'Portföy resmi başarıyla eklendi',
+      portfolioImages: user.portfolioImages,
+      totalImages: user.portfolioImages.length,
+    };
+  }
+
+  @Get('portfolio/images')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Kullanıcının portföy resimlerini getir' })
+  @ApiResponse({ status: 200, description: 'Portföy resimleri' })
+  async getPortfolioImages(@Request() req) {
+    const images = await this.usersService.getPortfolioImages(req.user.sub);
+    return {
+      portfolioImages: images,
+      totalImages: images.length,
+    };
+  }
+
+  @Get('portfolio/images/:userId')
+  @ApiOperation({ summary: 'Belirli bir kullanıcının portföy resimlerini getir (public)' })
+  @ApiResponse({ status: 200, description: 'Portföy resimleri' })
+  async getUserPortfolioImages(@Param('userId') userId: string) {
+    const images = await this.usersService.getPortfolioImages(userId);
+    return {
+      userId,
+      portfolioImages: images,
+      totalImages: images.length,
+    };
+  }
+
+  @Post('portfolio/images/delete')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Portföy resmini sil' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['imageUrl'],
+      properties: {
+        imageUrl: {
+          type: 'string',
+          description: 'Silinecek resmin URL\'si',
+          example: '/uploads/portfolio-images/portfolio-1234567890-123456789.jpg',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 200, description: 'Portföy resmi silindi' })
+  @ApiResponse({ status: 400, description: 'Geçersiz URL veya resim bulunamadı' })
+  async deletePortfolioImage(
+    @Request() req,
+    @Body('imageUrl') imageUrl: string,
+  ) {
+    if (!imageUrl) {
+      throw new BadRequestException('Resim URL\'si gerekli');
+    }
+    
+    const user = await this.usersService.deletePortfolioImage(req.user.sub, imageUrl);
+    return {
+      message: 'Portföy resmi başarıyla silindi',
+      portfolioImages: user.portfolioImages,
+      totalImages: user.portfolioImages.length,
+    };
+  }
+
+  @Post('portfolio/images/delete-all')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Tüm portföy resimlerini sil' })
+  @ApiResponse({ status: 200, description: 'Tüm portföy resimleri silindi' })
+  async deleteAllPortfolioImages(@Request() req) {
+    await this.usersService.deleteAllPortfolioImages(req.user.sub);
+    return {
+      message: 'Tüm portföy resimleri başarıyla silindi',
+      portfolioImages: [],
+      totalImages: 0,
+    };
+  }
+
   // ⚠️ Bu endpoint en sonda olmalı - genel parametreli route
   @Get(':id')
   @UseGuards(JwtAuthGuard)

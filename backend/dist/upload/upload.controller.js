@@ -59,6 +59,13 @@ let UploadController = class UploadController {
         }
         return res.sendFile(filePath);
     }
+    async servePortfolioImage(filename, res) {
+        const filePath = path.join(process.cwd(), 'uploads', 'portfolio-images', filename);
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).json({ message: 'Portföy resmi bulunamadı' });
+        }
+        return res.sendFile(filePath);
+    }
     async testUpload() {
         return {
             message: 'Upload modülü çalışıyor',
@@ -141,6 +148,15 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], UploadController.prototype, "serveFile", null);
+__decorate([
+    (0, common_1.Get)('portfolio-images/:filename'),
+    (0, swagger_1.ApiOperation)({ summary: 'Portföy resmini görüntüle' }),
+    __param(0, (0, common_1.Param)('filename')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], UploadController.prototype, "servePortfolioImage", null);
 __decorate([
     (0, common_1.Get)('test'),
     (0, swagger_1.ApiOperation)({ summary: 'Upload modülü test endpoint' }),

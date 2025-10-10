@@ -15,6 +15,7 @@ export declare class User {
     status: UserStatus;
     bio: string;
     profileImage: string;
+    portfolioImages: string[];
     isVerified: boolean;
     isOnline: boolean;
     rating: number;

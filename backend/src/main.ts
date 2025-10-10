@@ -37,6 +37,7 @@ async function bootstrap() {
   app.use('/public', express.static(join(__dirname, '..', 'public')));
   app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
   app.use('/uploads/job-images', express.static(join(__dirname, '..', 'uploads', 'job-images')));
+  app.use('/uploads/portfolio-images', express.static(join(__dirname, '..', 'uploads', 'portfolio-images')));
   app.use('/test', express.static(join(__dirname, '..')));
 
   // Swagger dokümantasyonu - Daha detaylı konfigürasyon
@@ -130,6 +131,7 @@ async function bootstrap() {
   console.log(`📋 Verification Test: http://localhost:${port}/public/test-verification.html`);
   console.log(`💬 Chat Test: http://localhost:${port}/public/chat-test.html`);
   console.log(`👨‍💼 Admin Panel: http://localhost:${port}/public/admin-panel.html`);
+  console.log(`📸 Portfolio Test: http://localhost:${port}/public/test-portfolio.html`);
   console.log(`📊 Swagger JSON: http://localhost:${port}/api-json`);
 }
 bootstrap(); 

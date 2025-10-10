@@ -19,6 +19,7 @@ export declare class UploadController {
         url: string;
     }>;
     serveFile(filename: string, res: Response): Promise<void | Response<any, Record<string, any>>>;
+    servePortfolioImage(filename: string, res: Response): Promise<void | Response<any, Record<string, any>>>;
     testUpload(): Promise<{
         message: string;
         uploadPath: string;

@@ -108,6 +108,51 @@ let UsersController = class UsersController {
             lastName: user.lastName
         };
     }
+    async addPortfolioImage(req, file) {
+        if (!file) {
+            throw new common_1.BadRequestException('Resim dosyası yüklenmedi');
+        }
+        const user = await this.usersService.addPortfolioImage(req.user.sub, file);
+        return {
+            message: 'Portföy resmi başarıyla eklendi',
+            portfolioImages: user.portfolioImages,
+            totalImages: user.portfolioImages.length,
+        };
+    }
+    async getPortfolioImages(req) {
+        const images = await this.usersService.getPortfolioImages(req.user.sub);
+        return {
+            portfolioImages: images,
+            totalImages: images.length,
+        };
+    }
+    async getUserPortfolioImages(userId) {
+        const images = await this.usersService.getPortfolioImages(userId);
+        return {
+            userId,
+            portfolioImages: images,
+            totalImages: images.length,
+        };
+    }
+    async deletePortfolioImage(req, imageUrl) {
+        if (!imageUrl) {
+            throw new common_1.BadRequestException('Resim URL\'si gerekli');
+        }
+        const user = await this.usersService.deletePortfolioImage(req.user.sub, imageUrl);
+        return {
+            message: 'Portföy resmi başarıyla silindi',
+            portfolioImages: user.portfolioImages,
+            totalImages: user.portfolioImages.length,
+        };
+    }
+    async deleteAllPortfolioImages(req) {
+        await this.usersService.deleteAllPortfolioImages(req.user.sub);
+        return {
+            message: 'Tüm portföy resimleri başarıyla silindi',
+            portfolioImages: [],
+            totalImages: 0,
+        };
+    }
     async findById(id) {
         const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
         if (!uuidRegex.test(id)) {
@@ -430,6 +475,91 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "getUserStatus", null);
+__decorate([
+    (0, common_1.Post)('portfolio/images'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Portföy resmi ekle (sadece worker kullanıcılar için)' }),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
+    (0, swagger_1.ApiBody)({
+        schema: {
+            type: 'object',
+            required: ['file'],
+            properties: {
+                file: {
+                    type: 'string',
+                    format: 'binary',
+                    description: 'Portföy resmi (max 5MB, max 10 resim)',
+                },
+            },
+        },
+    }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'Portföy resmi eklendi' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Geçersiz dosya veya maksimum resim sayısı aşıldı' }),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "addPortfolioImage", null);
+__decorate([
+    (0, common_1.Get)('portfolio/images'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcının portföy resimlerini getir' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Portföy resimleri' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getPortfolioImages", null);
+__decorate([
+    (0, common_1.Get)('portfolio/images/:userId'),
+    (0, swagger_1.ApiOperation)({ summary: 'Belirli bir kullanıcının portföy resimlerini getir (public)' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Portföy resimleri' }),
+    __param(0, (0, common_1.Param)('userId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getUserPortfolioImages", null);
+__decorate([
+    (0, common_1.Post)('portfolio/images/delete'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Portföy resmini sil' }),
+    (0, swagger_1.ApiBody)({
+        schema: {
+            type: 'object',
+            required: ['imageUrl'],
+            properties: {
+                imageUrl: {
+                    type: 'string',
+                    description: 'Silinecek resmin URL\'si',
+                    example: '/uploads/portfolio-images/portfolio-1234567890-123456789.jpg',
+                },
+            },
+        },
+    }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Portföy resmi silindi' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Geçersiz URL veya resim bulunamadı' }),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)('imageUrl')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "deletePortfolioImage", null);
+__decorate([
+    (0, common_1.Post)('portfolio/images/delete-all'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Tüm portföy resimlerini sil' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Tüm portföy resimleri silindi' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "deleteAllPortfolioImages", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

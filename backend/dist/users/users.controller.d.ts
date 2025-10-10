@@ -40,5 +40,29 @@ export declare class UsersController {
         firstName: string;
         lastName: string;
     }>;
+    addPortfolioImage(req: any, file: Express.Multer.File): Promise<{
+        message: string;
+        portfolioImages: string[];
+        totalImages: number;
+    }>;
+    getPortfolioImages(req: any): Promise<{
+        portfolioImages: string[];
+        totalImages: number;
+    }>;
+    getUserPortfolioImages(userId: string): Promise<{
+        userId: string;
+        portfolioImages: string[];
+        totalImages: number;
+    }>;
+    deletePortfolioImage(req: any, imageUrl: string): Promise<{
+        message: string;
+        portfolioImages: string[];
+        totalImages: number;
+    }>;
+    deleteAllPortfolioImages(req: any): Promise<{
+        message: string;
+        portfolioImages: any[];
+        totalImages: number;
+    }>;
     findById(id: string): Promise<import("./entities/user.entity").User>;
 }

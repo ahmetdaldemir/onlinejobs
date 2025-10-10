@@ -82,6 +82,15 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "profileImage", void 0);
 __decorate([
+    (0, typeorm_1.Column)('text', { array: true, nullable: true, default: [] }),
+    (0, swagger_1.ApiProperty)({
+        type: [String],
+        description: 'Worker kullanıcılar için portföy resimleri (max 10 resim)',
+        required: false
+    }),
+    __metadata("design:type", Array)
+], User.prototype, "portfolioImages", void 0);
+__decorate([
     (0, typeorm_1.Column)({ default: false }),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", Boolean)
