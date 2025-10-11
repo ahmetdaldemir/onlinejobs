@@ -61,7 +61,10 @@ let UsersController = class UsersController {
         return this.usersService.updateStatus(req.user.sub, status);
     }
     async updateIsOnline(req, isOnline) {
-        return this.usersService.updateIsOnline(req.user.sub, isOnline);
+        return this.usersService.updateIsOnline(req.user.sub, isOnline = true);
+    }
+    async updateIsOffline(req, isOffline) {
+        return this.usersService.updateIsOffline(req.user.sub, isOffline = true);
     }
     async getUserIsVerified(req) {
         return this.usersService.getUserIsVerified(req.user.sub);
@@ -314,6 +317,18 @@ __decorate([
     __metadata("design:paramtypes", [Object, Boolean]),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "updateIsOnline", null);
+__decorate([
+    (0, common_1.Put)('is-offline'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı offline durumunu güncelle' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Offline durum güncellendi' }),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)('isOffline')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Boolean]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateIsOffline", null);
 __decorate([
     (0, common_1.Get)('is-verified'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

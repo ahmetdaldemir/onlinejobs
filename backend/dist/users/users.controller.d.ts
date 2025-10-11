@@ -17,6 +17,7 @@ export declare class UsersController {
     getUserInfos(req: any): Promise<import("./entities/user-info.entity").UserInfo[]>;
     updateStatus(req: any, status: UserStatus): Promise<import("./entities/user.entity").User>;
     updateIsOnline(req: any, isOnline: boolean): Promise<import("./entities/user.entity").User>;
+    updateIsOffline(req: any, isOffline: boolean): Promise<import("./entities/user.entity").User>;
     getUserIsVerified(req: any): Promise<boolean>;
     updateLocation(req: any, locationData: {
         name?: string;

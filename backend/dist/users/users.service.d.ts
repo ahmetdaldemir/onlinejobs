@@ -40,4 +40,5 @@ export declare class UsersService {
     deletePortfolioImage(userId: string, imageUrl: string): Promise<User>;
     getPortfolioImages(userId: string): Promise<string[]>;
     deleteAllPortfolioImages(userId: string): Promise<User>;
+    updateIsOffline(userId: string, isOffline: boolean): Promise<User>;
 }

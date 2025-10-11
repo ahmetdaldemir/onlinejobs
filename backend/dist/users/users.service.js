@@ -476,6 +476,10 @@ let UsersService = class UsersService {
     }
     async updateIsOnline(userId, isOnline) {
         const user = await this.findById(userId);
+        console.log('🔄 Kullanıcı online durumu güncelleniyor:', {
+            userId: user.id,
+            isOnline: isOnline
+        });
         user.isOnline = isOnline;
         user.lastSeen = new Date();
         return this.userRepository.save(user);
@@ -567,6 +571,12 @@ let UsersService = class UsersService {
             userId: user.id
         });
         return savedUser;
+    }
+    async updateIsOffline(userId, isOffline) {
+        const user = await this.findById(userId);
+        user.isOnline = !isOffline;
+        user.lastSeen = new Date();
+        return this.userRepository.save(user);
     }
 };
 exports.UsersService = UsersService;

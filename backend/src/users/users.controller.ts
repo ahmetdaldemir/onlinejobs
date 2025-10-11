@@ -152,9 +152,22 @@ export class UsersController {
     @Request() req,
     @Body('isOnline') isOnline: boolean,
   ) {
-    return this.usersService.updateIsOnline(req.user.sub, isOnline);
+    return this.usersService.updateIsOnline(req.user.sub, isOnline = true);
   }
 
+
+  @Put('is-offline')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Kullanıcı offline durumunu güncelle' })
+  @ApiResponse({ status: 200, description: 'Offline durum güncellendi' })
+  async updateIsOffline(
+    @Request() req,
+    @Body('isOffline') isOffline: boolean,
+  ) {
+    return this.usersService.updateIsOffline(req.user.sub, isOffline = true);
+  }
+ 
 
   @Get('is-verified')
   @UseGuards(JwtAuthGuard)

@@ -539,7 +539,7 @@ export class UsersService {
       }
     }
 
-    // Yeni dosyayı kaydet
+    // Yeni dosyayı kayd
     const fs = require('fs');
     const path = require('path');
     const uploadsPath = path.join(process.cwd(), 'uploads');
@@ -567,7 +567,7 @@ export class UsersService {
       url: imageUrl
     });
 
-    return savedUser;
+    return savedUser
   }
 
   // Kullanıcıyı online yap
@@ -728,4 +728,11 @@ export class UsersService {
 
     return savedUser;
   }
-} 
+
+  async updateIsOffline(userId: string, isOffline: boolean): Promise<User> {
+    const user = await this.findById(userId);
+    user.isOnline = !isOffline;
+    user.lastSeen = new Date();
+    return this.userRepository.save(user);
+  }
+}  
