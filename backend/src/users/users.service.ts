@@ -404,15 +404,33 @@ export class UsersService {
 
     if (userInfo) {
       // Mevcut kaydı güncelle
-      if (updateUserInfoDto.name !== undefined) userInfo.name = updateUserInfoDto.name;
-      if (updateUserInfoDto.latitude !== undefined) userInfo.latitude = updateUserInfoDto.latitude;
-      if (updateUserInfoDto.longitude !== undefined) userInfo.longitude = updateUserInfoDto.longitude;
-      if (updateUserInfoDto.address !== undefined) userInfo.address = updateUserInfoDto.address;
-      if (updateUserInfoDto.neighborhood !== undefined) userInfo.neighborhood = updateUserInfoDto.neighborhood;
-      if (updateUserInfoDto.buildingNo !== undefined) userInfo.buildingNo = updateUserInfoDto.buildingNo;
-      if (updateUserInfoDto.floor !== undefined) userInfo.floor = updateUserInfoDto.floor;
-      if (updateUserInfoDto.apartmentNo !== undefined) userInfo.apartmentNo = updateUserInfoDto.apartmentNo;
-      if (updateUserInfoDto.description !== undefined) userInfo.description = updateUserInfoDto.description;
+      if (updateUserInfoDto.name !== undefined && updateUserInfoDto.name !== null && updateUserInfoDto.name.trim() !== '') {
+        userInfo.name = updateUserInfoDto.name;
+      }
+      if (updateUserInfoDto.latitude !== undefined && updateUserInfoDto.latitude !== null) {
+        userInfo.latitude = updateUserInfoDto.latitude;
+      }
+      if (updateUserInfoDto.longitude !== undefined && updateUserInfoDto.longitude !== null) {
+        userInfo.longitude = updateUserInfoDto.longitude;
+      }
+      if (updateUserInfoDto.address !== undefined && updateUserInfoDto.address !== null && updateUserInfoDto.address.trim() !== '') {
+        userInfo.address = updateUserInfoDto.address;
+      }
+      if (updateUserInfoDto.neighborhood !== undefined && updateUserInfoDto.neighborhood !== null && updateUserInfoDto.neighborhood.trim() !== '') {
+        userInfo.neighborhood = updateUserInfoDto.neighborhood;
+      }
+      if (updateUserInfoDto.buildingNo !== undefined && updateUserInfoDto.buildingNo !== null && updateUserInfoDto.buildingNo.trim() !== '') {
+        userInfo.buildingNo = updateUserInfoDto.buildingNo;
+      }
+      if (updateUserInfoDto.floor !== undefined && updateUserInfoDto.floor !== null && updateUserInfoDto.floor.trim() !== '') {
+        userInfo.floor = updateUserInfoDto.floor;
+      }
+      if (updateUserInfoDto.apartmentNo !== undefined && updateUserInfoDto.apartmentNo !== null && updateUserInfoDto.apartmentNo.trim() !== '') {
+        userInfo.apartmentNo = updateUserInfoDto.apartmentNo;
+      }
+      if (updateUserInfoDto.description !== undefined && updateUserInfoDto.description !== null && updateUserInfoDto.description.trim() !== '') {
+        userInfo.description = updateUserInfoDto.description;
+      }
     } else {
       // Yeni kayıt oluştur
       userInfo = this.userInfoRepository.create({
