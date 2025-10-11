@@ -459,8 +459,6 @@ export class UsersService {
     
     return user;
   }
-
-
   
   async createUserInfo(userId: string, createUserInfoDto: any): Promise<User> {
     const user = await this.findById(userId);
@@ -506,7 +504,6 @@ export class UsersService {
     
     return user;
   }
-
 
   async updateProfile(userId: string, updateData: any, file?: any): Promise<User> {
     const user = await this.findById(userId);

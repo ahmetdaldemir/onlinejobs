@@ -49,7 +49,6 @@ export class NotificationsService {
     // Kategoriye bağlı worker'ları bul
     const workers = await this.userRepository
       .createQueryBuilder('user')
-      .leftJoinAndSelect('user.userInfos', 'userInfos')
       .where('user.userType = :userType', { userType: 'worker' })
       .andWhere('user.status = :status', { status: UserStatus.ACTIVE })
       .andWhere(':categoryId = ANY(user.categoryIds)', { categoryId: job.categoryId })
@@ -57,15 +56,10 @@ export class NotificationsService {
 
     console.log(`👥 Kategoriye uygun ${workers.length} worker bulundu`);
 
-    // 20km içindeki worker'ları filtrele
+    // 20km içindeki worker'ları filtrele (Worker'lar için User tablosundaki koordinatlar)
     const nearbyWorkers = workers.filter(worker => {
-      if (!worker.userInfos || worker.userInfos.length === 0) {
-        console.log(`⚠️ Worker ${worker.id} konum bilgisi yok`);
-        return false;
-      }
-
-      const workerLocation = worker.userInfos[0];
-      if (!workerLocation.latitude || !workerLocation.longitude) {
+      // Worker'ın User tablosundaki koordinatlarını kontrol et
+      if (!worker.latitude || !worker.longitude) {
         console.log(`⚠️ Worker ${worker.id} koordinat bilgisi yok`);
         return false;
       }
@@ -73,8 +67,8 @@ export class NotificationsService {
       const distance = this.calculateDistance(
         jobLocation.latitude,
         jobLocation.longitude,
-        workerLocation.latitude,
-        workerLocation.longitude
+        worker.latitude,
+        worker.longitude
       );
 
       const isNearby = distance <= 20; // 20km içinde
