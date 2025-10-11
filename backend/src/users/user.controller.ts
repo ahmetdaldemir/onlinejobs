@@ -28,9 +28,30 @@ export class UserController {
   @Put()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcının tüm bilgilerini güncelle (User + UserInfo)' })
-  @ApiResponse({ status: 200, description: 'Kullanıcı bilgileri başarıyla güncellendi' })
-  @ApiResponse({ status: 400, description: 'Geçersiz veri' })
+  @ApiOperation({ 
+    summary: 'Kullanıcının tüm bilgilerini güncelle',
+    description: `Token'dan kullanıcıyı bulup bilgilerini günceller.
+    
+    🔹 User Bilgileri: firstName, lastName, email, phone, userType, bio, profileImage, categoryIds, isOnline
+    🔹 UserInfo Bilgileri: addressName, latitude, longitude, address, neighborhood, buildingNo, floor, apartmentNo, description
+    
+    ⚠️ Önemli Kurallar:
+    • Sadece doldurulan alanlar güncellenir
+    • Boş string veya null gönderilirse güncelleme yapılmaz
+    • Koordinat (latitude/longitude) sadece worker kullanıcıları için geçerlidir
+    • Şifre gönderilirse otomatik hash'lenir
+    • Mevcut UserInfo varsa güncellenir, yoksa yeni oluşturulur
+    
+    📊 Response: Güncellenmiş kullanıcı bilgileri (GET /user ile aynı format)` 
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Kullanıcı bilgileri başarıyla güncellendi. Response: { user bilgileri, userInfos: [], userCategories: [], userVerifications: [], userVerified: boolean }' 
+  })
+  @ApiResponse({ 
+    status: 400, 
+    description: 'Geçersiz veri (Koordinat worker olmayana gönderilemez, geçersiz latitude/longitude değerleri, vb.)' 
+  })
   @ApiResponse({ status: 404, description: 'Kullanıcı bulunamadı' })
   async updateMyCompleteProfile(
     @Request() req,
