@@ -17,7 +17,6 @@ const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 const auth_service_1 = require("./auth.service");
 const auth_dto_1 = require("./dto/auth.dto");
-const jwt_auth_guard_1 = require("./guards/jwt-auth.guard");
 let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
@@ -30,9 +29,6 @@ let AuthController = class AuthController {
     }
     async checkPhone(checkPhoneDto) {
         return this.authService.checkPhone(checkPhoneDto);
-    }
-    async getProfile(req) {
-        return this.authService.validateUser(req.user.sub);
     }
 };
 exports.AuthController = AuthController;
@@ -66,18 +62,6 @@ __decorate([
     __metadata("design:paramtypes", [auth_dto_1.CheckPhoneDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "checkPhone", null);
-__decorate([
-    (0, common_1.Get)('profile'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcı profili' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı profili' }),
-    (0, swagger_1.ApiResponse)({ status: 401, description: 'Yetkilendirme hatası' }),
-    __param(0, (0, common_1.Request)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "getProfile", null);
 exports.AuthController = AuthController = __decorate([
     (0, swagger_1.ApiTags)('Authentication'),
     (0, common_1.Controller)('auth'),

@@ -1,15 +1,18 @@
 import { Repository } from 'typeorm';
 import { User, UserStatus } from './entities/user.entity';
 import { UserInfo } from './entities/user-info.entity';
+import { UserVerification } from './entities/user-verification.entity';
 import { UpdateUserInfoDto } from './dto/update-user-info.dto';
+import { CompleteUserDto } from './dto/complete-user.dto';
 import { Category } from '../categories/entities/category.entity';
 import { UploadService } from '../upload/upload.service';
 export declare class UsersService {
     private userRepository;
     private userInfoRepository;
+    private userVerificationRepository;
     private categoryRepository;
     private uploadService;
-    constructor(userRepository: Repository<User>, userInfoRepository: Repository<UserInfo>, categoryRepository: Repository<Category>, uploadService: UploadService);
+    constructor(userRepository: Repository<User>, userInfoRepository: Repository<UserInfo>, userVerificationRepository: Repository<UserVerification>, categoryRepository: Repository<Category>, uploadService: UploadService);
     findTestUsers(): Promise<User[]>;
     findRealUsers(): Promise<User[]>;
     findActiveUsers(): Promise<User[]>;
@@ -41,4 +44,6 @@ export declare class UsersService {
     getPortfolioImages(userId: string): Promise<string[]>;
     deleteAllPortfolioImages(userId: string): Promise<User>;
     updateIsOffline(userId: string, isOffline: boolean): Promise<User>;
+    getCompleteUserProfile(userId: string): Promise<any>;
+    updateCompleteUserProfile(userId: string, completeUserDto: CompleteUserDto): Promise<any>;
 }

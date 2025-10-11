@@ -10,5 +10,4 @@ export declare class AuthController {
         status: string;
         statusCode: number;
     }>;
-    getProfile(req: any): Promise<import("../users/entities/user.entity").User>;
 }

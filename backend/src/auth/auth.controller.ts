@@ -33,13 +33,5 @@ export class AuthController {
     return this.authService.checkPhone(checkPhoneDto);
   }
 
-  @Get('profile')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcı profili' })
-  @ApiResponse({ status: 200, description: 'Kullanıcı profili' })
-  @ApiResponse({ status: 401, description: 'Yetkilendirme hatası' })
-  async getProfile(@Request() req) {
-    return this.authService.validateUser(req.user.sub);
-  }
+ 
 } 

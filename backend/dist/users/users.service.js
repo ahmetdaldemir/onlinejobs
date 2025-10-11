@@ -18,12 +18,15 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const user_entity_1 = require("./entities/user.entity");
 const user_info_entity_1 = require("./entities/user-info.entity");
+const user_verification_entity_1 = require("./entities/user-verification.entity");
 const category_entity_1 = require("../categories/entities/category.entity");
 const upload_service_1 = require("../upload/upload.service");
+const bcrypt = require("bcryptjs");
 let UsersService = class UsersService {
-    constructor(userRepository, userInfoRepository, categoryRepository, uploadService) {
+    constructor(userRepository, userInfoRepository, userVerificationRepository, categoryRepository, uploadService) {
         this.userRepository = userRepository;
         this.userInfoRepository = userInfoRepository;
+        this.userVerificationRepository = userVerificationRepository;
         this.categoryRepository = categoryRepository;
         this.uploadService = uploadService;
     }
@@ -66,7 +69,7 @@ let UsersService = class UsersService {
     async findById(id) {
         const user = await this.userRepository.findOne({
             where: { id },
-            relations: ['userInfos', 'categories']
+            relations: ['userInfos', 'verifications']
         });
         if (!user) {
             throw new common_1.NotFoundException('Kullanıcı bulunamadı');
@@ -244,6 +247,9 @@ let UsersService = class UsersService {
     }
     async updateLocation(userId, latitude, longitude, name) {
         const user = await this.findById(userId);
+        if (user.userType !== 'worker') {
+            throw new common_1.BadRequestException('Koordinat bilgisi sadece worker kullanıcıları tarafından güncellenebilir');
+        }
         if (latitude < -90 || latitude > 90) {
             throw new Error('Latitude değeri -90 ile 90 arasında olmalıdır');
         }
@@ -282,6 +288,9 @@ let UsersService = class UsersService {
         const user = await this.findById(userId);
         if (!updateUserInfoDto.userInfoId && !updateUserInfoDto.name) {
             throw new common_1.BadRequestException('Adres adı (name) zorunludur veya userInfoId belirtilmelidir');
+        }
+        if ((updateUserInfoDto.latitude !== undefined || updateUserInfoDto.longitude !== undefined) && user.userType !== 'worker') {
+            throw new common_1.BadRequestException('Koordinat bilgisi sadece worker kullanıcıları tarafından güncellenebilir');
         }
         if (updateUserInfoDto.latitude !== undefined) {
             if (updateUserInfoDto.latitude < -90 || updateUserInfoDto.latitude > 90) {
@@ -323,29 +332,45 @@ let UsersService = class UsersService {
             }
         }
         if (userInfo) {
-            if (updateUserInfoDto.name !== undefined)
+            if (updateUserInfoDto.name !== undefined && updateUserInfoDto.name !== null && updateUserInfoDto.name.trim() !== '') {
                 userInfo.name = updateUserInfoDto.name;
-            if (updateUserInfoDto.latitude !== undefined)
-                userInfo.latitude = updateUserInfoDto.latitude;
-            if (updateUserInfoDto.longitude !== undefined)
-                userInfo.longitude = updateUserInfoDto.longitude;
-            if (updateUserInfoDto.address !== undefined)
+            }
+            if (user.userType === 'worker') {
+                if (updateUserInfoDto.latitude !== undefined && updateUserInfoDto.latitude !== null) {
+                    userInfo.latitude = updateUserInfoDto.latitude;
+                }
+                if (updateUserInfoDto.longitude !== undefined && updateUserInfoDto.longitude !== null) {
+                    userInfo.longitude = updateUserInfoDto.longitude;
+                }
+            }
+            if (updateUserInfoDto.address !== undefined && updateUserInfoDto.address !== null && updateUserInfoDto.address.trim() !== '') {
                 userInfo.address = updateUserInfoDto.address;
-            if (updateUserInfoDto.neighborhood !== undefined)
+            }
+            if (updateUserInfoDto.neighborhood !== undefined && updateUserInfoDto.neighborhood !== null && updateUserInfoDto.neighborhood.trim() !== '') {
                 userInfo.neighborhood = updateUserInfoDto.neighborhood;
-            if (updateUserInfoDto.buildingNo !== undefined)
+            }
+            if (updateUserInfoDto.buildingNo !== undefined && updateUserInfoDto.buildingNo !== null && updateUserInfoDto.buildingNo.trim() !== '') {
                 userInfo.buildingNo = updateUserInfoDto.buildingNo;
-            if (updateUserInfoDto.floor !== undefined)
+            }
+            if (updateUserInfoDto.floor !== undefined && updateUserInfoDto.floor !== null && updateUserInfoDto.floor.trim() !== '') {
                 userInfo.floor = updateUserInfoDto.floor;
-            if (updateUserInfoDto.apartmentNo !== undefined)
+            }
+            if (updateUserInfoDto.apartmentNo !== undefined && updateUserInfoDto.apartmentNo !== null && updateUserInfoDto.apartmentNo.trim() !== '') {
                 userInfo.apartmentNo = updateUserInfoDto.apartmentNo;
-            if (updateUserInfoDto.description !== undefined)
+            }
+            if (updateUserInfoDto.description !== undefined && updateUserInfoDto.description !== null && updateUserInfoDto.description.trim() !== '') {
                 userInfo.description = updateUserInfoDto.description;
+            }
         }
         else {
+            const createData = { ...updateUserInfoDto };
+            if (user.userType !== 'worker') {
+                delete createData.latitude;
+                delete createData.longitude;
+            }
             userInfo = this.userInfoRepository.create({
                 user: { id: userId },
-                ...updateUserInfoDto
+                ...createData
             });
         }
         const savedUserInfo = await this.userInfoRepository.save(userInfo);
@@ -574,14 +599,172 @@ let UsersService = class UsersService {
         user.lastSeen = new Date();
         return this.userRepository.save(user);
     }
+    async getCompleteUserProfile(userId) {
+        const user = await this.userRepository.findOne({
+            where: { id: userId },
+            relations: ['userInfos', 'verifications']
+        });
+        if (!user) {
+            throw new common_1.NotFoundException('Kullanıcı bulunamadı');
+        }
+        let userCategories = [];
+        if (user.categoryIds && user.categoryIds.length > 0) {
+            const categories = await this.categoryRepository
+                .createQueryBuilder('category')
+                .where('category.id = ANY(:ids)', { ids: user.categoryIds })
+                .getMany();
+            userCategories = categories.map(cat => ({
+                id: cat.id,
+                name: cat.name,
+                parentId: cat.parentId
+            }));
+        }
+        const userVerified = user.verifications && user.verifications.length > 0
+            ? user.verifications.some(v => v.status === user_verification_entity_1.VerificationStatus.APPROVED)
+            : false;
+        const { password, categoryIds, categories, verifications, ...userWithoutPassword } = user;
+        return {
+            ...userWithoutPassword,
+            userCategories,
+            userInfos: user.userInfos || [],
+            userVerifications: user.verifications || [],
+            userVerified
+        };
+    }
+    async updateCompleteUserProfile(userId, completeUserDto) {
+        const user = await this.userRepository.findOne({
+            where: { id: userId },
+            relations: ['userInfos']
+        });
+        if (!user) {
+            throw new common_1.NotFoundException('Kullanıcı bulunamadı');
+        }
+        if ((completeUserDto.latitude !== undefined || completeUserDto.longitude !== undefined) && user.userType !== 'worker') {
+            throw new common_1.BadRequestException('Koordinat bilgisi sadece worker kullanıcıları tarafından güncellenebilir');
+        }
+        if (completeUserDto.firstName !== undefined && completeUserDto.firstName.trim() !== '') {
+            user.firstName = completeUserDto.firstName;
+        }
+        if (completeUserDto.lastName !== undefined && completeUserDto.lastName.trim() !== '') {
+            user.lastName = completeUserDto.lastName;
+        }
+        if (completeUserDto.email !== undefined && completeUserDto.email.trim() !== '') {
+            user.email = completeUserDto.email;
+        }
+        if (completeUserDto.phone !== undefined && completeUserDto.phone.trim() !== '') {
+            user.phone = completeUserDto.phone;
+        }
+        if (completeUserDto.userType !== undefined) {
+            user.userType = completeUserDto.userType;
+        }
+        if (completeUserDto.bio !== undefined) {
+            user.bio = completeUserDto.bio;
+        }
+        if (completeUserDto.profileImage !== undefined) {
+            user.profileImage = completeUserDto.profileImage;
+        }
+        if (completeUserDto.categoryIds !== undefined) {
+            user.categoryIds = completeUserDto.categoryIds;
+        }
+        if (completeUserDto.isOnline !== undefined) {
+            user.isOnline = completeUserDto.isOnline;
+        }
+        if (completeUserDto.password !== undefined && completeUserDto.password.trim() !== '') {
+            user.password = await bcrypt.hash(completeUserDto.password, 10);
+        }
+        await this.userRepository.save(user);
+        if (completeUserDto.addressName ||
+            completeUserDto.latitude !== undefined ||
+            completeUserDto.longitude !== undefined ||
+            completeUserDto.address ||
+            completeUserDto.neighborhood ||
+            completeUserDto.buildingNo ||
+            completeUserDto.floor ||
+            completeUserDto.apartmentNo ||
+            completeUserDto.description) {
+            let userInfo = user.userInfos && user.userInfos.length > 0 ? user.userInfos[0] : null;
+            if (completeUserDto.latitude !== undefined) {
+                if (completeUserDto.latitude < -90 || completeUserDto.latitude > 90) {
+                    throw new common_1.BadRequestException('Latitude değeri -90 ile 90 arasında olmalıdır');
+                }
+            }
+            if (completeUserDto.longitude !== undefined) {
+                if (completeUserDto.longitude < -180 || completeUserDto.longitude > 180) {
+                    throw new common_1.BadRequestException('Longitude değeri -180 ile 180 arasında olmalıdır');
+                }
+            }
+            if (!userInfo) {
+                const createData = {};
+                if (completeUserDto.addressName)
+                    createData.name = completeUserDto.addressName;
+                if (completeUserDto.address)
+                    createData.address = completeUserDto.address;
+                if (completeUserDto.neighborhood)
+                    createData.neighborhood = completeUserDto.neighborhood;
+                if (completeUserDto.buildingNo)
+                    createData.buildingNo = completeUserDto.buildingNo;
+                if (completeUserDto.floor)
+                    createData.floor = completeUserDto.floor;
+                if (completeUserDto.apartmentNo)
+                    createData.apartmentNo = completeUserDto.apartmentNo;
+                if (completeUserDto.description)
+                    createData.description = completeUserDto.description;
+                if (user.userType === 'worker') {
+                    if (completeUserDto.latitude !== undefined)
+                        createData.latitude = completeUserDto.latitude;
+                    if (completeUserDto.longitude !== undefined)
+                        createData.longitude = completeUserDto.longitude;
+                }
+                userInfo = this.userInfoRepository.create({
+                    user: { id: userId },
+                    ...createData
+                });
+            }
+            else {
+                if (completeUserDto.addressName !== undefined && completeUserDto.addressName.trim() !== '') {
+                    userInfo.name = completeUserDto.addressName;
+                }
+                if (completeUserDto.address !== undefined && completeUserDto.address.trim() !== '') {
+                    userInfo.address = completeUserDto.address;
+                }
+                if (completeUserDto.neighborhood !== undefined && completeUserDto.neighborhood.trim() !== '') {
+                    userInfo.neighborhood = completeUserDto.neighborhood;
+                }
+                if (completeUserDto.buildingNo !== undefined && completeUserDto.buildingNo.trim() !== '') {
+                    userInfo.buildingNo = completeUserDto.buildingNo;
+                }
+                if (completeUserDto.floor !== undefined && completeUserDto.floor.trim() !== '') {
+                    userInfo.floor = completeUserDto.floor;
+                }
+                if (completeUserDto.apartmentNo !== undefined && completeUserDto.apartmentNo.trim() !== '') {
+                    userInfo.apartmentNo = completeUserDto.apartmentNo;
+                }
+                if (completeUserDto.description !== undefined && completeUserDto.description.trim() !== '') {
+                    userInfo.description = completeUserDto.description;
+                }
+                if (user.userType === 'worker') {
+                    if (completeUserDto.latitude !== undefined && completeUserDto.latitude !== null) {
+                        userInfo.latitude = completeUserDto.latitude;
+                    }
+                    if (completeUserDto.longitude !== undefined && completeUserDto.longitude !== null) {
+                        userInfo.longitude = completeUserDto.longitude;
+                    }
+                }
+            }
+            await this.userInfoRepository.save(userInfo);
+        }
+        return this.getCompleteUserProfile(userId);
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.User)),
     __param(1, (0, typeorm_1.InjectRepository)(user_info_entity_1.UserInfo)),
-    __param(2, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
+    __param(2, (0, typeorm_1.InjectRepository)(user_verification_entity_1.UserVerification)),
+    __param(3, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         upload_service_1.UploadService])

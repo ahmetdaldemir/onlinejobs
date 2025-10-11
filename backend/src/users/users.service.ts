@@ -3,10 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User, UserStatus } from './entities/user.entity';
 import { UserInfo } from './entities/user-info.entity';
+import { UserVerification, VerificationStatus } from './entities/user-verification.entity';
 import { UpdateUserInfoDto } from './dto/update-user-info.dto';
+import { CompleteUserDto } from './dto/complete-user.dto';
 import { Category } from '../categories/entities/category.entity';
 import { UploadService } from '../upload/upload.service';
 import type { Express } from 'express';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +18,8 @@ export class UsersService {
     private userRepository: Repository<User>,
     @InjectRepository(UserInfo)
     private userInfoRepository: Repository<UserInfo>,
+    @InjectRepository(UserVerification)
+    private userVerificationRepository: Repository<UserVerification>,
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
     private uploadService: UploadService,
@@ -64,7 +69,7 @@ export class UsersService {
   async findById(id: string): Promise<User> {
     const user = await this.userRepository.findOne({ 
       where: { id },
-      relations: ['userInfos', 'categories']
+      relations: ['userInfos','verifications']
     });
     if (!user) {
       throw new NotFoundException('Kullanıcı bulunamadı');
@@ -308,6 +313,11 @@ export class UsersService {
   async updateLocation(userId: string, latitude: number, longitude: number, name?: string): Promise<User> {
     const user = await this.findById(userId);
     
+    // Sadece worker kullanıcıları koordinat bilgisi girebilir
+    if (user.userType !== 'worker') {
+      throw new BadRequestException('Koordinat bilgisi sadece worker kullanıcıları tarafından güncellenebilir');
+    }
+    
     // Koordinat değerlerini kontrol et
     if (latitude < -90 || latitude > 90) {
       throw new Error('Latitude değeri -90 ile 90 arasında olmalıdır');
@@ -354,6 +364,11 @@ export class UsersService {
     // Name alanı zorunlu olmalı (ID yoksa)
     if (!updateUserInfoDto.userInfoId && !updateUserInfoDto.name) {
       throw new BadRequestException('Adres adı (name) zorunludur veya userInfoId belirtilmelidir');
+    }
+    
+    // Sadece worker kullanıcıları koordinat bilgisi girebilir
+    if ((updateUserInfoDto.latitude !== undefined || updateUserInfoDto.longitude !== undefined) && user.userType !== 'worker') {
+      throw new BadRequestException('Koordinat bilgisi sadece worker kullanıcıları tarafından güncellenebilir');
     }
     
     // Koordinat değerlerini kontrol et
@@ -407,11 +422,15 @@ export class UsersService {
       if (updateUserInfoDto.name !== undefined && updateUserInfoDto.name !== null && updateUserInfoDto.name.trim() !== '') {
         userInfo.name = updateUserInfoDto.name;
       }
-      if (updateUserInfoDto.latitude !== undefined && updateUserInfoDto.latitude !== null) {
-        userInfo.latitude = updateUserInfoDto.latitude;
-      }
-      if (updateUserInfoDto.longitude !== undefined && updateUserInfoDto.longitude !== null) {
-        userInfo.longitude = updateUserInfoDto.longitude;
+
+      // Sadece worker kullanıcılar için koordinat güncellenir
+      if (user.userType === 'worker') {
+        if (updateUserInfoDto.latitude !== undefined && updateUserInfoDto.latitude !== null) {
+          userInfo.latitude = updateUserInfoDto.latitude;
+        }
+        if (updateUserInfoDto.longitude !== undefined && updateUserInfoDto.longitude !== null) {
+          userInfo.longitude = updateUserInfoDto.longitude;
+        }
       }
       if (updateUserInfoDto.address !== undefined && updateUserInfoDto.address !== null && updateUserInfoDto.address.trim() !== '') {
         userInfo.address = updateUserInfoDto.address;
@@ -433,9 +452,17 @@ export class UsersService {
       }
     } else {
       // Yeni kayıt oluştur
+      const createData = { ...updateUserInfoDto };
+      
+      // Worker olmayan kullanıcılar için koordinat bilgilerini temizle
+      if (user.userType !== 'worker') {
+        delete createData.latitude;
+        delete createData.longitude;
+      }
+      
       userInfo = this.userInfoRepository.create({
         user: { id: userId },
-        ...updateUserInfoDto
+        ...createData
       });
     }
 
@@ -752,5 +779,196 @@ export class UsersService {
     user.isOnline = !isOffline;
     user.lastSeen = new Date();
     return this.userRepository.save(user);
+  }
+
+  /**
+   * Token'dan kullanıcıyı bulup tüm bilgilerini döner
+   * User + UserInfos (array) + UserCategories (array) + UserVerifications (array) + UserVerified (boolean)
+   */
+  async getCompleteUserProfile(userId: string): Promise<any> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['userInfos', 'verifications']
+    });
+
+    if (!user) {
+      throw new NotFoundException('Kullanıcı bulunamadı');
+    }
+
+    // Kategorileri hiyerarşik formatta işle
+    let userCategories = [];
+    if (user.categoryIds && user.categoryIds.length > 0) {
+      const categories = await this.categoryRepository
+        .createQueryBuilder('category')
+        .where('category.id = ANY(:ids)', { ids: user.categoryIds })
+        .getMany();
+
+      userCategories = categories.map(cat => ({
+        id: cat.id,
+        name: cat.name,
+        parentId: cat.parentId
+      }));
+    }
+
+    // Verification durumunu kontrol et - onaylanmış verification var mı?
+    const userVerified = user.verifications && user.verifications.length > 0 
+      ? user.verifications.some(v => v.status === VerificationStatus.APPROVED)
+      : false;
+
+    // Şifreyi ve gereksiz alanları response'dan çıkar
+    const { password, categoryIds, categories, verifications, ...userWithoutPassword } = user as any;
+
+    return {
+      ...userWithoutPassword,
+      userCategories,
+      userInfos: user.userInfos || [],
+      userVerifications: user.verifications || [],
+      userVerified
+    };
+  }
+
+  /**
+   * Token'dan kullanıcıyı bulup tüm bilgilerini günceller
+   * User + UserInfo bilgilerini tek endpoint'ten günceller
+   */
+  async updateCompleteUserProfile(userId: string, completeUserDto: CompleteUserDto): Promise<any> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['userInfos']
+    });
+
+    if (!user) {
+      throw new NotFoundException('Kullanıcı bulunamadı');
+    }
+
+    // Sadece worker kullanıcıları koordinat bilgisi girebilir
+    if ((completeUserDto.latitude !== undefined || completeUserDto.longitude !== undefined) && user.userType !== 'worker') {
+      throw new BadRequestException('Koordinat bilgisi sadece worker kullanıcıları tarafından güncellenebilir');
+    }
+
+    // User bilgilerini güncelle
+    if (completeUserDto.firstName !== undefined && completeUserDto.firstName.trim() !== '') {
+      user.firstName = completeUserDto.firstName;
+    }
+    if (completeUserDto.lastName !== undefined && completeUserDto.lastName.trim() !== '') {
+      user.lastName = completeUserDto.lastName;
+    }
+    if (completeUserDto.email !== undefined && completeUserDto.email.trim() !== '') {
+      user.email = completeUserDto.email;
+    }
+    if (completeUserDto.phone !== undefined && completeUserDto.phone.trim() !== '') {
+      user.phone = completeUserDto.phone;
+    }
+    if (completeUserDto.userType !== undefined) {
+      user.userType = completeUserDto.userType;
+    }
+    if (completeUserDto.bio !== undefined) {
+      user.bio = completeUserDto.bio;
+    }
+    if (completeUserDto.profileImage !== undefined) {
+      user.profileImage = completeUserDto.profileImage;
+    }
+    if (completeUserDto.categoryIds !== undefined) {
+      user.categoryIds = completeUserDto.categoryIds;
+    }
+    if (completeUserDto.isOnline !== undefined) {
+      user.isOnline = completeUserDto.isOnline;
+    }
+
+    // Şifre güncellemesi varsa hash'le
+    if (completeUserDto.password !== undefined && completeUserDto.password.trim() !== '') {
+      user.password = await bcrypt.hash(completeUserDto.password, 10);
+    }
+
+    await this.userRepository.save(user);
+
+    // UserInfo bilgilerini güncelle veya oluştur
+    if (
+      completeUserDto.addressName ||
+      completeUserDto.latitude !== undefined ||
+      completeUserDto.longitude !== undefined ||
+      completeUserDto.address ||
+      completeUserDto.neighborhood ||
+      completeUserDto.buildingNo ||
+      completeUserDto.floor ||
+      completeUserDto.apartmentNo ||
+      completeUserDto.description
+    ) {
+      let userInfo: UserInfo | null = user.userInfos && user.userInfos.length > 0 ? user.userInfos[0] : null;
+
+      // Koordinat validasyonu
+      if (completeUserDto.latitude !== undefined) {
+        if (completeUserDto.latitude < -90 || completeUserDto.latitude > 90) {
+          throw new BadRequestException('Latitude değeri -90 ile 90 arasında olmalıdır');
+        }
+      }
+      if (completeUserDto.longitude !== undefined) {
+        if (completeUserDto.longitude < -180 || completeUserDto.longitude > 180) {
+          throw new BadRequestException('Longitude değeri -180 ile 180 arasında olmalıdır');
+        }
+      }
+
+      if (!userInfo) {
+        // Yeni UserInfo oluştur
+        const createData: any = {};
+        
+        if (completeUserDto.addressName) createData.name = completeUserDto.addressName;
+        if (completeUserDto.address) createData.address = completeUserDto.address;
+        if (completeUserDto.neighborhood) createData.neighborhood = completeUserDto.neighborhood;
+        if (completeUserDto.buildingNo) createData.buildingNo = completeUserDto.buildingNo;
+        if (completeUserDto.floor) createData.floor = completeUserDto.floor;
+        if (completeUserDto.apartmentNo) createData.apartmentNo = completeUserDto.apartmentNo;
+        if (completeUserDto.description) createData.description = completeUserDto.description;
+
+        // Sadece worker için koordinat ekle
+        if (user.userType === 'worker') {
+          if (completeUserDto.latitude !== undefined) createData.latitude = completeUserDto.latitude;
+          if (completeUserDto.longitude !== undefined) createData.longitude = completeUserDto.longitude;
+        }
+
+        userInfo = this.userInfoRepository.create({
+          user: { id: userId } as any,
+          ...createData
+        }) as unknown as UserInfo;
+      } else {
+        // Mevcut UserInfo'yu güncelle
+        if (completeUserDto.addressName !== undefined && completeUserDto.addressName.trim() !== '') {
+          userInfo.name = completeUserDto.addressName;
+        }
+        if (completeUserDto.address !== undefined && completeUserDto.address.trim() !== '') {
+          userInfo.address = completeUserDto.address;
+        }
+        if (completeUserDto.neighborhood !== undefined && completeUserDto.neighborhood.trim() !== '') {
+          userInfo.neighborhood = completeUserDto.neighborhood;
+        }
+        if (completeUserDto.buildingNo !== undefined && completeUserDto.buildingNo.trim() !== '') {
+          userInfo.buildingNo = completeUserDto.buildingNo;
+        }
+        if (completeUserDto.floor !== undefined && completeUserDto.floor.trim() !== '') {
+          userInfo.floor = completeUserDto.floor;
+        }
+        if (completeUserDto.apartmentNo !== undefined && completeUserDto.apartmentNo.trim() !== '') {
+          userInfo.apartmentNo = completeUserDto.apartmentNo;
+        }
+        if (completeUserDto.description !== undefined && completeUserDto.description.trim() !== '') {
+          userInfo.description = completeUserDto.description;
+        }
+
+        // Sadece worker için koordinat güncelle
+        if (user.userType === 'worker') {
+          if (completeUserDto.latitude !== undefined && completeUserDto.latitude !== null) {
+            userInfo.latitude = completeUserDto.latitude;
+          }
+          if (completeUserDto.longitude !== undefined && completeUserDto.longitude !== null) {
+            userInfo.longitude = completeUserDto.longitude;
+          }
+        }
+      }
+
+      await this.userInfoRepository.save(userInfo);
+    }
+
+    // Güncellenmiş kullanıcıyı döndür
+    return this.getCompleteUserProfile(userId);
   }
 }  

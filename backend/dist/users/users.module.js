@@ -10,6 +10,7 @@ exports.UsersModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const users_controller_1 = require("./users.controller");
+const user_controller_1 = require("./user.controller");
 const users_service_1 = require("./users.service");
 const user_entity_1 = require("./entities/user.entity");
 const user_info_entity_1 = require("./entities/user-info.entity");
@@ -27,7 +28,7 @@ exports.UsersModule = UsersModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, user_info_entity_1.UserInfo, user_verification_entity_1.UserVerification, category_entity_1.Category]),
             upload_module_1.UploadModule,
         ],
-        controllers: [users_controller_1.UsersController, user_verification_controller_1.UserVerificationController],
+        controllers: [users_controller_1.UsersController, user_controller_1.UserController, user_verification_controller_1.UserVerificationController],
         providers: [users_service_1.UsersService, user_verification_service_1.UserVerificationService],
         exports: [users_service_1.UsersService, user_verification_service_1.UserVerificationService],
     })

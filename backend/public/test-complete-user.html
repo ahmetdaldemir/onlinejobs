@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kullanıcı Profil Testi - Tek Endpoint</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #666;
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button.secondary {
+            background-color: #2196F3;
+        }
+        button.secondary:hover {
+            background-color: #0b7dda;
+        }
+        .response {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #4CAF50;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .error {
+            border-left-color: #f44336;
+            background-color: #ffebee;
+        }
+        .section {
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            background-color: #fafafa;
+        }
+        .section h3 {
+            margin-top: 0;
+            color: #444;
+        }
+        .token-display {
+            background-color: #e8f5e9;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>🔄 Kullanıcı Profil Testi - Tek Endpoint</h1>
+
+    <div class="container">
+        <h2>🔐 Giriş Bilgileri</h2>
+        <div class="form-group">
+            <label for="phone">Telefon:</label>
+            <input type="text" id="phone" value="+905550000001" placeholder="+905550000001">
+        </div>
+        <div class="form-group">
+            <label for="password">Şifre:</label>
+            <input type="password" id="password" value="test123" placeholder="test123">
+        </div>
+        <button onclick="login()">Giriş Yap</button>
+
+        <div class="token-display" id="tokenDisplay" style="display: none;">
+            <strong>Token:</strong> <span id="tokenValue"></span>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>📥 GET /user - Tüm Bilgileri Getir</h2>
+        <button onclick="getMyProfile()">Profilimi Getir</button>
+        <div id="getResponse" class="response" style="display: none;"></div>
+    </div>
+
+    <div class="container">
+        <h2>📤 PUT /user - Tüm Bilgileri Güncelle</h2>
+        
+        <div class="section">
+            <h3>👤 Kullanıcı Bilgileri</h3>
+            <div class="grid">
+                <div class="form-group">
+                    <label for="firstName">Ad:</label>
+                    <input type="text" id="firstName" placeholder="Ahmet">
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Soyad:</label>
+                    <input type="text" id="lastName" placeholder="Yılmaz">
+                </div>
+            </div>
+            <div class="grid">
+                <div class="form-group">
+                    <label for="email">E-posta:</label>
+                    <input type="email" id="email" placeholder="ahmet@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="phoneUpdate">Telefon:</label>
+                    <input type="text" id="phoneUpdate" placeholder="+905551234567">
+                </div>
+            </div>
+            <div class="grid">
+                <div class="form-group">
+                    <label for="userType">Kullanıcı Tipi:</label>
+                    <select id="userType">
+                        <option value="">Seçiniz...</option>
+                        <option value="worker">Worker</option>
+                        <option value="employer">Employer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="isOnline">Online Durum:</label>
+                    <select id="isOnline">
+                        <option value="">Değiştirme</option>
+                        <option value="true">Online</option>
+                        <option value="false">Offline</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="bio">Biyografi:</label>
+                <textarea id="bio" placeholder="Kısa biyografi..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="categoryIds">Kategori ID'leri (virgülle ayırın):</label>
+                <input type="text" id="categoryIds" placeholder="uuid1,uuid2,uuid3">
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>📍 Adres Bilgileri (UserInfo)</h3>
+            <div class="form-group">
+                <label for="addressName">Adres Adı:</label>
+                <input type="text" id="addressName" placeholder="Ev, İş, vs.">
+            </div>
+            <div class="grid">
+                <div class="form-group">
+                    <label for="latitude">Enlem (Latitude) - Sadece Worker:</label>
+                    <input type="number" step="0.00000001" id="latitude" placeholder="41.0082376">
+                </div>
+                <div class="form-group">
+                    <label for="longitude">Boylam (Longitude) - Sadece Worker:</label>
+                    <input type="number" step="0.00000001" id="longitude" placeholder="28.9783589">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="address">Adres:</label>
+                <input type="text" id="address" placeholder="Tam adres...">
+            </div>
+            <div class="grid">
+                <div class="form-group">
+                    <label for="neighborhood">Mahalle/Cadde/Sokak:</label>
+                    <input type="text" id="neighborhood" placeholder="Atatürk Mahallesi">
+                </div>
+                <div class="form-group">
+                    <label for="buildingNo">Bina No:</label>
+                    <input type="text" id="buildingNo" placeholder="12/A">
+                </div>
+            </div>
+            <div class="grid">
+                <div class="form-group">
+                    <label for="floor">Kat:</label>
+                    <input type="text" id="floor" placeholder="3">
+                </div>
+                <div class="form-group">
+                    <label for="apartmentNo">Daire No:</label>
+                    <input type="text" id="apartmentNo" placeholder="8">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="description">Açıklama:</label>
+                <textarea id="description" placeholder="Ek açıklamalar..."></textarea>
+            </div>
+        </div>
+
+        <button onclick="updateMyProfile()">Profili Güncelle</button>
+        <button class="secondary" onclick="clearForm()">Formu Temizle</button>
+        
+        <div id="updateResponse" class="response" style="display: none;"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000';
+        let authToken = '';
+
+        async function login() {
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ phone, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.access_token) {
+                    authToken = data.access_token;
+                    document.getElementById('tokenDisplay').style.display = 'block';
+                    document.getElementById('tokenValue').textContent = authToken;
+                    alert('✅ Giriş başarılı!');
+                } else {
+                    alert('❌ Giriş başarısız: ' + (data.message || 'Bilinmeyen hata'));
+                }
+            } catch (error) {
+                alert('❌ Hata: ' + error.message);
+            }
+        }
+
+        async function getMyProfile() {
+            if (!authToken) {
+                alert('⚠️ Önce giriş yapmalısınız!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/user`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const data = await response.json();
+                const responseDiv = document.getElementById('getResponse');
+                responseDiv.style.display = 'block';
+
+                if (response.ok) {
+                    responseDiv.className = 'response';
+                    responseDiv.textContent = JSON.stringify(data, null, 2);
+                    
+                    // Formu otomatik doldur
+                    if (data.firstName) document.getElementById('firstName').value = data.firstName;
+                    if (data.lastName) document.getElementById('lastName').value = data.lastName;
+                    if (data.email) document.getElementById('email').value = data.email;
+                    if (data.phone) document.getElementById('phoneUpdate').value = data.phone;
+                    if (data.userType) document.getElementById('userType').value = data.userType;
+                    if (data.bio) document.getElementById('bio').value = data.bio;
+                    
+                    // UserCategories'den categoryIds'i çıkar
+                    if (data.userCategories && data.userCategories.length > 0) {
+                        const categoryIds = data.userCategories.map(cat => cat.id);
+                        document.getElementById('categoryIds').value = categoryIds.join(',');
+                    }
+                    
+                    // UserInfos bilgileri (array olarak geliyor - ilkini doldur)
+                    if (data.userInfos && data.userInfos.length > 0) {
+                        const userInfo = data.userInfos[0];
+                        if (userInfo.name) document.getElementById('addressName').value = userInfo.name;
+                        if (userInfo.latitude) document.getElementById('latitude').value = userInfo.latitude;
+                        if (userInfo.longitude) document.getElementById('longitude').value = userInfo.longitude;
+                        if (userInfo.address) document.getElementById('address').value = userInfo.address;
+                        if (userInfo.neighborhood) document.getElementById('neighborhood').value = userInfo.neighborhood;
+                        if (userInfo.buildingNo) document.getElementById('buildingNo').value = userInfo.buildingNo;
+                        if (userInfo.floor) document.getElementById('floor').value = userInfo.floor;
+                        if (userInfo.apartmentNo) document.getElementById('apartmentNo').value = userInfo.apartmentNo;
+                        if (userInfo.description) document.getElementById('description').value = userInfo.description;
+                    }
+                } else {
+                    responseDiv.className = 'response error';
+                    responseDiv.textContent = `❌ Hata (${response.status}): ${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                const responseDiv = document.getElementById('getResponse');
+                responseDiv.style.display = 'block';
+                responseDiv.className = 'response error';
+                responseDiv.textContent = '❌ Hata: ' + error.message;
+            }
+        }
+
+        async function updateMyProfile() {
+            if (!authToken) {
+                alert('⚠️ Önce giriş yapmalısınız!');
+                return;
+            }
+
+            const updateData = {};
+
+            // User bilgileri
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phoneUpdate = document.getElementById('phoneUpdate').value.trim();
+            const userType = document.getElementById('userType').value;
+            const bio = document.getElementById('bio').value.trim();
+            const categoryIds = document.getElementById('categoryIds').value.trim();
+            const isOnline = document.getElementById('isOnline').value;
+
+            if (firstName) updateData.firstName = firstName;
+            if (lastName) updateData.lastName = lastName;
+            if (email) updateData.email = email;
+            if (phoneUpdate) updateData.phone = phoneUpdate;
+            if (userType) updateData.userType = userType;
+            if (bio) updateData.bio = bio;
+            if (categoryIds) updateData.categoryIds = categoryIds.split(',').map(id => id.trim());
+            if (isOnline) updateData.isOnline = isOnline === 'true';
+
+            // UserInfo bilgileri
+            const addressName = document.getElementById('addressName').value.trim();
+            const latitude = document.getElementById('latitude').value;
+            const longitude = document.getElementById('longitude').value;
+            const address = document.getElementById('address').value.trim();
+            const neighborhood = document.getElementById('neighborhood').value.trim();
+            const buildingNo = document.getElementById('buildingNo').value.trim();
+            const floor = document.getElementById('floor').value.trim();
+            const apartmentNo = document.getElementById('apartmentNo').value.trim();
+            const description = document.getElementById('description').value.trim();
+
+            if (addressName) updateData.addressName = addressName;
+            if (latitude) updateData.latitude = parseFloat(latitude);
+            if (longitude) updateData.longitude = parseFloat(longitude);
+            if (address) updateData.address = address;
+            if (neighborhood) updateData.neighborhood = neighborhood;
+            if (buildingNo) updateData.buildingNo = buildingNo;
+            if (floor) updateData.floor = floor;
+            if (apartmentNo) updateData.apartmentNo = apartmentNo;
+            if (description) updateData.description = description;
+
+            if (Object.keys(updateData).length === 0) {
+                alert('⚠️ En az bir alan doldurulmalıdır!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/user`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                const data = await response.json();
+                const responseDiv = document.getElementById('updateResponse');
+                responseDiv.style.display = 'block';
+
+                if (response.ok) {
+                    responseDiv.className = 'response';
+                    responseDiv.textContent = '✅ Güncelleme başarılı!\n\n' + JSON.stringify(data, null, 2);
+                } else {
+                    responseDiv.className = 'response error';
+                    responseDiv.textContent = `❌ Hata (${response.status}): ${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                const responseDiv = document.getElementById('updateResponse');
+                responseDiv.style.display = 'block';
+                responseDiv.className = 'response error';
+                responseDiv.textContent = '❌ Hata: ' + error.message;
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('firstName').value = '';
+            document.getElementById('lastName').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('phoneUpdate').value = '';
+            document.getElementById('userType').value = '';
+            document.getElementById('bio').value = '';
+            document.getElementById('categoryIds').value = '';
+            document.getElementById('isOnline').value = '';
+            document.getElementById('addressName').value = '';
+            document.getElementById('latitude').value = '';
+            document.getElementById('longitude').value = '';
+            document.getElementById('address').value = '';
+            document.getElementById('neighborhood').value = '';
+            document.getElementById('buildingNo').value = '';
+            document.getElementById('floor').value = '';
+            document.getElementById('apartmentNo').value = '';
+            document.getElementById('description').value = '';
+        }
+    </script>
+</body>
+</html>
+

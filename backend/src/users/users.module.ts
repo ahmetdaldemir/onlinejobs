@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersController } from './users.controller';
+import { UserController } from './user.controller';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { UserInfo } from './entities/user-info.entity';
@@ -15,7 +16,7 @@ import { UploadModule } from '../upload/upload.module';
     TypeOrmModule.forFeature([User, UserInfo, UserVerification, Category]),
     UploadModule,
   ],
-  controllers: [UsersController, UserVerificationController],
+  controllers: [UsersController, UserController, UserVerificationController],
   providers: [UsersService, UserVerificationService],
   exports: [UsersService, UserVerificationService],
 })
