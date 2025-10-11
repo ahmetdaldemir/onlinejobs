@@ -21,6 +21,7 @@ const admin_entity_1 = require("./entities/admin.entity");
 const jwt_strategy_1 = require("./strategies/jwt.strategy");
 const admin_jwt_strategy_1 = require("./strategies/admin-jwt.strategy");
 const optional_auth_guard_1 = require("./guards/optional-auth.guard");
+const users_module_1 = require("../users/users.module");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -29,6 +30,7 @@ exports.AuthModule = AuthModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forFeature([user_entity_1.User, admin_entity_1.Admin]),
             passport_1.PassportModule,
+            (0, common_1.forwardRef)(() => users_module_1.UsersModule),
             jwt_1.JwtModule.registerAsync({
                 imports: [config_1.ConfigModule],
                 useFactory: async (configService) => ({

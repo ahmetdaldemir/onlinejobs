@@ -8,7 +8,6 @@ export declare class AuthService {
     constructor(userRepository: Repository<User>, jwtService: JwtService);
     register(registerDto: RegisterDto): Promise<AuthResponseDto>;
     login(loginDto: LoginDto): Promise<AuthResponseDto>;
-    validateUser(userId: string): Promise<User>;
     checkPhone(checkPhoneDto: CheckPhoneDto): Promise<{
         message: string;
         status: string;

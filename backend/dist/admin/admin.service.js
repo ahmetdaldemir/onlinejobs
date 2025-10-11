@@ -24,6 +24,7 @@ const category_entity_1 = require("../categories/entities/category.entity");
 const bcrypt = require("bcryptjs");
 const job_application_entity_1 = require("../jobs/entities/job-application.entity");
 const upload_service_1 = require("../upload/upload.service");
+const job_entity_2 = require("../jobs/entities/job.entity");
 let AdminService = class AdminService {
     constructor(userRepository, userInfoRepository, jobRepository, messageRepository, categoryRepository, jobApplicationRepository, uploadService) {
         this.userRepository = userRepository;
@@ -527,7 +528,7 @@ let AdminService = class AdminService {
             let score = 0;
             score += job.viewCount * 0.3;
             score += job.applicationCount * 0.4;
-            if (job.isUrgent) {
+            if (job.priority === job_entity_2.JobPriority.URGENT) {
                 score += 50 * 0.2;
             }
             const daysSinceCreation = (Date.now() - job.createdAt.getTime()) / (1000 * 60 * 60 * 24);

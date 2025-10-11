@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional, IsDateString, IsEnum } from 'class-validator';
-import { ApplicationTag } from '../entities/job-application.entity';
 
 export class CreateJobApplicationDto {
   @ApiProperty({ required: false })
@@ -22,13 +21,5 @@ export class CreateJobApplicationDto {
   @IsOptional()
   @IsDateString()
   proposedStartDate?: Date;
-
-  @ApiProperty({ 
-    required: false, 
-    enum: ApplicationTag,
-    description: 'Başvuru zamanlaması: urgent (Acil), immediate (Hemen), scheduled (İleri zamanlı)'
-  })
-  @IsOptional()
-  @IsEnum(ApplicationTag)
-  tag?: ApplicationTag;
+ 
 } 

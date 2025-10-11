@@ -1,3 +1,4 @@
+import { JobPriority } from '../entities/job.entity';
 export declare class CreateJobDto {
     title: string;
     description: string;
@@ -5,7 +6,7 @@ export declare class CreateJobDto {
     jobImages?: string[];
     scheduledDate?: Date;
     scheduledTime?: string;
-    isUrgent?: boolean;
+    priority?: JobPriority;
     categoryId?: string;
     userInfoId?: string;
 }

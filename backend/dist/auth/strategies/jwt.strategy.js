@@ -14,29 +14,34 @@ const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
 const passport_jwt_1 = require("passport-jwt");
 const config_1 = require("@nestjs/config");
-const auth_service_1 = require("../auth.service");
+const users_service_1 = require("../../users/users.service");
 let JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy) {
-    constructor(configService, authService) {
+    constructor(configService, usersService) {
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
             secretOrKey: configService.get('JWT_SECRET'),
         });
         this.configService = configService;
-        this.authService = authService;
+        this.usersService = usersService;
     }
     async validate(payload) {
-        const user = await this.authService.validateUser(payload.sub);
-        if (!user) {
-            throw new common_1.UnauthorizedException();
+        try {
+            const user = await this.usersService.findById(payload.sub);
+            if (!user) {
+                throw new common_1.UnauthorizedException('Kullanıcı bulunamadı');
+            }
+            return { sub: user.id, email: user.email };
         }
-        return { sub: user.id, email: user.email };
+        catch (error) {
+            throw new common_1.UnauthorizedException('Geçersiz token');
+        }
     }
 };
 exports.JwtStrategy = JwtStrategy;
 exports.JwtStrategy = JwtStrategy = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [config_1.ConfigService,
-        auth_service_1.AuthService])
+        users_service_1.UsersService])
 ], JwtStrategy);
 //# sourceMappingURL=jwt.strategy.js.map

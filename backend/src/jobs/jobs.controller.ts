@@ -38,7 +38,7 @@ export class JobsController {
         budget: { type: 'string', description: 'Bütçe' },
         scheduledDate: { type: 'string', format: 'date', description: 'Planlanan tarih' },
         scheduledTime: { type: 'string', description: 'Planlanan saat' },
-        isUrgent: { type: 'boolean', description: 'Acil mi?' },
+        priority: { type: 'string', enum: ['urgent', 'immediate', 'scheduled', 'normal'], description: 'İş önceliği: urgent (Acil), immediate (Hemen), scheduled (İleri zamanlı), normal (Normal)', default: 'normal' },
         categoryId: { type: 'string', format: 'uuid', description: 'Kategori ID' },
         userInfoId: { type: 'string', format: 'uuid', description: 'Konum bilgisi ID' },
         images: {

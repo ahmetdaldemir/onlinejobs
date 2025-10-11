@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsBoolean, IsDateString, IsUUID } from 'class-validator';
- 
+import { IsString, IsOptional, IsBoolean, IsDateString, IsUUID, IsEnum } from 'class-validator';
+import { JobPriority } from '../entities/job.entity';
+
 export class CreateJobDto {
   @ApiProperty()
   @IsString()
@@ -31,10 +32,16 @@ export class CreateJobDto {
   @IsString()
   scheduledTime?: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ 
+    enum: JobPriority, 
+    required: false, 
+    description: 'İş önceliği: urgent (Acil), immediate (Hemen), scheduled (İleri zamanlı), normal (Normal)',
+    default: JobPriority.NORMAL,
+    example: JobPriority.NORMAL
+  })
   @IsOptional()
-  @IsBoolean()
-  isUrgent?: boolean;
+  @IsEnum(JobPriority)
+  priority?: JobPriority;
 
   @ApiProperty({ required: false })
   @IsOptional()

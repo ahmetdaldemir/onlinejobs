@@ -2,6 +2,12 @@ export declare enum JobStatus {
     OPEN = "open",
     CANCELLED = "cancelled"
 }
+export declare enum JobPriority {
+    URGENT = "urgent",
+    IMMEDIATE = "immediate",
+    SCHEDULED = "scheduled",
+    NORMAL = "normal"
+}
 export declare class Job {
     id: string;
     title: string;
@@ -12,7 +18,7 @@ export declare class Job {
     userInfoId: string;
     scheduledDate: Date;
     scheduledTime: string;
-    isUrgent: boolean;
+    priority: JobPriority;
     jobImages: string[];
     viewCount: number;
     applicationCount: number;

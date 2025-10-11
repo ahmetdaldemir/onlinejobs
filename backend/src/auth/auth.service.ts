@@ -184,19 +184,6 @@ export class AuthService {
     };
   }
 
-  async validateUser(userId: string): Promise<User> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      relations: ['categories','userInfos'],
-    });
-
-    if (!user) {
-      throw new UnauthorizedException('Kullanıcı bulunamadı');
-    }
-
-    return user;
-  }
-
 
     async checkPhone(checkPhoneDto: CheckPhoneDto): Promise<{ message: string; status: string; statusCode: number }> {
     const { phone,userType } = checkPhoneDto;

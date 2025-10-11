@@ -332,8 +332,17 @@ let JobsService = class JobsService {
         let score = 0;
         score += job.viewCount * 0.3;
         score += job.applicationCount * 0.4;
-        if (job.isUrgent) {
+        if (job.priority === job_entity_1.JobPriority.URGENT) {
+            score += 60 * 0.2;
+        }
+        else if (job.priority === job_entity_1.JobPriority.IMMEDIATE) {
             score += 50 * 0.2;
+        }
+        else if (job.priority === job_entity_1.JobPriority.SCHEDULED) {
+            score += 30 * 0.2;
+        }
+        else {
+            score += 20 * 0.2;
         }
         const daysSinceCreation = (Date.now() - job.createdAt.getTime()) / (1000 * 60 * 60 * 24);
         if (daysSinceCreation <= 7) {

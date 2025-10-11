@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateJobDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
+const job_entity_1 = require("../entities/job.entity");
 class CreateJobDto {
 }
 exports.CreateJobDto = CreateJobDto;
@@ -50,11 +51,17 @@ __decorate([
     __metadata("design:type", String)
 ], CreateJobDto.prototype, "scheduledTime", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, swagger_1.ApiProperty)({
+        enum: job_entity_1.JobPriority,
+        required: false,
+        description: 'İş önceliği: urgent (Acil), immediate (Hemen), scheduled (İleri zamanlı), normal (Normal)',
+        default: job_entity_1.JobPriority.NORMAL,
+        example: job_entity_1.JobPriority.NORMAL
+    }),
     (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsBoolean)(),
-    __metadata("design:type", Boolean)
-], CreateJobDto.prototype, "isUrgent", void 0);
+    (0, class_validator_1.IsEnum)(job_entity_1.JobPriority),
+    __metadata("design:type", String)
+], CreateJobDto.prototype, "priority", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
     (0, class_validator_1.IsOptional)(),

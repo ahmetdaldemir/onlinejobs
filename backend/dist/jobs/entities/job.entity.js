@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Job = exports.JobStatus = void 0;
+exports.Job = exports.JobPriority = exports.JobStatus = void 0;
 const typeorm_1 = require("typeorm");
 const swagger_1 = require("@nestjs/swagger");
 var JobStatus;
@@ -17,6 +17,13 @@ var JobStatus;
     JobStatus["OPEN"] = "open";
     JobStatus["CANCELLED"] = "cancelled";
 })(JobStatus || (exports.JobStatus = JobStatus = {}));
+var JobPriority;
+(function (JobPriority) {
+    JobPriority["URGENT"] = "urgent";
+    JobPriority["IMMEDIATE"] = "immediate";
+    JobPriority["SCHEDULED"] = "scheduled";
+    JobPriority["NORMAL"] = "normal";
+})(JobPriority || (exports.JobPriority = JobPriority = {}));
 let Job = class Job {
 };
 exports.Job = Job;
@@ -69,10 +76,18 @@ __decorate([
     __metadata("design:type", String)
 ], Job.prototype, "scheduledTime", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ default: false }),
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", Boolean)
-], Job.prototype, "isUrgent", void 0);
+    (0, typeorm_1.Column)({
+        type: 'enum',
+        enum: JobPriority,
+        default: JobPriority.NORMAL,
+    }),
+    (0, swagger_1.ApiProperty)({
+        enum: JobPriority,
+        description: 'İş önceliği: Acil, Hemen, İleri zamanlı, Normal',
+        default: JobPriority.NORMAL
+    }),
+    __metadata("design:type", String)
+], Job.prototype, "priority", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'simple-array', nullable: true }),
     (0, swagger_1.ApiProperty)({ type: [String], description: 'İş ilanı resimleri (URL\'ler)' }),

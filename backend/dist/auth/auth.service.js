@@ -162,16 +162,6 @@ let AuthService = class AuthService {
             statusCode: 200,
         };
     }
-    async validateUser(userId) {
-        const user = await this.userRepository.findOne({
-            where: { id: userId },
-            relations: ['categories', 'userInfos'],
-        });
-        if (!user) {
-            throw new common_1.UnauthorizedException('Kullanıcı bulunamadı');
-        }
-        return user;
-    }
     async checkPhone(checkPhoneDto) {
         const { phone, userType } = checkPhoneDto;
         const existingUser = await this.userRepository.findOne({

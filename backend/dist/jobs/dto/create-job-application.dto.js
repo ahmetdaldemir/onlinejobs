@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateJobApplicationDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
-const job_application_entity_1 = require("../entities/job-application.entity");
 class CreateJobApplicationDto {
 }
 exports.CreateJobApplicationDto = CreateJobApplicationDto;
@@ -40,14 +39,4 @@ __decorate([
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", Date)
 ], CreateJobApplicationDto.prototype, "proposedStartDate", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
-        required: false,
-        enum: job_application_entity_1.ApplicationTag,
-        description: 'Başvuru zamanlaması: urgent (Acil), immediate (Hemen), scheduled (İleri zamanlı)'
-    }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsEnum)(job_application_entity_1.ApplicationTag),
-    __metadata("design:type", String)
-], CreateJobApplicationDto.prototype, "tag", void 0);
 //# sourceMappingURL=create-job-application.dto.js.map

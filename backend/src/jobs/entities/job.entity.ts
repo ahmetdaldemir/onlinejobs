@@ -15,8 +15,13 @@ export enum JobStatus {
   CANCELLED = 'cancelled',
 }
 
- 
- 
+export enum JobPriority {
+  URGENT = 'urgent',        // Acil
+  IMMEDIATE = 'immediate',  // Hemen
+  SCHEDULED = 'scheduled',  // İleri zamanlı
+  NORMAL = 'normal',        // Normal
+}
+
 @Entity('jobs')
 @Index(['status'])
 @Index(['categoryId'])
@@ -64,9 +69,17 @@ export class Job {
   @ApiProperty()
   scheduledTime: string;
 
-  @Column({ default: false })
-  @ApiProperty()
-  isUrgent: boolean;
+  @Column({
+    type: 'enum',
+    enum: JobPriority,
+    default: JobPriority.NORMAL,
+  })
+  @ApiProperty({ 
+    enum: JobPriority, 
+    description: 'İş önceliği: Acil, Hemen, İleri zamanlı, Normal',
+    default: JobPriority.NORMAL
+  })
+  priority: JobPriority;
 
   @Column({ type: 'simple-array', nullable: true })
   @ApiProperty({ type: [String], description: 'İş ilanı resimleri (URL\'ler)' })

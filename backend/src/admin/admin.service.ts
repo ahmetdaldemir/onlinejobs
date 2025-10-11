@@ -13,6 +13,7 @@ import { UpdateCategoryDto } from '../categories/dto/update-category.dto';
 import * as bcrypt from 'bcryptjs';
 import { JobApplication } from '../jobs/entities/job-application.entity';
 import { UploadService } from '../upload/upload.service';
+import { JobPriority } from '../jobs/entities/job.entity';
 
 @Injectable()
 export class AdminService {
@@ -663,10 +664,10 @@ export class AdminService {
       // Başvuru sayısı (ağırlık: 0.4)
       score += job.applicationCount * 0.4;
       
-      // Aciliyet (ağırlık: 0.2)
-      if (job.isUrgent) {
-        score += 50 * 0.2;
-      }
+        // Aciliyet (ağırlık: 0.2)
+        if (job.priority === JobPriority.URGENT) {
+          score += 50 * 0.2;
+        }
       
       // Yeni işler için bonus (ağırlık: 0.1)
       const daysSinceCreation = (Date.now() - job.createdAt.getTime()) / (1000 * 60 * 60 * 24);

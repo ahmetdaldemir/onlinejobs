@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Job, JobStatus } from './entities/job.entity';
+import { Job, JobStatus, JobPriority } from './entities/job.entity';
 import { JobApplication, ApplicationStatus } from './entities/job-application.entity';
 import { NotificationsService } from '../notifications/notifications.service';
 import { User } from '../users/entities/user.entity';
@@ -449,9 +449,15 @@ export class JobsService {
     // Başvuru sayısı (ağırlık: 0.4)
     score += job.applicationCount * 0.4;
     
-    // Aciliyet (ağırlık: 0.2)
-    if (job.isUrgent) {
-      score += 50 * 0.2;
+    // Öncelik (ağırlık: 0.2)
+    if (job.priority === JobPriority.URGENT) {
+      score += 60 * 0.2;  // Acil - En yüksek
+    } else if (job.priority === JobPriority.IMMEDIATE) {
+      score += 50 * 0.2;  // Hemen
+    } else if (job.priority === JobPriority.SCHEDULED) {
+      score += 30 * 0.2;  // İleri zamanlı
+    } else {
+      score += 20 * 0.2;  // Normal
     }
     
     // Yeni işler için bonus (ağırlık: 0.1)

@@ -14,15 +14,27 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get('test')
-  @ApiOperation({ summary: 'Test kullanıcılarını listele (Public)' })
-  @ApiResponse({ status: 200, description: 'Test kullanıcıları listelendi' })
+  @ApiOperation({ 
+    summary: 'Test kullanıcılarını listele (Public)',
+    description: 'Development için - Test telefon numaralarına (+905550000001-005) sahip kullanıcıları listeler.'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Test kullanıcıları listelendi. Response: User[]' 
+  })
   async findTestUsers() {
     return this.usersService.findTestUsers();
   }
 
   @Get('real')
-  @ApiOperation({ summary: 'Gerçek kullanıcıları listele (Public)' })
-  @ApiResponse({ status: 200, description: 'Gerçek kullanıcılar listelendi' })
+  @ApiOperation({ 
+    summary: 'Gerçek kullanıcıları listele (Public)',
+    description: 'Development için - Test kullanıcıları hariç gerçek kullanıcıları listeler.'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Gerçek kullanıcılar listelendi. Response: User[]' 
+  })
   async findRealUsers() {
     return this.usersService.findRealUsers();
   }
@@ -30,8 +42,14 @@ export class UsersController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Tüm kullanıcıları listele' })
-  @ApiResponse({ status: 200, description: 'Kullanıcılar listelendi' })
+  @ApiOperation({ 
+    summary: 'Tüm kullanıcıları listele (Admin)',
+    description: 'Admin paneli için - Tüm kullanıcıları listeler.'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Kullanıcılar listelendi. Response: User[]' 
+  })
   async findAll() {
     return this.usersService.findAll();
   }
@@ -39,8 +57,14 @@ export class UsersController {
   @Get('active')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Aktif kullanıcıları listele' })
-  @ApiResponse({ status: 200, description: 'Aktif kullanıcılar listelendi' })
+  @ApiOperation({ 
+    summary: 'Aktif kullanıcıları listele (Admin)',
+    description: 'Admin paneli için - Status: ACTIVE olan kullanıcıları listeler.'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Aktif kullanıcılar listelendi. Response: User[]' 
+  })
   async findActiveUsers() {
     return this.usersService.findActiveUsers();
   }
@@ -48,8 +72,14 @@ export class UsersController {
   @Get('online')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Online kullanıcıları listele' })
-  @ApiResponse({ status: 200, description: 'Online kullanıcılar listelendi' })
+  @ApiOperation({ 
+    summary: 'Online kullanıcıları listele (Admin)',
+    description: 'Admin paneli için - isOnline: true olan kullanıcıları listeler.'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Online kullanıcılar listelendi. Response: User[]' 
+  })
   async findOnlineUsers() {
     return this.usersService.findOnlineUsers();
   }
@@ -93,172 +123,46 @@ export class UsersController {
   @Get('by-type/:userType')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcıları tipe göre listele' })
-  @ApiParam({ name: 'userType', description: 'Kullanıcı tipi: job_seeker, employer, both' })
-  @ApiResponse({ status: 200, description: 'Kullanıcılar listelendi' })
+  @ApiOperation({ 
+    summary: 'Kullanıcıları tipe göre listele (Admin)',
+    description: 'Admin paneli için - Kullanıcıları userType\'a göre filtreler (worker, employer).'
+  })
+  @ApiParam({ 
+    name: 'userType', 
+    description: 'Kullanıcı tipi',
+    enum: ['worker', 'employer']
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Kullanıcılar listelendi. Response: User[]' 
+  })
   async findUsersByType(@Param('userType') userType: string) {
     return this.usersService.findUsersByType(userType);
   }
 
-  @Put('user-types')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcı tiplerini güncelle' })
-  @ApiResponse({ status: 200, description: 'Kullanıcı tipleri güncellendi' })
-  async updateUserTypes(
-    @Request() req,
-    @Body('userType') userType: string,
-  ) {
-    return this.usersService.updateUserTypes(req.user.sub, userType);
-  }
-
-  @Get('user-info')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcının tüm adres bilgilerini getir' })
-  @ApiResponse({ status: 200, description: 'Kullanıcının tüm adres bilgileri' })
-  async getUserInfo(@Request() req) {
-    return this.usersService.getUserInfo(req.user.sub);
-  }
-
-  @Get('user-infos')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcının tüm adres bilgilerini getir (alias)' })
-  @ApiResponse({ status: 200, description: 'Kullanıcının tüm adres bilgileri' })
-  async getUserInfos(@Request() req) {
-    return this.usersService.getUserInfo(req.user.sub);
-  }
-
-  @Put('status')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcı durumunu güncelle' })
-  @ApiResponse({ status: 200, description: 'Durum güncellendi' })
-  async updateStatus(
-    @Request() req,
-    @Body('status') status: UserStatus,
-  ) {
-    return this.usersService.updateStatus(req.user.sub, status);
-  }
-
-
-  @Put('is-online')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcı online durumunu güncelle' })
-  @ApiResponse({ status: 200, description: 'Online durum güncellendi' })
-  async updateIsOnline(
-    @Request() req,
-    @Body('isOnline') isOnline: boolean,
-  ) {
-    return this.usersService.updateIsOnline(req.user.sub, isOnline = true);
-  }
-
-
-  @Put('is-offline')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcı offline durumunu güncelle' })
-  @ApiResponse({ status: 200, description: 'Offline durum güncellendi' })
-  async updateIsOffline(
-    @Request() req,
-    @Body('isOffline') isOffline: boolean,
-  ) {
-    return this.usersService.updateIsOffline(req.user.sub, isOffline = true);
-  }
- 
-
-  @Get('is-verified')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcının tüm adres bilgilerini getir (alias)' })
-  @ApiResponse({ status: 200, description: 'Kullanıcının tüm adres bilgileri' })
-  async getUserIsVerified(@Request() req) {
-    return this.usersService.getUserIsVerified(req.user.sub);
-  }
-
-  @Put('location')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcı konumunu güncelle' })
-  @ApiResponse({ status: 200, description: 'Konum güncellendi' })
-  async updateLocation(
-    @Request() req,
-    @Body() locationData: { name?: string; latitude: number; longitude: number },
-  ) {
-    return this.usersService.updateLocation(req.user.sub, locationData.latitude, locationData.longitude, locationData.name);
-  }
-
-  @Put('user-info')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcı bilgilerini güncelle (ID ile güncelleme veya yeni ekleme)' })
-  @ApiResponse({ status: 200, description: 'Kullanıcı bilgileri güncellendi' })
-  @ApiResponse({ status: 400, description: 'Geçersiz veri veya kayıt bulunamadı' })
-  async updateUserInfo(
-    @Request() req,
-    @Body() updateUserInfoDto: UpdateUserInfoDto,
-  ) {
-    return this.usersService.updateUserInfo(req.user.sub, updateUserInfoDto);
-  }
-
-
-  @Post('user-info')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcı bilgilerini güncelle (ID ile güncelleme veya yeni ekleme)' })
-  @ApiResponse({ status: 200, description: 'Kullanıcı bilgileri güncellendi' })
-  @ApiResponse({ status: 400, description: 'Geçersiz veri veya kayıt bulunamadı' })
-  async createUserInfo(
-    @Request() req,
-    @Body() createUserInfoDto: any,
-  ) {
-    return this.usersService.createUserInfo(req.user.sub, createUserInfoDto);
-  }
-
-
-
-  @Put('profile')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcı profilini güncelle (profil fotoğrafı dahil)' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        firstName: { type: 'string' },
-        lastName: { type: 'string' },
-        email: { type: 'string' },
-        phone: { type: 'string' },
-        bio: { type: 'string' },
-        categoryIds: { 
-          type: 'array', 
-          items: { type: 'string' } 
-        },
-        file: {
-          type: 'string',
-          format: 'binary',
-          description: 'Profil fotoğrafı (opsiyonel)',
-        },
-      },
-    },
-  })
-  @UseInterceptors(FileInterceptor('file'))
-  async updateProfile(
-    @Request() req,
-    @Body() updateData: any,
-    @UploadedFile() file?: any
-  ) {
-    return this.usersService.updateProfile(req.user.sub, updateData, file);
-  }
+  // ❌ KALDIRILDI: Artık GET /user ve PUT /user endpoint'leri kullanılıyor
+  // Kaldırılan endpoint'ler:
+  // - PUT /users/user-types, GET /users/user-info, GET /users/user-infos
+  // - PUT /users/status, PUT /users/is-online, PUT /users/is-offline
+  // - GET /users/is-verified, PUT /users/location, PUT /users/user-info
+  // - POST /users/user-info, PUT /users/profile
+  //
+  // Hepsi şu endpoint'lerden yapılıyor:
+  // ✅ GET /user - Tüm bilgileri getir
+  // ✅ PUT /user - Tüm bilgileri güncelle
 
   @Put('profile-image')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Profil fotoğrafını güncelle (Dosya yükle)' })
-  @ApiResponse({ status: 200, description: 'Profil fotoğrafı güncellendi' })
+  @ApiOperation({ 
+    summary: 'Profil fotoğrafını yükle ve güncelle',
+    description: 'Dosya upload için özel endpoint. Profil fotoğrafını yükler ve user.profileImage alanını günceller. Diğer bilgiler için PUT /user kullanın.'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Profil fotoğrafı başarıyla güncellendi. Response: { profileImage: string, message: string }' 
+  })
+  @ApiResponse({ status: 400, description: 'Dosya yüklenmedi veya geçersiz format' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -268,7 +172,7 @@ export class UsersController {
         file: {
           type: 'string',
           format: 'binary',
-          description: 'Profil fotoğrafı (max 5MB)',
+          description: 'Profil fotoğrafı (max 5MB, jpg/jpeg/png)',
         },
       },
     },
@@ -287,23 +191,49 @@ export class UsersController {
   }
 
   @Get('profile-image/:userId')
-  @ApiOperation({ summary: 'Kullanıcı profil fotoğrafını getir' })
-  @ApiResponse({ status: 200, description: 'Profil fotoğrafı URL\'i' })
+  @ApiOperation({ 
+    summary: 'Başka kullanıcının profil fotoğrafını getir',
+    description: 'Public endpoint - Başka bir kullanıcının profil resmini almak için kullanılır.'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Profil fotoğrafı URL\'i. Response: { profileImage: string }' 
+  })
   async getProfileImage(@Param('userId') userId: string) {
     const user = await this.usersService.findById(userId);
     return { profileImage: user.profileImage };
   }
 
   @Get('online-users')
-  @ApiOperation({ summary: 'Online kullanıcıları listele' })
-  @ApiResponse({ status: 200, description: 'Online kullanıcılar listelendi' })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ 
+    summary: 'Tüm online kullanıcıları listele',
+    description: 'Hem worker hem employer - online olan tüm kullanıcıları listeler.'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Online kullanıcılar listelendi. Response: User[]' 
+  })
   async getOnlineUsers() {
     return this.usersService.findOnlineUsers();
   }
 
   @Get('online-workers')
-  @ApiOperation({ summary: 'Online işçileri listele' })
-  @ApiResponse({ status: 200, description: 'Online işçiler listelendi' })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ 
+    summary: 'Yakındaki online worker\'ları listele (Employer için)',
+    description: 'Employer\'ların yakındaki online worker\'ları bulmak için kullanır. Worker koordinatları User tablosundan alınır.'
+  })
+  @ApiQuery({ name: 'latitude', required: false, type: Number, description: 'Enlem (latitude)' })
+  @ApiQuery({ name: 'longitude', required: false, type: Number, description: 'Boylam (longitude)' })
+  @ApiQuery({ name: 'radius', required: false, type: Number, description: 'Arama yarıçapı (km)' })
+  @ApiQuery({ name: 'categoryId', required: false, type: String, description: 'Kategori ID' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Online worker\'lar listelendi. Worker\'ların city, district, neighborhood, latitude, longitude bilgileri User objesinde gelir.' 
+  })
   async getOnlineWorkers(
     @Query('latitude') latitude?: number,
     @Query('longitude') longitude?: number,
@@ -314,8 +244,20 @@ export class UsersController {
   }
 
   @Get('online-employers')
-  @ApiOperation({ summary: 'Online işverenleri listele' })
-  @ApiResponse({ status: 200, description: 'Online işverenler listelendi' })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ 
+    summary: 'Yakındaki online employer\'ları listele (Worker için)',
+    description: 'Worker\'ların yakındaki online employer\'ları bulmak için kullanır. Employer koordinatları UserInfo tablosundan alınır.'
+  })
+  @ApiQuery({ name: 'latitude', required: false, type: Number, description: 'Enlem (latitude)' })
+  @ApiQuery({ name: 'longitude', required: false, type: Number, description: 'Boylam (longitude)' })
+  @ApiQuery({ name: 'radius', required: false, type: Number, description: 'Arama yarıçapı (km)' })
+  @ApiQuery({ name: 'categoryId', required: false, type: String, description: 'Kategori ID' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Online employer\'lar listelendi. Employer\'ların adres bilgileri userInfos array\'inde gelir.' 
+  })
   async getOnlineEmployers(
     @Query('latitude') latitude?: number,
     @Query('longitude') longitude?: number,
@@ -326,8 +268,14 @@ export class UsersController {
   }
 
   @Get('user-status/:userId')
-  @ApiOperation({ summary: 'Kullanıcının online durumunu getir' })
-  @ApiResponse({ status: 200, description: 'Kullanıcı durumu' })
+  @ApiOperation({ 
+    summary: 'Başka kullanıcının online durumunu getir',
+    description: 'Chat ve messaging için kullanılır. Başka bir kullanıcının online durumunu, son görülme zamanını ve temel bilgilerini döner.'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Kullanıcı online durumu. Response: { userId: string, isOnline: boolean, lastSeen: Date, firstName: string, lastName: string }' 
+  })
   async getUserStatus(@Param('userId') userId: string) {
     const user = await this.usersService.findById(userId);
     return {
@@ -339,11 +287,14 @@ export class UsersController {
     };
   }
 
-  // Portfolio yönetimi
+  // Portfolio yönetimi (sadece worker için)
   @Post('portfolio/images')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Portföy resmi ekle (sadece worker kullanıcılar için)' })
+  @ApiOperation({ 
+    summary: 'Portföy resmi ekle (sadece worker)',
+    description: 'Worker\'ların portföy resmi yüklemesi için. Max 10 resim eklenebilir. Güncel liste için GET /user kullanın.'
+  })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -353,13 +304,16 @@ export class UsersController {
         file: {
           type: 'string',
           format: 'binary',
-          description: 'Portföy resmi (max 5MB, max 10 resim)',
+          description: 'Portföy resmi (max 5MB, jpg/jpeg/png)',
         },
       },
     },
   })
-  @ApiResponse({ status: 201, description: 'Portföy resmi eklendi' })
-  @ApiResponse({ status: 400, description: 'Geçersiz dosya veya maksimum resim sayısı aşıldı' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'Portföy resmi eklendi. Response: { message: string, portfolioImages: string[], totalImages: number }' 
+  })
+  @ApiResponse({ status: 400, description: 'Geçersiz dosya, maksimum resim sayısı aşıldı (max 10), veya kullanıcı worker değil' })
   @UseInterceptors(FileInterceptor('file'))
   async addPortfolioImage(
     @Request() req,
@@ -377,22 +331,18 @@ export class UsersController {
     };
   }
 
-  @Get('portfolio/images')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcının portföy resimlerini getir' })
-  @ApiResponse({ status: 200, description: 'Portföy resimleri' })
-  async getPortfolioImages(@Request() req) {
-    const images = await this.usersService.getPortfolioImages(req.user.sub);
-    return {
-      portfolioImages: images,
-      totalImages: images.length,
-    };
-  }
+  // ❌ KALDIRILDI: GET /users/portfolio/images
+  // Artık GET /user response'unda portfolioImages array'i geliyor
 
   @Get('portfolio/images/:userId')
-  @ApiOperation({ summary: 'Belirli bir kullanıcının portföy resimlerini getir (public)' })
-  @ApiResponse({ status: 200, description: 'Portföy resimleri' })
+  @ApiOperation({ 
+    summary: 'Başka kullanıcının portföy resimlerini getir',
+    description: 'Public endpoint - Başka bir kullanıcının (worker) portföy resimlerini görüntülemek için. Kendi portföy resimleriniz için GET /user kullanın.'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Portföy resimleri. Response: { userId: string, portfolioImages: string[], totalImages: number }' 
+  })
   async getUserPortfolioImages(@Param('userId') userId: string) {
     const images = await this.usersService.getPortfolioImages(userId);
     return {
@@ -405,7 +355,10 @@ export class UsersController {
   @Post('portfolio/images/delete')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Portföy resmini sil' })
+  @ApiOperation({ 
+    summary: 'Portföy resmini sil (sadece worker)',
+    description: 'Belirtilen URL\'deki portföy resmini siler. Güncel portfolio listesi için GET /user kullanın.'
+  })
   @ApiBody({
     schema: {
       type: 'object',
@@ -419,7 +372,10 @@ export class UsersController {
       },
     },
   })
-  @ApiResponse({ status: 200, description: 'Portföy resmi silindi' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Portföy resmi silindi. Response: { message: string, portfolioImages: string[], totalImages: number }' 
+  })
   @ApiResponse({ status: 400, description: 'Geçersiz URL veya resim bulunamadı' })
   async deletePortfolioImage(
     @Request() req,
@@ -440,8 +396,14 @@ export class UsersController {
   @Post('portfolio/images/delete-all')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Tüm portföy resimlerini sil' })
-  @ApiResponse({ status: 200, description: 'Tüm portföy resimleri silindi' })
+  @ApiOperation({ 
+    summary: 'Tüm portföy resimlerini sil (sadece worker)',
+    description: 'Kullanıcının tüm portföy resimlerini siler. Güncel bilgi için GET /user kullanın.'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Tüm portföy resimleri silindi. Response: { message: string, portfolioImages: [], totalImages: 0 }' 
+  })
   async deleteAllPortfolioImages(@Request() req) {
     await this.usersService.deleteAllPortfolioImages(req.user.sub);
     return {
@@ -455,8 +417,14 @@ export class UsersController {
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Kullanıcı detayı (UUID ile)' })
-  @ApiResponse({ status: 200, description: 'Kullanıcı detayı' })
+  @ApiOperation({ 
+    summary: 'Başka kullanıcının detaylarını getir (UUID ile)',
+    description: 'Başka bir kullanıcının profil bilgilerini görüntülemek için kullanılır (chat, profil görüntüleme vb.). Kendi bilgileriniz için GET /user kullanın.'
+  })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Kullanıcı bilgileri. Response: User entity (şifre hariç)' 
+  })
   @ApiResponse({ status: 404, description: 'Kullanıcı bulunamadı' })
   @ApiResponse({ status: 400, description: 'Geçersiz UUID formatı' })
   async findById(@Param('id') id: string) {
