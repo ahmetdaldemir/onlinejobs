@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString, IsEmail, IsEnum, IsBoolean, IsArray, IsNumber } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CompleteUserDto {
   // User bilgileri
@@ -95,50 +96,28 @@ export class CompleteUserDto {
   @IsBoolean()
   isOnline?: boolean;
 
-  // UserInfo bilgileri
+  // Worker için konum bilgileri (User tablosunda)
   @ApiProperty({ 
     required: false, 
-    description: 'Adres adı (Ev, İş, vb.)', 
-    example: 'Ev Adresim' 
+    description: '🔹 Şehir - Sadece WORKER için (User tablosuna kaydedilir)', 
+    example: 'İstanbul' 
   })
   @IsOptional()
   @IsString()
-  addressName?: string;
+  city?: string;
 
   @ApiProperty({ 
     required: false, 
-    description: 'Enlem (latitude) - ⚠️ Sadece worker için! -90 ile 90 arası olmalı', 
-    example: 41.0082376,
-    minimum: -90,
-    maximum: 90
-  })
-  @IsOptional()
-  @IsNumber()
-  latitude?: number;
-
-  @ApiProperty({ 
-    required: false, 
-    description: 'Boylam (longitude) - ⚠️ Sadece worker için! -180 ile 180 arası olmalı', 
-    example: 28.9783589,
-    minimum: -180,
-    maximum: 180
-  })
-  @IsOptional()
-  @IsNumber()
-  longitude?: number;
-
-  @ApiProperty({ 
-    required: false, 
-    description: 'Genel adres', 
-    example: 'Bağdat Caddesi No:14, Kadıköy/İstanbul' 
+    description: '🔹 İlçe - Sadece WORKER için (User tablosuna kaydedilir)', 
+    example: 'Kadıköy' 
   })
   @IsOptional()
   @IsString()
-  address?: string;
+  district?: string;
 
   @ApiProperty({ 
     required: false, 
-    description: 'Mahalle/Cadde/Sokak', 
+    description: '🔹 Mahalle - Sadece WORKER için (User tablosuna kaydedilir)', 
     example: 'Fenerbahçe Mahallesi' 
   })
   @IsOptional()
@@ -147,7 +126,60 @@ export class CompleteUserDto {
 
   @ApiProperty({ 
     required: false, 
-    description: 'Bina numarası', 
+    description: '🔹 Enlem (latitude) - Sadece WORKER için! -90 ile 90 arası (User tablosuna kaydedilir)', 
+    example: 41.0082376,
+    minimum: -90,
+    maximum: 90
+  })
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return parseFloat(value);
+    }
+    return value;
+  })
+  @IsNumber()
+  latitude?: number;
+
+  @ApiProperty({ 
+    required: false, 
+    description: '🔹 Boylam (longitude) - Sadece WORKER için! -180 ile 180 arası (User tablosuna kaydedilir)', 
+    example: 28.9783589,
+    minimum: -180,
+    maximum: 180
+  })
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      return parseFloat(value);
+    }
+    return value;
+  })
+  @IsNumber()
+  longitude?: number;
+
+  // Employer için UserInfo bilgileri
+  @ApiProperty({ 
+    required: false, 
+    description: '🔸 Adres adı - Sadece EMPLOYER için (UserInfo tablosuna kaydedilir)', 
+    example: 'Ev Adresim' 
+  })
+  @IsOptional()
+  @IsString()
+  addressName?: string;
+
+  @ApiProperty({ 
+    required: false, 
+    description: '🔸 Genel adres - Sadece EMPLOYER için (UserInfo tablosuna kaydedilir)', 
+    example: 'Bağdat Caddesi No:14, Kadıköy/İstanbul' 
+  })
+  @IsOptional()
+  @IsString()
+  address?: string;
+
+  @ApiProperty({ 
+    required: false, 
+    description: '🔸 Bina numarası - Sadece EMPLOYER için (UserInfo tablosuna kaydedilir)', 
     example: '12/A' 
   })
   @IsOptional()
@@ -156,7 +188,7 @@ export class CompleteUserDto {
 
   @ApiProperty({ 
     required: false, 
-    description: 'Kat bilgisi', 
+    description: '🔸 Kat bilgisi - Sadece EMPLOYER için (UserInfo tablosuna kaydedilir)', 
     example: '3' 
   })
   @IsOptional()
@@ -165,7 +197,7 @@ export class CompleteUserDto {
 
   @ApiProperty({ 
     required: false, 
-    description: 'Daire numarası', 
+    description: '🔸 Daire numarası - Sadece EMPLOYER için (UserInfo tablosuna kaydedilir)', 
     example: '8' 
   })
   @IsOptional()
@@ -174,7 +206,7 @@ export class CompleteUserDto {
 
   @ApiProperty({ 
     required: false, 
-    description: 'Adres açıklaması', 
+    description: '🔸 Adres açıklaması - Sadece EMPLOYER için (UserInfo tablosuna kaydedilir)', 
     example: 'Kapı kodu: 1234. Zile bastığınızda açılır.' 
   })
   @IsOptional()

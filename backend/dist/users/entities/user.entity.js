@@ -126,6 +126,31 @@ __decorate([
     __metadata("design:type", Date)
 ], User.prototype, "lastSeen", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ length: 100, nullable: true }),
+    (0, swagger_1.ApiProperty)({ description: 'Şehir (sadece worker için)' }),
+    __metadata("design:type", String)
+], User.prototype, "city", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ length: 100, nullable: true }),
+    (0, swagger_1.ApiProperty)({ description: 'İlçe (sadece worker için)' }),
+    __metadata("design:type", String)
+], User.prototype, "district", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ length: 100, nullable: true }),
+    (0, swagger_1.ApiProperty)({ description: 'Mahalle (sadece worker için)' }),
+    __metadata("design:type", String)
+], User.prototype, "neighborhood", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 8, nullable: true }),
+    (0, swagger_1.ApiProperty)({ description: 'Enlem/Latitude (sadece worker için)' }),
+    __metadata("design:type", Number)
+], User.prototype, "latitude", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 11, scale: 8, nullable: true }),
+    (0, swagger_1.ApiProperty)({ description: 'Boylam/Longitude (sadece worker için)' }),
+    __metadata("design:type", Number)
+], User.prototype, "longitude", void 0);
+__decorate([
     (0, typeorm_1.OneToMany)('Job', 'employer'),
     __metadata("design:type", Array)
 ], User.prototype, "jobs", void 0);

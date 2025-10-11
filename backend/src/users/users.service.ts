@@ -99,7 +99,6 @@ export class UsersService {
   ): Promise<any[]> {
     let query = this.userRepository
       .createQueryBuilder('user')
-      .leftJoinAndSelect('user.userInfos', 'userInfo')
       .where('user.userType = :userType', { userType: 'worker' })
       .andWhere('user.isOnline = :isOnline', { isOnline: true })
       .andWhere('user.status = :status', { status: UserStatus.ACTIVE });
@@ -109,15 +108,15 @@ export class UsersService {
     }
 
     if (latitude && longitude && radius) {
-      // Sadece konum bilgisi olan kullanıcıları filtrele
-      query = query.andWhere('userInfo.latitude IS NOT NULL')
-        .andWhere('userInfo.longitude IS NOT NULL')
+      // Worker'lar için User tablosundaki latitude/longitude kullan
+      query = query.andWhere('user.latitude IS NOT NULL')
+        .andWhere('user.longitude IS NOT NULL')
         .andWhere(
           `(
             6371 * acos(
-              cos(radians(:latitude)) * cos(radians(userInfo.latitude)) *
-              cos(radians(userInfo.longitude) - radians(:longitude)) +
-              sin(radians(:latitude)) * sin(radians(userInfo.latitude))
+              cos(radians(:latitude)) * cos(radians(user.latitude)) *
+              cos(radians(user.longitude) - radians(:longitude)) +
+              sin(radians(:latitude)) * sin(radians(user.latitude))
             )
           ) <= :radius`,
           { latitude, longitude, radius }
@@ -125,9 +124,9 @@ export class UsersService {
         .addSelect(
           `(
             6371 * acos(
-              cos(radians(:latitude)) * cos(radians(userInfo.latitude)) *
-              cos(radians(userInfo.longitude) - radians(:longitude)) +
-              sin(radians(:latitude)) * sin(radians(userInfo.latitude))
+              cos(radians(:latitude)) * cos(radians(user.latitude)) *
+              cos(radians(user.longitude) - radians(:longitude)) +
+              sin(radians(:latitude)) * sin(radians(user.latitude))
             )
           )`,
           'distance'
@@ -141,16 +140,13 @@ export class UsersService {
     const processedResults = await Promise.all(results.map(async (user) => {
       let processedUser: any = { ...user };
       
-      // Mesafe bilgisini ekle
-      if (latitude && longitude) {
-        const userInfo = user.userInfos?.[0];
-        if (userInfo && userInfo.latitude && userInfo.longitude) {
-          const distance = this.calculateDistance(
-            latitude, longitude,
-            userInfo.latitude, userInfo.longitude
-          );
-          processedUser.distance = Math.round(distance * 100) / 100; // 2 ondalık basamak
-        }
+      // Mesafe bilgisini ekle (User tablosundaki koordinatlardan)
+      if (latitude && longitude && user.latitude && user.longitude) {
+        const distance = this.calculateDistance(
+          latitude, longitude,
+          user.latitude, user.longitude
+        );
+        processedUser.distance = Math.round(distance * 100) / 100; // 2 ondalık basamak
       }
 
       // Kategorileri hiyerarşik formatta döndür
@@ -326,28 +322,16 @@ export class UsersService {
       throw new Error('Longitude değeri -180 ile 180 arasında olmalıdır');
     }
     
-    // UserInfo'yu bul veya oluştur
-    let userInfo = await this.userInfoRepository.findOne({
-      where: { user: { id: userId } },
-      relations: ['user']
-    });
-
-    if (!userInfo) {
-      userInfo = this.userInfoRepository.create({
-        user: { id: userId },
-        latitude,
-        longitude,
-        name,
-      });
-    } else {
-      userInfo.latitude = latitude;
-      userInfo.longitude = longitude;
-      if (name) {
-        userInfo.name = name;
-      }
+    // Worker için User tablosuna kaydet
+    user.latitude = latitude;
+    user.longitude = longitude;
+    
+    // name parametresi city bilgisi olarak yorumlanabilir (opsiyonel)
+    if (name) {
+      user.city = name;
     }
 
-    await this.userInfoRepository.save(userInfo);
+    await this.userRepository.save(user);
     return user;
   }
 
@@ -841,11 +825,6 @@ export class UsersService {
       throw new NotFoundException('Kullanıcı bulunamadı');
     }
 
-    // Sadece worker kullanıcıları koordinat bilgisi girebilir
-    if ((completeUserDto.latitude !== undefined || completeUserDto.longitude !== undefined) && user.userType !== 'worker') {
-      throw new BadRequestException('Koordinat bilgisi sadece worker kullanıcıları tarafından güncellenebilir');
-    }
-
     // User bilgilerini güncelle
     if (completeUserDto.firstName !== undefined && completeUserDto.firstName.trim() !== '') {
       user.firstName = completeUserDto.firstName;
@@ -880,92 +859,98 @@ export class UsersService {
       user.password = await bcrypt.hash(completeUserDto.password, 10);
     }
 
-    await this.userRepository.save(user);
-
-    // UserInfo bilgilerini güncelle veya oluştur
-    if (
-      completeUserDto.addressName ||
-      completeUserDto.latitude !== undefined ||
-      completeUserDto.longitude !== undefined ||
-      completeUserDto.address ||
-      completeUserDto.neighborhood ||
-      completeUserDto.buildingNo ||
-      completeUserDto.floor ||
-      completeUserDto.apartmentNo ||
-      completeUserDto.description
-    ) {
-      let userInfo: UserInfo | null = user.userInfos && user.userInfos.length > 0 ? user.userInfos[0] : null;
-
+    // Worker için: Konum bilgilerini User tablosuna kaydet
+    if (user.userType === 'worker') {
+      if (completeUserDto.city !== undefined && completeUserDto.city.trim() !== '') {
+        user.city = completeUserDto.city;
+      }
+      if (completeUserDto.district !== undefined && completeUserDto.district.trim() !== '') {
+        user.district = completeUserDto.district;
+      }
+      if (completeUserDto.neighborhood !== undefined && completeUserDto.neighborhood.trim() !== '') {
+        user.neighborhood = completeUserDto.neighborhood;
+      }
+      
       // Koordinat validasyonu
       if (completeUserDto.latitude !== undefined) {
         if (completeUserDto.latitude < -90 || completeUserDto.latitude > 90) {
           throw new BadRequestException('Latitude değeri -90 ile 90 arasında olmalıdır');
         }
+        user.latitude = completeUserDto.latitude;
       }
       if (completeUserDto.longitude !== undefined) {
         if (completeUserDto.longitude < -180 || completeUserDto.longitude > 180) {
           throw new BadRequestException('Longitude değeri -180 ile 180 arasında olmalıdır');
         }
+        user.longitude = completeUserDto.longitude;
       }
-
-      if (!userInfo) {
-        // Yeni UserInfo oluştur
-        const createData: any = {};
-        
-        if (completeUserDto.addressName) createData.name = completeUserDto.addressName;
-        if (completeUserDto.address) createData.address = completeUserDto.address;
-        if (completeUserDto.neighborhood) createData.neighborhood = completeUserDto.neighborhood;
-        if (completeUserDto.buildingNo) createData.buildingNo = completeUserDto.buildingNo;
-        if (completeUserDto.floor) createData.floor = completeUserDto.floor;
-        if (completeUserDto.apartmentNo) createData.apartmentNo = completeUserDto.apartmentNo;
-        if (completeUserDto.description) createData.description = completeUserDto.description;
-
-        // Sadece worker için koordinat ekle
-        if (user.userType === 'worker') {
-          if (completeUserDto.latitude !== undefined) createData.latitude = completeUserDto.latitude;
-          if (completeUserDto.longitude !== undefined) createData.longitude = completeUserDto.longitude;
-        }
-
-        userInfo = this.userInfoRepository.create({
-          user: { id: userId } as any,
-          ...createData
-        }) as unknown as UserInfo;
-      } else {
-        // Mevcut UserInfo'yu güncelle
-        if (completeUserDto.addressName !== undefined && completeUserDto.addressName.trim() !== '') {
-          userInfo.name = completeUserDto.addressName;
-        }
-        if (completeUserDto.address !== undefined && completeUserDto.address.trim() !== '') {
-          userInfo.address = completeUserDto.address;
-        }
-        if (completeUserDto.neighborhood !== undefined && completeUserDto.neighborhood.trim() !== '') {
-          userInfo.neighborhood = completeUserDto.neighborhood;
-        }
-        if (completeUserDto.buildingNo !== undefined && completeUserDto.buildingNo.trim() !== '') {
-          userInfo.buildingNo = completeUserDto.buildingNo;
-        }
-        if (completeUserDto.floor !== undefined && completeUserDto.floor.trim() !== '') {
-          userInfo.floor = completeUserDto.floor;
-        }
-        if (completeUserDto.apartmentNo !== undefined && completeUserDto.apartmentNo.trim() !== '') {
-          userInfo.apartmentNo = completeUserDto.apartmentNo;
-        }
-        if (completeUserDto.description !== undefined && completeUserDto.description.trim() !== '') {
-          userInfo.description = completeUserDto.description;
-        }
-
-        // Sadece worker için koordinat güncelle
-        if (user.userType === 'worker') {
-          if (completeUserDto.latitude !== undefined && completeUserDto.latitude !== null) {
-            userInfo.latitude = completeUserDto.latitude;
-          }
-          if (completeUserDto.longitude !== undefined && completeUserDto.longitude !== null) {
-            userInfo.longitude = completeUserDto.longitude;
-          }
-        }
+    } else {
+      // Employer'a konum bilgisi gönderilirse hata ver
+      if (completeUserDto.city || completeUserDto.district || completeUserDto.neighborhood || 
+          completeUserDto.latitude !== undefined || completeUserDto.longitude !== undefined) {
+        throw new BadRequestException('Konum bilgileri (city, district, neighborhood, latitude, longitude) sadece worker kullanıcıları için geçerlidir');
       }
+    }
 
-      await this.userInfoRepository.save(userInfo);
+    await this.userRepository.save(user);
+
+    // UserInfo bilgilerini güncelle veya oluştur (SADECE EMPLOYER için)
+    if (user.userType === 'employer') {
+      if (
+        completeUserDto.addressName ||
+        completeUserDto.address ||
+        completeUserDto.buildingNo ||
+        completeUserDto.floor ||
+        completeUserDto.apartmentNo ||
+        completeUserDto.description
+      ) {
+        let userInfo: UserInfo | null = user.userInfos && user.userInfos.length > 0 ? user.userInfos[0] : null;
+
+        if (!userInfo) {
+          // Yeni UserInfo oluştur
+          const createData: any = {};
+          
+          if (completeUserDto.addressName) createData.name = completeUserDto.addressName;
+          if (completeUserDto.address) createData.address = completeUserDto.address;
+          if (completeUserDto.buildingNo) createData.buildingNo = completeUserDto.buildingNo;
+          if (completeUserDto.floor) createData.floor = completeUserDto.floor;
+          if (completeUserDto.apartmentNo) createData.apartmentNo = completeUserDto.apartmentNo;
+          if (completeUserDto.description) createData.description = completeUserDto.description;
+
+          userInfo = this.userInfoRepository.create({
+            user: { id: userId } as any,
+            ...createData
+          }) as unknown as UserInfo;
+        } else {
+          // Mevcut UserInfo'yu güncelle
+          if (completeUserDto.addressName !== undefined && completeUserDto.addressName.trim() !== '') {
+            userInfo.name = completeUserDto.addressName;
+          }
+          if (completeUserDto.address !== undefined && completeUserDto.address.trim() !== '') {
+            userInfo.address = completeUserDto.address;
+          }
+          if (completeUserDto.buildingNo !== undefined && completeUserDto.buildingNo.trim() !== '') {
+            userInfo.buildingNo = completeUserDto.buildingNo;
+          }
+          if (completeUserDto.floor !== undefined && completeUserDto.floor.trim() !== '') {
+            userInfo.floor = completeUserDto.floor;
+          }
+          if (completeUserDto.apartmentNo !== undefined && completeUserDto.apartmentNo.trim() !== '') {
+            userInfo.apartmentNo = completeUserDto.apartmentNo;
+          }
+          if (completeUserDto.description !== undefined && completeUserDto.description.trim() !== '') {
+            userInfo.description = completeUserDto.description;
+          }
+        }
+
+        await this.userInfoRepository.save(userInfo);
+      }
+    } else {
+      // Worker'a UserInfo bilgisi gönderilirse hata ver
+      if (completeUserDto.addressName || completeUserDto.address || completeUserDto.buildingNo || 
+          completeUserDto.floor || completeUserDto.apartmentNo || completeUserDto.description) {
+        throw new BadRequestException('UserInfo bilgileri (addressName, address, buildingNo, floor, apartmentNo, description) sadece employer kullanıcıları için geçerlidir');
+      }
     }
 
     // Güncellenmiş kullanıcıyı döndür

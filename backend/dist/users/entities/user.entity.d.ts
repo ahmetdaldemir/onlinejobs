@@ -23,6 +23,11 @@ export declare class User {
     createdAt: Date;
     updatedAt: Date;
     lastSeen: Date;
+    city: string;
+    district: string;
+    neighborhood: string;
+    latitude: number;
+    longitude: number;
     jobs: any[];
     sentMessages: any[];
     receivedMessages: any[];

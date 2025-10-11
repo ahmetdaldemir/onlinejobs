@@ -9,11 +9,13 @@ export declare class CompleteUserDto {
     profileImage?: string;
     categoryIds?: string[];
     isOnline?: boolean;
-    addressName?: string;
+    city?: string;
+    district?: string;
+    neighborhood?: string;
     latitude?: number;
     longitude?: number;
+    addressName?: string;
     address?: string;
-    neighborhood?: string;
     buildingNo?: string;
     floor?: string;
     apartmentNo?: string;

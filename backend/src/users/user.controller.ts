@@ -14,11 +14,25 @@ export class UserController {
   @ApiBearerAuth()
   @ApiOperation({ 
     summary: 'Kullanıcının tüm bilgilerini getir',
-    description: 'Token\'dan kullanıcıyı bulup tüm bilgilerini döner: User bilgileri, UserInfos (array), UserCategories (array), UserVerifications (array), UserVerified (boolean)'
+    description: `Token'dan kullanıcıyı bulup tüm bilgilerini döner.
+    
+    📊 Response İçeriği:
+    • User bilgileri (id, firstName, lastName, email, phone, userType, bio, rating, vb.)
+    • userCategories: [] - Kullanıcının seçtiği kategoriler
+    • userVerifications: [] - Verification kayıtları
+    • userVerified: boolean - En az 1 approved verification varsa true
+    
+    👷 WORKER ise (userType: 'worker'):
+    • city, district, neighborhood, latitude, longitude - User objesinde gelir
+    • userInfos: [] - BOŞ ARRAY (Worker'ların UserInfo kaydı olmaz)
+    
+    👔 EMPLOYER ise (userType: 'employer'):
+    • city, district, neighborhood, latitude, longitude - NULL (Employer'da olmaz)
+    • userInfos: [] - Employer'ın adresleri (birden fazla olabilir)`
   })
   @ApiResponse({ 
     status: 200, 
-    description: 'Kullanıcı bilgileri başarıyla getirildi. Response: { user bilgileri, userInfos: [], userCategories: [], userVerifications: [], userVerified: boolean }' 
+    description: 'Kullanıcı bilgileri başarıyla getirildi. Response: { user bilgileri, userCategories: [], userInfos: [], userVerifications: [], userVerified: boolean }' 
   })
   @ApiResponse({ status: 404, description: 'Kullanıcı bulunamadı' })
   async getMyCompleteProfile(@Request() req) {
@@ -32,15 +46,29 @@ export class UserController {
     summary: 'Kullanıcının tüm bilgilerini güncelle',
     description: `Token'dan kullanıcıyı bulup bilgilerini günceller.
     
-    🔹 User Bilgileri: firstName, lastName, email, phone, userType, bio, profileImage, categoryIds, isOnline
-    🔹 UserInfo Bilgileri: addressName, latitude, longitude, address, neighborhood, buildingNo, floor, apartmentNo, description
+    🔹 User Bilgileri: firstName, lastName, email, phone, userType, bio, profileImage, categoryIds, isOnline, password
+    
+    👷 WORKER için (User tablosuna kaydedilir):
+    • city (şehir)
+    • district (ilçe)
+    • neighborhood (mahalle)
+    • latitude (enlem)
+    • longitude (boylam)
+    
+    👔 EMPLOYER için (UserInfo tablosuna kaydedilir):
+    • addressName (adres adı)
+    • address (genel adres)
+    • buildingNo (bina no)
+    • floor (kat)
+    • apartmentNo (daire no)
+    • description (açıklama)
     
     ⚠️ Önemli Kurallar:
     • Sadece doldurulan alanlar güncellenir
     • Boş string veya null gönderilirse güncelleme yapılmaz
-    • Koordinat (latitude/longitude) sadece worker kullanıcıları için geçerlidir
+    • Worker'a UserInfo bilgileri gönderilemez
+    • Employer'a konum bilgileri (city, district, vb.) gönderilemez
     • Şifre gönderilirse otomatik hash'lenir
-    • Mevcut UserInfo varsa güncellenir, yoksa yeni oluşturulur
     
     📊 Response: Güncellenmiş kullanıcı bilgileri (GET /user ile aynı format)` 
   })

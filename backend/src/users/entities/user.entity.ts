@@ -108,6 +108,27 @@ export class User {
   @ApiProperty()
   lastSeen: Date;
 
+  // Worker için konum bilgileri (sadece worker kullanır)
+  @Column({ length: 100, nullable: true })
+  @ApiProperty({ description: 'Şehir (sadece worker için)' })
+  city: string;
+
+  @Column({ length: 100, nullable: true })
+  @ApiProperty({ description: 'İlçe (sadece worker için)' })
+  district: string;
+
+  @Column({ length: 100, nullable: true })
+  @ApiProperty({ description: 'Mahalle (sadece worker için)' })
+  neighborhood: string;
+
+  @Column({ type: 'decimal', precision: 10, scale: 8, nullable: true })
+  @ApiProperty({ description: 'Enlem/Latitude (sadece worker için)' })
+  latitude: number;
+
+  @Column({ type: 'decimal', precision: 11, scale: 8, nullable: true })
+  @ApiProperty({ description: 'Boylam/Longitude (sadece worker için)' })
+  longitude: number;
+
   // İlişkiler
   @OneToMany('Job', 'employer')
   jobs: any[];

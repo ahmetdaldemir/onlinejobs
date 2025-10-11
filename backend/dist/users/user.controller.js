@@ -36,11 +36,25 @@ __decorate([
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({
         summary: 'Kullanıcının tüm bilgilerini getir',
-        description: 'Token\'dan kullanıcıyı bulup tüm bilgilerini döner: User bilgileri, UserInfos (array), UserCategories (array), UserVerifications (array), UserVerified (boolean)'
+        description: `Token'dan kullanıcıyı bulup tüm bilgilerini döner.
+    
+    📊 Response İçeriği:
+    • User bilgileri (id, firstName, lastName, email, phone, userType, bio, rating, vb.)
+    • userCategories: [] - Kullanıcının seçtiği kategoriler
+    • userVerifications: [] - Verification kayıtları
+    • userVerified: boolean - En az 1 approved verification varsa true
+    
+    👷 WORKER ise (userType: 'worker'):
+    • city, district, neighborhood, latitude, longitude - User objesinde gelir
+    • userInfos: [] - BOŞ ARRAY (Worker'ların UserInfo kaydı olmaz)
+    
+    👔 EMPLOYER ise (userType: 'employer'):
+    • city, district, neighborhood, latitude, longitude - NULL (Employer'da olmaz)
+    • userInfos: [] - Employer'ın adresleri (birden fazla olabilir)`
     }),
     (0, swagger_1.ApiResponse)({
         status: 200,
-        description: 'Kullanıcı bilgileri başarıyla getirildi. Response: { user bilgileri, userInfos: [], userCategories: [], userVerifications: [], userVerified: boolean }'
+        description: 'Kullanıcı bilgileri başarıyla getirildi. Response: { user bilgileri, userCategories: [], userInfos: [], userVerifications: [], userVerified: boolean }'
     }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Kullanıcı bulunamadı' }),
     __param(0, (0, common_1.Request)()),
@@ -52,9 +66,44 @@ __decorate([
     (0, common_1.Put)(),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Kullanıcının tüm bilgilerini güncelle (User + UserInfo)' }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Kullanıcı bilgileri başarıyla güncellendi' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Geçersiz veri' }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Kullanıcının tüm bilgilerini güncelle',
+        description: `Token'dan kullanıcıyı bulup bilgilerini günceller.
+    
+    🔹 User Bilgileri: firstName, lastName, email, phone, userType, bio, profileImage, categoryIds, isOnline, password
+    
+    👷 WORKER için (User tablosuna kaydedilir):
+    • city (şehir)
+    • district (ilçe)
+    • neighborhood (mahalle)
+    • latitude (enlem)
+    • longitude (boylam)
+    
+    👔 EMPLOYER için (UserInfo tablosuna kaydedilir):
+    • addressName (adres adı)
+    • address (genel adres)
+    • buildingNo (bina no)
+    • floor (kat)
+    • apartmentNo (daire no)
+    • description (açıklama)
+    
+    ⚠️ Önemli Kurallar:
+    • Sadece doldurulan alanlar güncellenir
+    • Boş string veya null gönderilirse güncelleme yapılmaz
+    • Worker'a UserInfo bilgileri gönderilemez
+    • Employer'a konum bilgileri (city, district, vb.) gönderilemez
+    • Şifre gönderilirse otomatik hash'lenir
+    
+    📊 Response: Güncellenmiş kullanıcı bilgileri (GET /user ile aynı format)`
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Kullanıcı bilgileri başarıyla güncellendi. Response: { user bilgileri, userInfos: [], userCategories: [], userVerifications: [], userVerified: boolean }'
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 400,
+        description: 'Geçersiz veri (Koordinat worker olmayana gönderilemez, geçersiz latitude/longitude değerleri, vb.)'
+    }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'Kullanıcı bulunamadı' }),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Body)()),
