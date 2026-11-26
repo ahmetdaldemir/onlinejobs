@@ -101,7 +101,7 @@ Content-Type: application/json
 
 ## Jobs
 
-### İş İlanı Oluştur
+### İş İlanı Oluştur (Resimsiz)
 ```bash
 POST /jobs
 Authorization: Bearer <token>
@@ -110,16 +110,40 @@ Content-Type: application/json
 {
   "title": "Elektrik Arızası",
   "description": "Evde elektrik kesintisi var, acil elektrikçi arıyorum.",
-  "budget": 200,
-  "location": "Kadıköy, İstanbul",
-  "latitude": 41.0082,
-  "longitude": 28.9784,
-  "categoryId": "uuid-of-electrician",
+  "budget": "200",
+  "categoryId": "uuid-of-category",
   "userInfoId": "uuid-of-user-info",
-  "isUrgent": true,
-  "jobType": "urgent"
+  "scheduledDate": "2024-01-20",
+  "scheduledTime": "14:00",
+  "priority": "urgent"
 }
 ```
+
+### İş İlanı Oluştur (Resimlerle)
+```bash
+POST /jobs
+Authorization: Bearer <token>
+Content-Type: multipart/form-data
+
+Form Data:
+- title: "Elektrik Arızası"
+- description: "Evde elektrik kesintisi var, acil elektrikçi arıyorum."
+- budget: "200"
+- categoryId: "uuid-of-category"
+- userInfoId: "uuid-of-user-info"
+- scheduledDate: "2024-01-20"
+- scheduledTime: "14:00"
+- priority: "urgent"
+- images: [file1.jpg]  // Dosya olarak, max 5 adet resim
+- images: [file2.jpg]
+```
+
+**ÖNEMLİ NOTLAR:** 
+- **Resim göndermeden JSON isteği yapıyorsanız:** `Content-Type: application/json` kullanın ve body'de `images` alanı GÖNDERMEYİN
+- **Resim gönderiyorsanız:** `Content-Type: multipart/form-data` kullanın ve resimleri dosya olarak gönderin
+- `images` alanını JSON body'de ASLA göndermemelisiniz (sadece multipart/form-data ile dosya olarak)
+- `priority` değerleri: `urgent`, `immediate`, `scheduled`, `normal`
+- `budget`, `scheduledDate`, `scheduledTime`, `categoryId`, `userInfoId`, `priority` alanları opsiyoneldir
 
 ### İş İlanlarını Listele
 ```bash
@@ -134,15 +158,20 @@ GET /jobs?status=open&categoryId=uuid&latitude=41.0082&longitude=28.9784&radius=
     "title": "Elektrik Arızası",
     "description": "Evde elektrik kesintisi var, acil elektrikçi arıyorum.",
     "status": "open",
-    "jobType": "urgent",
-    "budget": 200,
-    "location": "Kadıköy, İstanbul",
-    "latitude": 41.0082,
-    "longitude": 28.9784,
-    "isUrgent": true,
+    "priority": "urgent",
+    "budget": "200",
+    "scheduledDate": "2024-01-20",
+    "scheduledTime": "14:00",
+    "jobImages": ["url1.jpg", "url2.jpg"],
     "viewCount": 5,
     "applicationCount": 2,
+    "isFeatured": false,
+    "featuredScore": 0,
     "createdAt": "2024-01-15T10:30:00Z",
+    "updatedAt": "2024-01-15T10:30:00Z",
+    "employerId": "uuid",
+    "categoryId": "uuid",
+    "userInfoId": "uuid",
     "employer": {
       "id": "uuid",
       "firstName": "Ayşe",
@@ -152,6 +181,13 @@ GET /jobs?status=open&categoryId=uuid&latitude=41.0082&longitude=28.9784&radius=
     "category": {
       "id": "uuid",
       "name": "Elektrikçi"
+    },
+    "userInfo": {
+      "id": "uuid",
+      "address": "Kadıköy, İstanbul",
+      "neighborhood": "Fenerbahçe",
+      "city": "İstanbul",
+      "district": "Kadıköy"
     }
   }
 ]
